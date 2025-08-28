@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2025-present OpenRefactory, Inc.
+  ~
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.openrefactory</groupId>
+  <artifactId>org.openrefactory.callgraph</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>org.openrefactory.callgraph</name>
+  <packaging>eclipse-plugin</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tycho-version>4.0.5</tycho-version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+      <version>3.124.200</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.platform</groupId>
+          <artifactId>org.eclipse.swt</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.platform</groupId>
+          <artifactId>org.eclipse.swt.gtk.linux.aarch64</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.platform</groupId>
+          <artifactId>org.eclipse.swt.gtk.linux.arm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.osgi.service</groupId>
+          <artifactId>org.osgi.service.prefs</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.json/json -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20250517</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>2023-12R</id>
+      <url>https://download.eclipse.org/releases/2023-12</url>
+      <layout>p2</layout>
+    </repository>
+  </repositories>
+
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <includes>**/*.class</includes>
+              <excludes>
+		        	**/*.properties,
+		        	**/org/eclipse/jdt/**/*.class,
+		        	**/org/eclipse/jface/**/*.class,
+		        	**/org/eclipse/core/**/*.class,
+		        	**/org/eclipse/jgit/**/*.class,
+		        	**/org/eclipse/swt/**/*.class,
+		        	**/org/eclipse/ui/**/*.class,
+		        	**/org/eclipse/team/**/*.class,
+		        	**/org/eclipse/search/**/*.class,
+		        	**/org/eclipse/search2/**/*.class,
+		        	**/org/eclipse/jdi/**/*.class,
+		        	**/org/eclipse/e4/**/*.class,
+		        	**/org/eclipse/emf/**/*.class,
+		        	**/org/eclipse/ltk/**/*.class,
+		        	**/org/eclipse/equinox/**/*.class,
+		        	**/org/eclipse/help/**/*.class,
+		        	**/org/eclipse/text/**/*.class,
+		        	**/com/jcraft/jsch/**/*.class,
+		        	**/org/eclipse/compare/**/*.class,
+		        	**/org/eclipse/debug/**/*.class,
+		        	**/org/eclipse/osgi/container/**/*.class,
+		        	**/org/eclipse/osgi/framework/**/*.class,
+		        	**/org/eclipse/osgi/internal/**/*.class,
+		        	**/org/eclipse/osgi/launch/**/*.class,
+		        	**/org/eclipse/osgi/report/**/*.class,
+		        	**/org/eclipse/osgi/service/**/*.class,
+		        	**/org/eclipse/osgi/signedcontent/**/*.class,
+		        	**/org/eclipse/osgi/storage/**/*.class,
+		        	**/org/eclipse/osgi/storagemanager/**/*.class,
+		        	**/org/eclipse/osgi/util/Manifest*,
+		        	**/org/eclipse/osgi/util/Text*,
+		        	**/org/osgi/**/*.class,
+		        	**/org/apache/**/*.class,
+		        	**/org/bouncycastle/**/*.class,
+		        	**/com/googlecode/**/*.class,
+		        	**/com/ibm/**/*.class,
+		        	**/com/sun/**/*.class,
+		        	**/org/kxml2/**/*.class,
+		        	**/org/junit/**/*.class,
+		        	**/org/tukaani/**/*.class,
+		        	**/org/w3c/**/*.class,
+		        	**/org/xmlpull/**/*.class,
+		        	**/javax/**/*.class,
+		        	**/lib/gnu/**/*.class
+              </excludes>
+              <outputDirectory>target/classes</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <extensions>true</extensions>
+      </plugin>
+
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.43.0</version>
+        <configuration>
+          <java>
+            <includes>
+              <include>src-api/**/*.java</include>
+              <include>src-internal-api/**/*.java</include>
+              <include>src-internal/**/*.java</include>
+            </includes>
+          </java>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

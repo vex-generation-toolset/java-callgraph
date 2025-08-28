@@ -1,0 +1,1 @@
+class Tom extends Jerry {}

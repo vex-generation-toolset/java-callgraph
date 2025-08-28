@@ -1,0 +1,1277 @@
+[
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistration",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "allowCredentials",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["boolean"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistration",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "allowedHeaders",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["String"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistration",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "allowedMethods",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["String"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistration",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "allowedOriginPatterns",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["String"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistration",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "allowedOrigins",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["String"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistration",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "exposedHeaders",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["String"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistration",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "maxAge",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["long"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": true,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistration",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "combine",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["CorsConfiguration"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsRegistry",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "addMapping",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.web.servlet.config.annotation",
+        "param_count": 1,
+        "params": ["String"],
+        "return_null": false,
+        "return_type": "CorsRegistration",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "anonymous",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "AnonymousConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "anonymous",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "AnonymousConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "cors",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "CorsConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "cors",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CorsConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "csrf",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "CsrfConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "csrf",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "CsrfConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "exceptionHandling",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "ExceptionHandlingConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "exceptionHandling",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "ExceptionHandlingConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "formLogin",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "FormLoginConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "formLogin",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "FormLoginConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "headers",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HeadersConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "headers",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HeadersConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "httpBasic",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpBasicConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "httpBasic",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpBasicConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "jee",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "JeeConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "jee",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "JeeConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "logout",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "LogoutConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "logout",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "LogoutConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "oauth2Client",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "OAuth2ClientConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "oauth2Client",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "OAuth2ClientConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers.oauth2.client",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "oauth2Login",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "OAuth2LoginConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "oauth2Login",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "OAuth2LoginConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers.oauth2.client",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "oauth2ResourceServer",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "OAuth2ResourceServerConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "oauth2ResourceServer",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "OAuth2ResourceServerConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers.oauth2.server.resource",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "openidLogin",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "OpenIDLoginConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "openidLogin",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "OpenIDLoginConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers.openid",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "portMapper",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "PortMapperConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "portMapper",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "PortMapperConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "rememberMe",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "RememberMeConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "rememberMe",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "RememberMeConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "requestCache",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "RequestCacheConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "requestCache",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "RequestCacheConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "saml2Login",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "Saml2LoginConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "saml2Login",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "Saml2LoginConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers.saml2",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "saml2Logout",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "Saml2LogoutConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "saml2Logout",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "Saml2LogoutConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers.saml2",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "securityContext",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "SecurityContextConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "securityContext",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "SecurityContextConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "servletApi",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "ServletApiConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "servletApi",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "ServletApiConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "sessionManagement",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "SessionManagementConfigurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "sessionManagement",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "SessionManagementConfigurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "x509",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "X509Configurer",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "HttpSecurity",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "x509",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.builders",
+        "param_count": 1,
+        "params": ["Customizer"],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    },
+    {
+        "bounded_type_parameters": "",
+        "declaring_type": "X509Configurer",
+        "declaring_type_params": "",
+        "exceptions": [],
+        "method_name": "disable",
+        "modifiers": [
+            "public"
+        ],
+        "package_name": "org.springframework.security.config.annotation.web.configurers",
+        "param_count": 0,
+        "params": [],
+        "return_null": false,
+        "return_type": "HttpSecurity",
+        "returnsPrimitive": false,
+        "since_version": "X"
+    }
+]

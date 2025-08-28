@@ -1,0 +1,557 @@
+[
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicDesktopPaneUI.CloseAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.MouseMotionListener", 
+        "method_names": [
+            "mouseDragged", 
+            "mouseMoved"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.ItemListener", 
+        "method_names": [
+            "itemStateChanged"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardUpLeftHandler", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.MouseWheelListener", 
+        "method_names": [
+            "mouseWheelMoved"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.imageio.spi.IIOServiceProvider", 
+        "method_names": [
+            "onRegistration", 
+            "onDeregistration"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.HierarchyBoundsListener", 
+        "method_names": [
+            "ancestorMoved", 
+            "ancestorResized"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.StyledEditorKit.UnderlineAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.event.UndoableEditListener", 
+        "method_names": [
+            "undoableEditHappened"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.KeyListener", 
+        "method_names": [
+            "keyTyped", 
+            "keyPressed", 
+            "keyReleased"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.security.DigestOutputStream", 
+        "method_names": [
+            "on"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicFileChooserUI.ApproveSelectionAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.List.AccessibleAWTList", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.StyledEditorKit.BoldAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicTreeUI.TreeCancelEditingAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.ToolTipManager.insideTimerAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.DefaultEditorKit.PasteAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicDesktopPaneUI.MinimizeAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.StyledEditorKit.FontFamilyAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.StyledEditorKit.FontSizeAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.ComponentListener", 
+        "method_names": [
+            "componentResized", 
+            "componentMoved", 
+            "componentShown", 
+            "componentHidden"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.event.ChangeListener", 
+        "method_names": [
+            "stateChanged"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.WindowListener", 
+        "method_names": [
+            "windowOpened", 
+            "windowClosing", 
+            "windowClosed", 
+            "windowIconified", 
+            "windowDeiconified", 
+            "windowActivated", 
+            "windowDeactivated"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicTreeUI.TreeTraverseAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicSplitPaneDivider", 
+        "method_names": [
+            "oneTouchExpandableChanged"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.security.DigestInputStream", 
+        "method_names": [
+            "on"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicTreeUI.TreeIncrementAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicSliderUI.ScrollListener", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.event.ListSelectionListener", 
+        "method_names": [
+            "valueChanged"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicFileChooserUI.GoHomeAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicDesktopPaneUI.MaximizeAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicTreeUI.TreeHomeAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.StyledEditorKit.AlignmentAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.HierarchyListener", 
+        "method_names": [
+            "hierarchyChanged"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.DefaultEditorKit.InsertTabAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardResizeToggleHandler", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.DefaultEditorKit.InsertContentAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicInternalFrameTitlePane.CloseAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.WindowFocusListener", 
+        "method_names": [
+            "windowGainedFocus", 
+            "windowLostFocus"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicDesktopPaneUI.OpenAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicFileChooserUI.ChangeToParentDirectoryAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.event.DocumentListener", 
+        "method_names": [
+            "insertUpdate", 
+            "removeUpdate", 
+            "changedUpdate"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.tree.DefaultTreeCellEditor", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicTreeUI.TreeToggleAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.metal.MetalFileChooserUI.DirectoryComboBoxAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicFileChooserUI.UpdateAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.StyledEditorKit.ForegroundAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.event.CaretListener", 
+        "method_names": [
+            "caretUpdate"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.util.concurrent.ForkJoinWorkerThread", 
+        "method_names": [
+            "onStart", 
+            "onTermination"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.MouseListener", 
+        "method_names": [
+            "mouseClicked", 
+            "mousePressed", 
+            "mouseReleased", 
+            "mouseEntered", 
+            "mouseExited"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.util.stream.BaseStream", 
+        "method_names": [
+            "onClose"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicTreeUI.TreePageAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.DefaultEditorKit.CopyAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicFileChooserUI.NewFolderAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.nio.charset.CharsetEncoder", 
+        "method_names": [
+            "onMalformedInput", 
+            "onUnmappableCharacter"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.DefaultEditorKit.DefaultKeyTypedAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicOptionPaneUI.ButtonActionListener", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.JComboBox", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.imageio.spi.RegisterableService", 
+        "method_names": [
+            "onRegistration", 
+            "onDeregistration"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.AWTEventMulticaster", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.nio.charset.CharsetDecoder", 
+        "method_names": [
+            "onMalformedInput", 
+            "onUnmappableCharacter"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.ToolTipManager.stillInsideTimerAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicDesktopPaneUI.NavigateAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardHomeHandler", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicFileChooserUI.CancelSelectionAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.FocusListener", 
+        "method_names": [
+            "focusGained", 
+            "focusLost"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardEndHandler", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.WindowStateListener", 
+        "method_names": [
+            "windowStateChanged"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.util.concurrent.Phaser", 
+        "method_names": [
+            "onAdvance"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicScrollBarUI.ScrollListener", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardDownRightHandler", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.DefaultEditorKit.BeepAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicSliderUI.ActionScroller", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.html.FormView", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.DefaultEditorKit.InsertBreakAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.dnd.DropTarget.DropTargetAutoScroller", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.StyledEditorKit.ItalicAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.awt.event.ActionListener", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicInternalFrameTitlePane.SizeAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.plaf.basic.BasicTreeUI.ComponentHandler", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "java.util.concurrent.CountedCompleter", 
+        "method_names": [
+            "onCompletion", 
+            "onExceptionalCompletion"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.ToolTipManager.outsideTimerAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }, 
+    {
+        "qualified_class_name": "javax.swing.text.DefaultEditorKit.CutAction", 
+        "method_names": [
+            "actionPerformed"
+        ]
+    }
+]

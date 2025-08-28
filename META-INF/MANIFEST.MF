@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenRefactory - Java Client
+Bundle-SymbolicName: org.openrefactory.callgraph;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: OpenRefactory
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: 
+ org.eclipse.jface.text;bundle-version="3.22.0",
+ org.eclipse.jdt.core;bundle-version="3.32.0",
+ org.eclipse.jdt.ui;bundle-version="3.27.100",
+ org.eclipse.jface;bundle-version="3.28.0",
+ org.eclipse.core.runtime;bundle-version="3.26.100",
+ org.eclipse.core.resources;bundle-version="3.18.100"
+Automatic-Module-Name: org.openrefactory.callgraph
+Bundle-ClassPath: lib/json-20250517.jar,
+ .

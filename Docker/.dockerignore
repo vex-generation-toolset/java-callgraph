@@ -1,0 +1,4 @@
+build_image.sh
+Dockerfile
+allatori.jar
+obf-config.xml
