@@ -1,15 +1,16 @@
-# icr-java-cg-transition
+# java-callgraph
 
 ## Docker Build and Run
-To build docker image, run:
+To build docker image, run (may require `sudo`):
 ```sh
-cd icr-java-cg-transition
-mvn -DskipTests clean install
-cd Docker && sudo ./build_image.sh -i icr-cg:latest
+cd java-callgraph
+mvn -DskipTests clean package
+cd Docker && ./build_image.sh -i java-cg:latest
 ```
-Next, run the docker container:
+Next, run the docker container. The source code needs to be mounted at the `/workspace/source` directory.
+The call-graph is generated at the `/workspace/result` directory. Mount a directory at `/workspace/result` for the call-graph to persist. 
 ```sh
-docker run --rm -v /home/nhasan/ORExtras/JavaSource/sagan:/workspace/source \
-    -v /home/nhasan/ORExtras/JavaSource/Result/sagan:/workspace/result \
-    icr-cg:latest
+docker run --rm -v <path/to/source>:/workspace/source \
+    -v <path/to/result>:/workspace/result \
+    java-cg:latest
 ```
