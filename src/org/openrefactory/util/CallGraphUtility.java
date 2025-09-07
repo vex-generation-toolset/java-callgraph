@@ -1227,13 +1227,33 @@ public class CallGraphUtility {
         String callingContextDeclaredTypeHash = null;
         int servicingCalleeMethodIndex = Constants.INVALID_METHOD_HASH_INDEX;
         if (invocation.getQualifier() != null) {
+            // Issue 7
             // A.super.foo() etc.,
-            // This occurs when we have say multiple interfaces
-            // A and B implemented, both have foo and we want to
-            // qualify one foo
+            // This works in two cases.
+            //   (a) A can be an outer enclosing class of an Inner class
+            //       which has the foo method
+            //       With A.super, we are breaking from Inner to A
+            //       then using super to go to the parent class of A
+            //       and finding the foo method there. (Issue 1924)
+            //   (b) This can also occur if a class X implements
+            //       two interfaces A and B, and both of them have a default
+            //       method named foo. In that case, A.super is used to
+            //       disambiguate between the interfaces. We go to A
+            //       but then we stay there and find the default method foo.
+            //       So, super is not used here to go to the qualifier type
+            //       and going to its supertype (Case a), rather the qualifier type
+            //       itself is found in the interface (therefore the super move is done)
+            //       and then we stay there.
             TypeInfo callingContextDeclaredtype = TypeCalculator.typeOf(invocation.getQualifier(), false);
             if (callingContextDeclaredtype != null) {
                 callingContextDeclaredTypeHash = callingContextDeclaredtype.getName();
+                if (CallGraphUtility.isInterface(callingContextDeclaredTypeHash)) {
+                    // Case b. Go ahead
+                } else {
+                    // Case a. Find the super class.
+                    callingContextDeclaredTypeHash = CallGraphDataStructures
+                        .getSuperClassOf(callingContextDeclaredTypeHash);
+                }
             }
             if (callingContextDeclaredTypeHash != null) {
                 servicingCalleeMethodIndex =
