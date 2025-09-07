@@ -1463,6 +1463,7 @@ public class CallGraphProcessor implements Runnable {
                 // of callee methods.
                 if (methodInvoc instanceof MethodInvocation invocation) {
                     IMethodBinding mb = invocation.resolveMethodBinding();
+                    TokenRange tr = ASTNodeUtility.getTokenRangeFromNode(methodInvoc, filePath);
                     String qname;
 
                     if (mb != null) {
@@ -1474,7 +1475,7 @@ public class CallGraphProcessor implements Runnable {
                     }
 
                     if (qname != null) {
-                        CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodQname, qname);
+                        CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodQname, qname, tr);
                     }
                 }
             }
