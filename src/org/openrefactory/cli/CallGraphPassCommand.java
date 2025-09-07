@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -26,6 +28,7 @@ import org.openrefactory.analysis.vpg.JavaVPG;
 import org.openrefactory.model.IModel;
 import org.openrefactory.model.IModelFileElement;
 import org.openrefactory.model.Model;
+import org.openrefactory.util.datastructure.TokenRange;
 import org.openrefactory.util.manager.C2PManager;
 import org.openrefactory.util.manager.C2SManager;
 import org.openrefactory.util.manager.FNDSpecManager;
@@ -205,9 +208,18 @@ public class CallGraphPassCommand {
 			String cgFileName = timeStamp + "_cg.json";
 			File cgFile = Path.of(ConfigurationManager.config.RESULT, cgFileName).toFile();
 			try (FileWriter fOut = new FileWriter(cgFile); BufferedWriter bw = new BufferedWriter(fOut)) {
-				Map<String, Set<String>> callerToCalleeMap = CallGraphDataStructures.getExtendedCallGraph()
-						.getCallerToCalleeMap();
-				bw.write(new JSONObject(callerToCalleeMap).toString(4));
+				Map<String, Set<String>> canonicalCallerToCalleeMap = new HashMap<String, Set<String>>();
+				Map<String, Map<TokenRange, Set<String>>> storedCallerToCalleeMap = CallGraphDataStructures
+						.getExtendedCallGraph().getCallerToCalleeMap();
+				for (String caller : storedCallerToCalleeMap.keySet()) {
+					Map<TokenRange, Set<String>> rangeToCalleesMap = storedCallerToCalleeMap.get(caller);
+					Set<String> callees = new HashSet<String>(4);
+					for (java.util.Map.Entry<TokenRange, Set<String>> rangeToCallees : rangeToCalleesMap.entrySet()) {
+						callees.addAll(rangeToCallees.getValue());
+					}
+					canonicalCallerToCalleeMap.put(caller, callees);
+				}
+				bw.write(new JSONObject(canonicalCallerToCalleeMap).toString(4));
 			} catch (Exception | Error e) {
 				progressReporter.showProgress("Failed to generate cg file: " + e.getMessage());
 			}

@@ -5,10 +5,13 @@
  */
 package org.openrefactory.analysis.callgraph;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.openrefactory.util.datastructure.TokenRange;
 
 /**
  * Extended call graph that includes library functions/methods and uses qualified names.
@@ -43,31 +46,34 @@ public class ExtendedCallGraph {
      * The main data structure storing caller-to-callee relationships.
      * 
      * <p>This map maintains the core call graph structure where each key represents
-     * a caller method (in qualified name format) and the corresponding value is a set
-     * of callee methods that the caller can invoke.</p>
+     * a caller method (in qualified name format) and the corresponding value is a map
+     * where each call site is associated with a set of callee methods.</p>
      * 
      * <p>The map uses:</p>
      * <ul>
      *   <li><strong>Keys:</strong> Fully qualified method names of caller methods
      *       (e.g., "com.example.MyClass.myMethod")</li>
-     *   <li><strong>Values:</strong> Sets of fully qualified method names representing
-     *       all possible callee methods that can be called by the caller</li>
+     *   <li><strong>Values:</strong>A map where each call site (represented by
+     *       a token range is associated with a set of fully qualified method names
+     *       representing all possible callee methods</li>
      * </ul>
      * 
      * <p>This structure is thread-safe and supports concurrent access during call graph
      * construction, making it suitable for parallel processing scenarios.</p>
      */
-    private final Map<String, Set<String>> callerToCalleeMap;
+    private final Map<String, Map<TokenRange, Set<String>>> callerToCalleeMap;
 
     public ExtendedCallGraph() {
         this.callerToCalleeMap = new ConcurrentHashMap<>();
     }
 
-    public void addEdge(String caller, String callee) {
-        this.callerToCalleeMap.computeIfAbsent(caller, k -> new HashSet<>()).add(callee);
+    public void addEdge(String caller, String callee, TokenRange tr) {
+        Map<TokenRange, Set<String>> rangeToCallees = callerToCalleeMap.computeIfAbsent(caller, k -> new HashMap<>());
+        Set<String> callees = rangeToCallees.computeIfAbsent(tr, k -> new HashSet<>());
+        callees.add(callee);
     }
 
-    public Map<String, Set<String>> getCallerToCalleeMap() {
+    public Map<String, Map<TokenRange, Set<String>>> getCallerToCalleeMap() {
         return callerToCalleeMap;
     }
 }
