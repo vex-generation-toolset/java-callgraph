@@ -1234,7 +1234,7 @@ public class CallGraphUtility {
             //       which has the foo method
             //       With A.super, we are breaking from Inner to A
             //       then using super to go to the parent class of A
-            //       and finding the foo method there. (Issue 1924)
+            //       and finding the foo method there.
             //   (b) This can also occur if a class X implements
             //       two interfaces A and B, and both of them have a default
             //       method named foo. In that case, A.super is used to

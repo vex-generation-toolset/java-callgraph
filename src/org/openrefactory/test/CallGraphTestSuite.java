@@ -43,7 +43,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Issue 91 A test suite for testing the Call Graph
+ * A test suite for testing the Call Graph
  *
  * @author Mohammad Rafid Ul Islam
  */
@@ -123,7 +123,6 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                         String[] splits = methodName.split(CallGraphUtility.CG_SEPARATOR);
                         callers.add(splits[0] + ":" + splits[1] + "()V");
                     } else if (CallGraphUtility.isStaticConstructor(hash)) {
-                        // Issue 1403
                         // For virtual static constructors we use suffix VSC
                         String methodName = CallGraphUtility.getMethodNameFromSignature(
                                 CallGraphDataStructures.getMethodSignatureFromHash(hash));
@@ -155,7 +154,6 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
          * @return a set of hashes of the callee methods from that method
          */
         public Set<String> getCallees(String callerHash) {
-            // Issue 1228
             // Test case, we do not need the virtual connector method
             List<String> calleeHashes = CallGraphDataStructures.getCallGraph().getCalleeListOf(callerHash, false);
             Set<String> callees = new TreeSet<String>(Collator.getInstance());
@@ -166,7 +164,6 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                     String[] splits = methodName.split(CallGraphUtility.CG_SEPARATOR);
                     callees.add(splits[0] + ":" + splits[1] + "()V");
                 } else if (CallGraphUtility.isStaticConstructor(hash)) {
-                    // Issue 1403
                     // For virtual static constructors we use suffix VSC
                     String methodName = CallGraphUtility.getMethodNameFromSignature(
                             CallGraphDataStructures.getMethodSignatureFromHash(hash));
@@ -190,7 +187,7 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
 
         /*
          * Marker = startLine,startOffset,endLine,endOffset,choice {caller or callee), [list of callers/callees]
-         * In place of list a number 0 is present if no caller or callee (introduced in Issue 1374)
+         * In place of list a number 0 is present if no caller or callee
          * Here, choice is what should be returned callers or callees of the selected
          * method.
          * List of callers/callees are comma separated method signature strings.
