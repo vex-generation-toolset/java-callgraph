@@ -25,3 +25,5 @@ class X  extends Z {
         System.out.println("X");
     }
 }
+
+/*$$$$$ B.bar, 1, S.foo */
