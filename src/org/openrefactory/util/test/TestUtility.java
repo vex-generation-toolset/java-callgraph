@@ -103,7 +103,7 @@ public final class TestUtility {
     }
 
     /**
-     * Issue 964 From a test file, move to the test container directory
+     * From a test file, move to the test container directory
      *
      * @param file the starting file
      * @return the test container directory which will have a number or a letter followed by a number in the prefix. As
@@ -117,7 +117,7 @@ public final class TestUtility {
     }
 
     /**
-     * Issue 964, 242 Since we have reached 1000 tests, we have started using a00, A00, etc., as test directories. We
+     * Since we have reached 1000 tests, we have started using a00, A00, etc., as test directories. We
      * will look for digit in the first or second position
      *
      * @param name the file/directory name
