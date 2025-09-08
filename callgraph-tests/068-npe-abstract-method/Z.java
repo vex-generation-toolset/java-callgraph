@@ -26,4 +26,4 @@ class X  extends Z {
     }
 }
 
-/*$$$$$ B.bar, 1, S.foo */
+/*$$$$$ B#bar(), 1, X#foo() */

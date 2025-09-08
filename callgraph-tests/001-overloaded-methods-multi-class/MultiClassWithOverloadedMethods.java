@@ -47,6 +47,16 @@ public class MultiClassWithOverloadedMethods {
     }
 }
 
+/*$$$$$ MultiClassWithOverloadedMethods.main(String[]), 4, A#foo(A), C#foo(A), B#foo(A), D#foo(A) */
+
+/*$$$$$ A#foo(A), 0 */
+
+/*$$$$$ B#foo(A), 0 */
+
+/*$$$$$ C#foo(A), 1, D#foo(A) */
+
+/*$$$$$ D#foo(A), 4, B#foo(A), A#foo(A), C#foo(A), D#foo(A) */
+
 // Explanation:
 // (1) marker 1 selected class D's foo() method and its caller is according
 //     to the algorithm class D's foo() and class C's foo().
