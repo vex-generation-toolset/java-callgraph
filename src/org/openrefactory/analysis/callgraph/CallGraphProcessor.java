@@ -1457,29 +1457,6 @@ public class CallGraphProcessor implements Runnable {
             String callerMethodHash,
             String callerMethodQname,
             String filePath) {
-        if (methodInvocations != null && callerMethodQname != null) {
-            for (ASTNode methodInvoc : methodInvocations) {
-                // For all the method invocations, generate the qualified name
-                // of callee methods.
-                if (methodInvoc instanceof MethodInvocation invocation) {
-                    IMethodBinding mb = invocation.resolveMethodBinding();
-                    TokenRange tr = ASTNodeUtility.getTokenRangeFromNode(methodInvoc, filePath);
-                    String qname;
-
-                    if (mb != null) {
-                        ITypeBinding typeBinding = mb.getDeclaringClass();
-                        String name = invocation.getName().toString();
-                        qname = typeBinding.getQualifiedName() + "." + name;
-                    } else {
-                        qname = TypeCalculator.qualifiedNameOf(invocation, filePath, false);
-                    }
-
-                    if (qname != null) {
-                        CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodQname, qname, tr);
-                    }
-                }
-            }
-        }
         if (methodInvocations != null) {
             // From a method method's calling context, store the pair of type info and
             // token range of scope if it is a local variable or field of local variable.
@@ -1625,11 +1602,15 @@ public class CallGraphProcessor implements Runnable {
                                         // drop out the methods that do not match except the top generic method.
                                         iterator.remove();
                                     } else {
-                                        CallGraphDataStructures.getCallGraph()
-                                                .addEdge(
-                                                        callerMethodHash,
-                                                        CallGraphDataStructures.getMethodHashFromIndex(
-                                                                methodHashIndex));
+                                        String calleeMethodHash = CallGraphDataStructures
+                                                .getMethodHashFromIndex(methodHashIndex);
+                                        CallGraphDataStructures.getCallGraph().addEdge(callerMethodHash,
+                                                calleeMethodHash);
+                                        if (callerMethodHash != null && !callerMethodHash.isEmpty()
+                                                && calleeMethodHash != null && !callerMethodHash.isEmpty()) {
+                                            CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
+                                                    calleeMethodHash, invocationTokenRange);
+                                        }
                                     }
                                 }
                                 if (!calleeContenderMethodInvocationTypes.isEmpty()) {

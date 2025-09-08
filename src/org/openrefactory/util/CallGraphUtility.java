@@ -44,6 +44,7 @@ import org.openrefactory.analysis.callgraph.AccessModifiers;
 import org.openrefactory.analysis.callgraph.CallGraphDataStructures;
 import org.openrefactory.analysis.callgraph.method.MethodHandler;
 import org.openrefactory.analysis.callgraph.method.MethodIdentity;
+import org.openrefactory.analysis.callgraph.method.MethodInfoBundle;
 import org.openrefactory.analysis.callgraph.method.MethodMatchFinderUtil;
 import org.openrefactory.analysis.type.TypeCalculator;
 import org.openrefactory.analysis.type.typeinfo.ArrayTypeInfo;
@@ -1848,5 +1849,34 @@ public class CallGraphUtility {
             }
         }
         return false;
+    }
+
+    /**
+     * Issue 5
+     * Get the name of a method in a canonicalized format from a method hash.
+     *
+     * @param methodHash hash of a method.
+     * @return the method name in canonicalized format.
+     */
+    public static String getMethodNameInCanonicalizedFormat(String methodHash) {
+        int methodHashIndex = CallGraphDataStructures.getMethodIndexFromHash(methodHash);
+        if (methodHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+            MethodInfoBundle bundle = CallGraphDataStructures.getHashToMethodInfoBundleList().get(methodHashIndex);
+            MethodIdentity identity = bundle.getIdentity();
+            String methodSignature = bundle.getSignature();
+            String className = CallGraphUtility.getClassNameFromMethodSignature(methodSignature);
+            // Create method param types
+            StringBuffer argBuf = new StringBuffer();
+            for (TypeInfo typeInfo : identity.getArgParamTypeInfos()) {
+                argBuf.append(typeInfo.toString());
+                argBuf.append(",");
+            }
+            if (identity.getArgParamTypeInfos().size() > 0) {
+                argBuf.setLength(argBuf.length() - 1);
+            }
+			return className + (identity.isStatic() ? "." : "#") + identity.getMethodName() + "(" + argBuf.toString()
+                + ")";
+        }
+        return "";
     }
 }

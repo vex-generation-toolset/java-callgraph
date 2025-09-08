@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -28,6 +29,7 @@ import org.openrefactory.analysis.vpg.JavaVPG;
 import org.openrefactory.model.IModel;
 import org.openrefactory.model.IModelFileElement;
 import org.openrefactory.model.Model;
+import org.openrefactory.util.CallGraphUtility;
 import org.openrefactory.util.datastructure.TokenRange;
 import org.openrefactory.util.manager.C2PManager;
 import org.openrefactory.util.manager.C2SManager;
@@ -211,13 +213,16 @@ public class CallGraphPassCommand {
 				Map<String, Set<String>> canonicalCallerToCalleeMap = new HashMap<String, Set<String>>();
 				Map<String, Map<TokenRange, Set<String>>> storedCallerToCalleeMap = CallGraphDataStructures
 						.getExtendedCallGraph().getCallerToCalleeMap();
-				for (String caller : storedCallerToCalleeMap.keySet()) {
-					Map<TokenRange, Set<String>> rangeToCalleesMap = storedCallerToCalleeMap.get(caller);
+				for (Entry<String, Map<TokenRange, Set<String>>> callerEntry : storedCallerToCalleeMap.entrySet()) {
+					Map<TokenRange, Set<String>> rangeToCalleesMap = callerEntry.getValue();
 					Set<String> callees = new HashSet<String>(4);
 					for (java.util.Map.Entry<TokenRange, Set<String>> rangeToCallees : rangeToCalleesMap.entrySet()) {
-						callees.addAll(rangeToCallees.getValue());
+						for (String calleeHash : rangeToCallees.getValue()) {
+							String calleeName = CallGraphUtility.getMethodNameInCanonicalizedFormat(calleeHash);
+							callees.add(calleeName);
+						}
 					}
-					canonicalCallerToCalleeMap.put(caller, callees);
+					canonicalCallerToCalleeMap.put(callerEntry.getKey(), callees);
 				}
 				bw.write(new JSONObject(canonicalCallerToCalleeMap).toString(4));
 			} catch (Exception | Error e) {

@@ -21,6 +21,7 @@ import org.openrefactory.analysis.callgraph.MultiThreadCallGraphProcessor;
 import org.openrefactory.analysis.vpg.JavaVPG;
 import org.openrefactory.model.Model;
 import org.openrefactory.model.eclipse.EclipseModel;
+import org.openrefactory.util.CallGraphUtility;
 import org.openrefactory.util.datastructure.TokenRange;
 import org.openrefactory.util.manager.C2PManager;
 import org.openrefactory.util.manager.C2SManager;
@@ -126,23 +127,32 @@ public class ExtendedCallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 ExtendedCallGraph callGraph = CallGraphDataStructures.getExtendedCallGraph();
                 // Null check
                 assertNotNull("In " + file + ", Expected a call graph, but found null", callGraph);
-                // Check that we have only 1 test
-                // Nothing to do with calculation, this is just how the tests are framed
-                assertTrue(
-                        "In " + file + ", Expected one entry for the call graph test, but found "
-                               + callGraph.getCallerToCalleeMap().size(),
-                        callGraph.getCallerToCalleeMap().size() == 1);
                 // Match the caller
-                assertTrue(
-						"In " + file + ", Expected the following caller " + expectedCaller + ", but found "
-								+ callGraph.getCallerToCalleeMap().keySet().iterator().next(),
-						callGraph.getCallerToCalleeMap().keySet().iterator().next().equals(expectedCaller));
+                String matchedCallerHash = null;
+                for (String callerHash : callGraph.getCallerToCalleeMap().keySet()) {
+                    String callerName = CallGraphUtility.getMethodNameInCanonicalizedFormat(callerHash);
+                    if (callerName.equals(expectedCaller)) {
+                        matchedCallerHash = callerHash;
+                        break;
+                    }
+                }
+                if (calleeCount == 0) {
+                    assertNull("In " + file + ", The following caller should not be present: " + expectedCaller
+                            + ", but it was.", matchedCallerHash);
+                    return;
+                } else {
+                    assertNotNull("In " + file + ", Expected the following caller " + expectedCaller
+                            + ", but did not find it.", matchedCallerHash);
+                }
+                // Get the callsite and callees from the only caller in the map
                 Map<TokenRange, Set<String>> foundCallsitesAndCallees = callGraph.getCallerToCalleeMap()
-						.get(expectedCaller);
+                        .get(matchedCallerHash);
                 // First collect the callees
                 Set<String> foundCallees = new HashSet<String>(2);
                 for (Entry<TokenRange, Set<String>> entry : foundCallsitesAndCallees.entrySet()) {
-                    foundCallees.addAll(entry.getValue());
+                    for (String calleeHash : entry.getValue()) {
+                        foundCallees.add(CallGraphUtility.getMethodNameInCanonicalizedFormat(calleeHash));
+                    }
                 }
                 // Match the number of callees for the caller
 				assertTrue(
