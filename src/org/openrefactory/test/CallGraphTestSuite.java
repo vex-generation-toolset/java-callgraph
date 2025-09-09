@@ -155,8 +155,11 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
          */
         public Set<String> getCallees(String callerHash) {
             // Test case, we do not need the virtual connector method
-            List<String> calleeHashes = CallGraphDataStructures.getCallGraph().getCalleeListOf(callerHash, false);
             Set<String> callees = new TreeSet<String>(Collator.getInstance());
+            List<String> calleeHashes = CallGraphDataStructures.getCallGraph().getCalleeListOf(callerHash, false);
+            if (calleeHashes == null) {
+                return callees;
+            }
             for (String hash : calleeHashes) {
                 if (CallGraphUtility.isDefaultConstructor(hash)) {
                     String methodName = CallGraphUtility.getMethodNameFromSignature(
@@ -243,7 +246,7 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 assertNotNull("For file " + file.getName() + ", the selection returned a null object", selectedNode);
 
                 CallGraphDataStructures.initialize();
-                MultiThreadCallGraphProcessor.BuildAndProcessCallGraph(new NullProgressReporter(), projectPath);
+                MultiThreadCallGraphProcessor.BuildAndProcessCallGraph(true, new NullProgressReporter(), projectPath);
 
                 Set<String> methods = null;
                 if (selectedNode instanceof MethodDeclaration) {
@@ -281,31 +284,23 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                         }
                     }
                 }
-                if (methods == null) {
+                if (methods == null || methods.isEmpty()) {
                     int entries = Integer.parseInt(markers.removeFirst());
                     assertEquals(entries, 0);
                 } else {
-                    String actual = "";
-                    for (String method : methods) {
-                        actual += method + "##";
-                    }
+                    String actual = String.join("##", methods);
                     Set<String> expectedMethods = new TreeSet<String>(Collator.getInstance());
                     while (!markers.isEmpty()) {
                         String expectedMethod = markers.removeFirst();
                         expectedMethods.add(expectedMethod);
                     }
-                    String expected = "";
-                    for (String method : expectedMethods) {
-                        expected += method + "##";
-                    }
+                    String expected = String.join("##", expectedMethods);
                     CallGraphDataStructures.deinitialize();
-                    assertEquals(
-                            "In " + file + " Failure",
-                            expected.substring(0, expected.length() - 2).trim(),
-                            actual.substring(0, actual.length() - 2).trim());
+                    assertEquals("In " + file + " Failure", expected.trim(), actual.trim());
                 }
             } catch (Exception e) {
-                throw e;
+                String msg = ">>>>>>> Exception In file: " + file;
+                throw new Exception(msg, e);
             }
         }
     }
