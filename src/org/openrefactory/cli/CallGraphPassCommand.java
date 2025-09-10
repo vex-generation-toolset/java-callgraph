@@ -214,6 +214,7 @@ public class CallGraphPassCommand {
 				Map<String, Map<TokenRange, Set<String>>> storedCallerToCalleeMap = CallGraphDataStructures
 						.getExtendedCallGraph().getCallerToCalleeMap();
 				for (Entry<String, Map<TokenRange, Set<String>>> callerEntry : storedCallerToCalleeMap.entrySet()) {
+					String callerName = CallGraphUtility.getMethodNameInCanonicalizedFormat(callerEntry.getKey(), true);
 					Map<TokenRange, Set<String>> rangeToCalleesMap = callerEntry.getValue();
 					Set<String> callees = new HashSet<String>(4);
 					for (java.util.Map.Entry<TokenRange, Set<String>> rangeToCallees : rangeToCalleesMap.entrySet()) {
@@ -222,7 +223,7 @@ public class CallGraphPassCommand {
 							callees.add(calleeName);
 						}
 					}
-					canonicalCallerToCalleeMap.put(callerEntry.getKey(), callees);
+					canonicalCallerToCalleeMap.put(callerName, callees);
 				}
 				bw.write(new JSONObject(canonicalCallerToCalleeMap).toString(4));
 			} catch (Exception | Error e) {
