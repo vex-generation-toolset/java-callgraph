@@ -130,7 +130,7 @@ public class ExtendedCallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 // Match the caller
                 String matchedCallerHash = null;
                 for (String callerHash : callGraph.getCallerToCalleeMap().keySet()) {
-                    String callerName = CallGraphUtility.getMethodNameInCanonicalizedFormat(callerHash);
+                    String callerName = CallGraphUtility.getMethodNameInCanonicalizedFormat(callerHash, true);
                     if (callerName.equals(expectedCaller)) {
                         matchedCallerHash = callerHash;
                         break;
@@ -151,7 +151,7 @@ public class ExtendedCallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 Set<String> foundCallees = new HashSet<String>(2);
                 for (Entry<TokenRange, Set<String>> entry : foundCallsitesAndCallees.entrySet()) {
                     for (String calleeHash : entry.getValue()) {
-                        foundCallees.add(CallGraphUtility.getMethodNameInCanonicalizedFormat(calleeHash));
+                        foundCallees.add(CallGraphUtility.getMethodNameInCanonicalizedFormat(calleeHash, true));
                     }
                 }
                 // Match the number of callees for the caller

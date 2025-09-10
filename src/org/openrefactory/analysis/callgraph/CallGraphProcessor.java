@@ -1481,17 +1481,16 @@ public class CallGraphProcessor implements Runnable {
                         // For a static method, no need to store the method invocation type since it is
                         // calculated differently. In that case, just add an edge to the call graph and continue
                         if (CallGraphUtility.isStaticMethod(servicingCalleeMethodIndex)) {
-                            CallGraphDataStructures.getCallGraph()
-                                    .addEdge(
-                                            callerMethodHash,
-                                            CallGraphDataStructures.getMethodHashFromIndex(servicingCalleeMethodIndex));
+                            String calleeMethodHash = CallGraphDataStructures.getMethodHashFromIndex(servicingCalleeMethodIndex);
+                            CallGraphDataStructures.getCallGraph().addEdge(callerMethodHash, calleeMethodHash);
+                            // Issue 3
+                            // Added extended call graph entry for static method calls
+                            CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
+                                    calleeMethodHash, invocationTokenRange);
                             // No override for a static method, but create a method invocation type
-                            Set<Integer> calleeContenderMethodInvocationTypes =
-                                    MethodMatchFinderUtil.updateCGAndGetSingleServicingMethodInvocation(
-                                            null,
-                                            servicingCalleeMethodIndex,
-                                            CallGraphDataStructures.getMethodHashFromIndex(servicingCalleeMethodIndex),
-                                            false);
+                            Set<Integer> calleeContenderMethodInvocationTypes = MethodMatchFinderUtil
+                                    .updateCGAndGetSingleServicingMethodInvocation(null, servicingCalleeMethodIndex,
+                                            calleeMethodHash, false);
                             if (calleeContenderMethodInvocationTypes != null
                                     && !calleeContenderMethodInvocationTypes.isEmpty()) {
                                 CallGraphDataStructures.addToMethodInvocationToCalleeCandidatesMap(
@@ -1606,11 +1605,11 @@ public class CallGraphProcessor implements Runnable {
                                                 .getMethodHashFromIndex(methodHashIndex);
                                         CallGraphDataStructures.getCallGraph().addEdge(callerMethodHash,
                                                 calleeMethodHash);
-                                        if (callerMethodHash != null && !callerMethodHash.isEmpty()
-                                                && calleeMethodHash != null && !callerMethodHash.isEmpty()) {
-                                            CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
-                                                    calleeMethodHash, invocationTokenRange);
-                                        }
+                                        // Issue 3
+                                        // Added extended call graph information for instance method calls
+                                        // including polymorphic methods.
+                                        CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
+                                                calleeMethodHash, invocationTokenRange);
                                     }
                                 }
                                 if (!calleeContenderMethodInvocationTypes.isEmpty()) {
@@ -1672,16 +1671,18 @@ public class CallGraphProcessor implements Runnable {
                                         matchingMethodHashIndex = matchingMethodIndex;
                                     }
                                     // Add edge to the call graph
-                                    CallGraphDataStructures.getCallGraph()
-                                            .addEdge(
-                                                    callerMethodHash,
-                                                    CallGraphDataStructures.getMethodHashFromIndex(
-                                                            matchingMethodIndex));
+                                    String calleeMethodHash = CallGraphDataStructures.getMethodHashFromIndex(
+									        matchingMethodIndex);
+                                    CallGraphDataStructures.getCallGraph().addEdge(callerMethodHash, calleeMethodHash);
+                                    // Issue 3
+                                    // Added extended call graph information for implementor of a library method.
+                                    CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
+                                            calleeMethodHash, invocationTokenRange);
                                     Set<Integer> calleeContenderMethodInvocations =
                                             MethodMatchFinderUtil.updateCGAndGetSingleServicingMethodInvocation(
                                                     null,
                                                     matchingMethodIndex,
-                                                    CallGraphDataStructures.getMethodHashFromIndex(matchingMethodIndex),
+                                                    calleeMethodHash,
                                                     false);
                                     if (calleeContenderMethodInvocations != null
                                             && !calleeContenderMethodInvocations.isEmpty()) {
@@ -1761,7 +1762,7 @@ public class CallGraphProcessor implements Runnable {
                     // No need to pass the path since the servicing method hash index will not be found
                     int consHashIndex =
                             CallGraphUtility.getServicingMethodHashIndex(classInstanceCreation, null, null, null);
-                    if (classInstanceCreation.getAnonymousClassDeclaration() != null) {
+					if (classInstanceCreation.getAnonymousClassDeclaration() != null) {
                         // A class instance creation for an anonymous class.
                         // If we have gotten a matching method, that method will be called from the
                         // default constructor of the anonymous class.
@@ -1776,22 +1777,27 @@ public class CallGraphProcessor implements Runnable {
                                         CallGraphDataStructures.getMethodIndexFromHash(defaultConsOfAnonClass);
                                 if (defaultConsHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
                                     if (consHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                                        String superclassServicingConstructorHash = CallGraphDataStructures
+                                                .getMethodHashFromIndex(consHashIndex);
                                         // Calling the default constructor of the anon class which calls the servicing
-                                        // constructor
-                                        // in the super class
+                                        // constructor in the super class
                                         CallGraphDataStructures.getCallGraph()
                                                 .addEdge(callerMethodHash, defaultConsOfAnonClass);
-                                        CallGraphDataStructures.getCallGraph()
-                                                .addEdge(
-                                                        defaultConsOfAnonClass,
-                                                        CallGraphDataStructures.getMethodHashFromIndex(consHashIndex));
+                                        CallGraphDataStructures.getCallGraph().addEdge(defaultConsOfAnonClass,
+                                                 superclassServicingConstructorHash);
+                                        // Issue 3
+                                        // Added extended call graph information as described above
+                                        CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
+                                                defaultConsOfAnonClass, invocationTokenRange);
+                                        CallGraphDataStructures.getExtendedCallGraph().addEdge(defaultConsOfAnonClass,
+                                                superclassServicingConstructorHash, invocationTokenRange);
                                         // Create information about the servicing method for this class instance
                                         // creation
                                         calleeContenders =
                                                 MethodMatchFinderUtil.updateCGAndGetSingleServicingMethodInvocation(
                                                         null,
                                                         consHashIndex,
-                                                        CallGraphDataStructures.getMethodHashFromIndex(consHashIndex),
+                                                        superclassServicingConstructorHash,
                                                         false);
                                         if (calleeContenders != null && !calleeContenders.isEmpty()) {
                                             CallGraphDataStructures.addToMethodInvocationToCalleeCandidatesMap(
@@ -1801,6 +1807,10 @@ public class CallGraphProcessor implements Runnable {
                                         // Only calling the default constructor of the anonymous declaration
                                         CallGraphDataStructures.getCallGraph()
                                                 .addEdge(callerMethodHash, defaultConsOfAnonClass);
+                                        // Issue 3
+                                        // Added extended call graph information as described above
+                                        CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
+                                                defaultConsOfAnonClass, invocationTokenRange);
                                         // Create information about this class instance creation
                                         // No overriding here. So only update method invocation type in CG
                                         calleeContenders =
@@ -1822,6 +1832,10 @@ public class CallGraphProcessor implements Runnable {
                         if (consHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
                             String consHash = CallGraphDataStructures.getMethodHashFromIndex(consHashIndex);
                             CallGraphDataStructures.getCallGraph().addEdge(callerMethodHash, consHash);
+                            // Issue 3
+                            // Added extended call graph information for a constructor call
+                            CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash, consHash,
+                                    invocationTokenRange);
                             // Create information about this class instance creation
                             // No overriding here. So only update method invocation type in CG
                             calleeContenders = MethodMatchFinderUtil.updateCGAndGetSingleServicingMethodInvocation(
@@ -1912,11 +1926,13 @@ public class CallGraphProcessor implements Runnable {
                                     if (identity.isAnAbstactOrInterfaceMethodWithNoBody()) {
                                         iterator.remove();
                                     } else {
-                                        CallGraphDataStructures.getCallGraph()
-                                                .addEdge(
-                                                        callerHash,
-                                                        CallGraphDataStructures.getMethodHashFromIndex(
-                                                                methodHashIndex));
+                                        String calleeHash = CallGraphDataStructures.getMethodHashFromIndex(
+										        methodHashIndex);
+                                        CallGraphDataStructures.getCallGraph().addEdge(callerHash, calleeHash);
+										// Issue 3
+										// Added extended call graph information for a super method call
+                                        CallGraphDataStructures.getExtendedCallGraph().addEdge(callerHash,
+                                                calleeHash, invocationTokenRange);
                                     }
                                 }
                                 if (!calleeContenderMethodInvocationTypes.isEmpty()) {
@@ -1979,6 +1995,10 @@ public class CallGraphProcessor implements Runnable {
                             String calleeConstructorHash =
                                     CallGraphDataStructures.getMethodHashFromIndex(consHashIndex);
                             CallGraphDataStructures.getCallGraph().addEdge(callerHash, calleeConstructorHash);
+                            // Issue 3
+							// Extended call graph information for a this constructor
+                            CallGraphDataStructures.getExtendedCallGraph().addEdge(callerHash,
+                                    calleeConstructorHash, consInvocationTokenRange);
                             // The constructors are not overridden
                             // Create information about this class instance creation
                             // No overriding here. So only update method invocation type in CG.
@@ -2068,6 +2088,10 @@ public class CallGraphProcessor implements Runnable {
                         if (superConsHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
                             String superConsHash = CallGraphDataStructures.getMethodHashFromIndex(superConsHashIndex);
                             CallGraphDataStructures.getCallGraph().addEdge(callerHash, superConsHash);
+                            // Issue 3
+							// Extended call graph information for a super constructor
+                            CallGraphDataStructures.getExtendedCallGraph().addEdge(callerHash,
+                                    superConsHash, superConsInvocationTokenRange);
                             // The constructors are not overridden
                             // Create information about this class instance creation
                             // No overriding here. So only update method invocation type in CG.
@@ -2297,6 +2321,10 @@ public class CallGraphProcessor implements Runnable {
         }
         if (superClassConstIndex != Constants.INVALID_METHOD_HASH_INDEX) {
             CallGraphDataStructures.getCallGraph().addEdge(callerHash, superClassConstHash);
+            // Issue 3
+			// Extended call graph information for a super constructor
+            CallGraphDataStructures.getExtendedCallGraph().addEdge(callerHash, superClassConstHash,
+                    superConsInvocationTokenRange);
             // The constructors are not overridden
             // Create information about this class instance creation
             // No overriding here. So only update method invocation type in CG
