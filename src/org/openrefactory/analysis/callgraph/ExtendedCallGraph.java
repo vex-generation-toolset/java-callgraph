@@ -68,9 +68,11 @@ public class ExtendedCallGraph {
     }
 
     public void addEdge(String caller, String callee, TokenRange tr) {
-        Map<TokenRange, Set<String>> rangeToCallees = callerToCalleeMap.computeIfAbsent(caller, k -> new HashMap<>());
-        Set<String> callees = rangeToCallees.computeIfAbsent(tr, k -> new HashSet<>());
-        callees.add(callee);
+        if (caller != null && !caller.isEmpty() && callee != null && !callee.isEmpty()) {
+            Map<TokenRange, Set<String>> rangeToCallees = callerToCalleeMap.computeIfAbsent(caller, k -> new HashMap<>());
+            Set<String> callees = rangeToCallees.computeIfAbsent(tr, k -> new HashSet<>());
+            callees.add(callee);
+        }
     }
 
     public Map<String, Map<TokenRange, Set<String>>> getCallerToCalleeMap() {

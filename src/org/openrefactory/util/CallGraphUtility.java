@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -1806,6 +1807,26 @@ public class CallGraphUtility {
     }
 
     /**
+     * Returns the TokenRange of the method indicated by the hash
+     *
+     * @param methodHash   a method hash
+     * @return             the TokenRange
+     */
+    public static TokenRange getTokeRangeFromMethodHash(String methodHash) {
+        String signature = CallGraphDataStructures.getMethodSignatureFromHash(methodHash);
+        if (signature == null) {
+            // Issue 445
+            // For library class,  signature may null
+            return null;
+        }
+        String[] splits = signature.split(CG_SEPARATOR);
+        String fileName = splits[CG_FILENAME_INDEX];
+        int offset = Integer.parseInt(splits[CG_METHOD_OFFSET]);
+        int length = Integer.parseInt(splits[CG_METHOD_LENGTH]);
+        return new TokenRange(offset, length, fileName);
+    }
+
+    /**
      * Checks if a class hash represents an interface.
      *
      * @param classHash the class hash to check
@@ -1852,31 +1873,197 @@ public class CallGraphUtility {
     }
 
     /**
-     * Issue 5
+     * Issue 5, 3
      * Get the name of a method in a canonicalized format from a method hash.
      *
      * @param methodHash hash of a method.
      * @return the method name in canonicalized format.
      */
-    public static String getMethodNameInCanonicalizedFormat(String methodHash) {
+    public static String getMethodNameInCanonicalizedFormat(String methodHash, boolean calculateClassName) {
         int methodHashIndex = CallGraphDataStructures.getMethodIndexFromHash(methodHash);
         if (methodHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
             MethodInfoBundle bundle = CallGraphDataStructures.getHashToMethodInfoBundleList().get(methodHashIndex);
             MethodIdentity identity = bundle.getIdentity();
-            String methodSignature = bundle.getSignature();
-            String className = CallGraphUtility.getClassNameFromMethodSignature(methodSignature);
-            // Create method param types
-            StringBuffer argBuf = new StringBuffer();
-            for (TypeInfo typeInfo : identity.getArgParamTypeInfos()) {
-                argBuf.append(typeInfo.toString());
-                argBuf.append(",");
+            String className = "";
+            StringBuffer argBuf = getMethodArgs(identity);
+            if (calculateClassName) {
+                className = getClassNameInCanonicalizedFormat(CallGraphUtility.getClassHashFromMethodHash(methodHash));
             }
-            if (identity.getArgParamTypeInfos().size() > 0) {
-                argBuf.setLength(argBuf.length() - 1);
+            if (identity.isConstructor() && !identity.hasBody()) {
+                return className + ".<init>()";
+            } else {
+                return className + (identity.isStatic() ? "." : "#") + identity.getMethodName() + "("
+                    + argBuf.toString() + ")";
             }
-			return className + (identity.isStatic() ? "." : "#") + identity.getMethodName() + "(" + argBuf.toString()
-                + ")";
         }
         return "";
     }
+
+    /**
+     * Issue 3
+     * Gets the arguments of a method
+     *
+     * @param identity the method identity
+     * @return the String with the types of parameters in a comma separated manner.
+     */
+    private static StringBuffer getMethodArgs(MethodIdentity identity) {
+        // Create method param types
+        StringBuffer argBuf = new StringBuffer();
+        for (TypeInfo typeInfo : identity.getArgParamTypeInfos()) {
+            argBuf.append(typeInfo.toString());
+            argBuf.append(",");
+        }
+        if (identity.getArgParamTypeInfos().size() > 0) {
+            argBuf.setLength(argBuf.length() - 1);
+        }
+        return argBuf;
+    }
+
+    /**
+     * Issue 5
+     * Get the name of a class in a canonicalized format.
+     *
+     * @param classHash       the class hash enclosing the method for which
+     *                        we are seeking the class name in a canonicalized format.
+     * @return the class name in canonicalized format, if successful,
+     *         Otherwise, return an empty string.
+     */
+    private static String getClassNameInCanonicalizedFormat(String classHash) {
+        String enclosingClassHash = CallGraphDataStructures.getImmediateEnclosingClassMap().get(classHash);
+        String enclosingMethodHash = CallGraphDataStructures.getImmediateEnclosingMethodMap().get(classHash);
+        boolean nestedMethodAndClassStructure = false;
+        if (enclosingClassHash == null && enclosingMethodHash == null) {
+            String packageName = getPackageNameFromClassHashWithTrailingDot(classHash);
+            return packageName + CallGraphUtility.getClassnameWithAnonymousLocationInformation(classHash);
+        } else {
+            // Storing the results so that we can concatenate them in reverse order in the end
+            Stack<String> classNameComponents = new Stack<String>();
+            while (enclosingClassHash != null || enclosingMethodHash != null) {
+                // (1) There is both enclosing class hash and enclosing method hash:
+                //        We see which is nearest by comparing token ranges.
+                //        If the enclosing method is closer, the inner method is inside an
+                //            anonymous class inside the enclosing method.
+                //            We capture the anonymous class and the enclosing method
+                //            and then go outside to check for more inner cases.
+                //        If the enclosing class is closer, we should go to that class but then check for the
+                //            next class since that class may also be enclosed inside another class.
+                //            Eventually we go to the method. From that we go to the class enclosing
+                //            and we repeat until we are done.
+                // (2) There is only an enclosing class: we have an inner class
+                //        which may have many enclosing outer classes.
+                // (3) There is only an enclosing method: It cannot happen, since the
+                //        method must be enclosed inside a class.
+                if (enclosingClassHash != null && enclosingMethodHash != null) {
+                    nestedMethodAndClassStructure = true;
+                    TokenRange classTr = getTokeRangeFromClassHash(enclosingClassHash);
+                    TokenRange methodTr = getTokeRangeFromMethodHash(enclosingMethodHash);
+                    if (classTr.getOffset() < methodTr.getOffset()) {
+                        // Method is nearer
+                        String methodName = getMethodNameInCanonicalizedFormat(enclosingMethodHash, false);
+                        if (!methodName.isEmpty()) {
+                            classNameComponents.push(getClassnameWithAnonymousLocationInformation(classHash));
+                            classNameComponents.push(methodName);
+                        }
+                        // If there is another enclosing method,
+                        // it must be outside the enclosing class hash
+                        enclosingMethodHash = CallGraphDataStructures.getImmediateEnclosingMethodMap()
+                            .get(enclosingClassHash);
+                    } else {
+                        // Class is nearer, just get the class name and move out
+                        classNameComponents.push(getClassnameWithAnonymousLocationInformation(classHash));
+                        enclosingClassHash = CallGraphDataStructures.getImmediateEnclosingClassMap()
+                            .get(enclosingClassHash);
+                    }
+                } else if (enclosingClassHash != null) {
+                    if (!nestedMethodAndClassStructure) {
+                        classNameComponents
+                            .push(getClassnameWithAnonymousLocationInformation(classHash));
+                        nestedMethodAndClassStructure = true;
+                    }
+                    // No more methods will be found, but there may be other classes
+                    // Get those classes.
+                    String temp = CallGraphDataStructures.getImmediateEnclosingClassMap()
+                        .get(enclosingClassHash);
+                    if (temp == null) {
+                        // We have reached the top most class,
+                        // We need to get the package name for this.
+                        String packageName = getPackageNameFromClassHashWithTrailingDot(enclosingClassHash);
+                        classNameComponents
+                            .push(packageName + getClassnameWithAnonymousLocationInformation(enclosingClassHash));
+                        // This is the last iteration, since in the next iteration
+                        // enclosing class hash will be null (set to null later)
+                    } else {
+                        // Add this class name and go to the outer one.
+                        classNameComponents.push(getClassnameWithAnonymousLocationInformation(enclosingClassHash));
+                    }
+                    enclosingClassHash = temp;
+                } else {
+                    // Should never happen.
+                }
+            }
+            if (!classNameComponents.isEmpty()) {
+                StringBuffer buf = new StringBuffer();
+                if (!classNameComponents.isEmpty()) {
+                    String temp = classNameComponents.pop();
+                    buf.append(temp);
+                    while (!classNameComponents.isEmpty()) {
+                        temp = classNameComponents.pop();
+                        if (!temp.startsWith(".") && !temp.startsWith("#") && !temp.startsWith("$")) {
+                            buf.append(".");
+                        }
+                        buf.append(temp);
+                    }
+                    return buf.toString();
+                }
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Issue 3
+     * Get the package name in which a class is in.
+     * The returned name is also followed by a "."
+     *
+     * @param classHash the class for which the package name is calculated
+     * @return The package name if available followed by a "." if successful
+     *         Otherwise, return an empty string.
+     */
+    private static String getPackageNameFromClassHashWithTrailingDot(String classHash) {
+		ASTNode classNode = getClassFromClassSignature(CallGraphDataStructures.getClassSignatureFromHash(classHash));
+        ASTNode comp = ASTNodeUtility.findNearestAncestor(classNode, CompilationUnit.class);
+        if (comp != null) {
+            if (((CompilationUnit)comp).getPackage() != null) {
+                return ((CompilationUnit)comp).getPackage().getName().getFullyQualifiedName() + ".";
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Issue 3
+     * Gets the canonical name of class including an anonymous class which is represented differently.
+     *
+     * @param classHash the class hash for which the calculation is done
+     * @return the class name represented in canonical format
+     */
+    private static String getClassnameWithAnonymousLocationInformation(String classHash) {
+        String className = getClassNameFromClassHash(classHash);
+        if (className.startsWith(CG_ANONYMOUS_TYPE)) {
+            className = className.substring(CG_ANONYMOUS_TYPE.length());
+            // Get the anonymous class declaration
+            ASTNode classDeclaration = getClassFromClassSignature(
+                CallGraphDataStructures.getClassSignatureFromHash(classHash));
+            int n = ASTNodeUtility.findAnonymousDeclarationPositionInContainer(classDeclaration);
+            if (n > 0) {
+                className = className + CG_ANON_NAME_SEPARATOR + n;
+            } else {
+                className = className + CG_ANON_NAME_SEPARATOR + "1";
+            }
+            return className;
+        } else {
+            return className;
+        }
+    }
+
 }

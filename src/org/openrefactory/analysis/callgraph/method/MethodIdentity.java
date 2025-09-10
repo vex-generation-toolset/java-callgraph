@@ -154,6 +154,17 @@ public class MethodIdentity implements Serializable {
     }
 
     /**
+     * Checks if the method has no body.
+     *
+     * <p>This method checks if the bodyless bit is not set.</p>
+     *
+     * @return {@code true} if the method has a body, {@code false} otherwise
+     */
+    public boolean hasBody() {
+        return !methodBits.get(MethodIdentityBits.BODYLESS.ordinal());
+    }
+
+    /**
      * Sets the constructor bit indicating this is a constructor method.
      *
      * <p>Constructor methods have special semantics in Java and are treated

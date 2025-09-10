@@ -218,7 +218,7 @@ public class CallGraphPassCommand {
 					Set<String> callees = new HashSet<String>(4);
 					for (java.util.Map.Entry<TokenRange, Set<String>> rangeToCallees : rangeToCalleesMap.entrySet()) {
 						for (String calleeHash : rangeToCallees.getValue()) {
-							String calleeName = CallGraphUtility.getMethodNameInCanonicalizedFormat(calleeHash);
+							String calleeName = CallGraphUtility.getMethodNameInCanonicalizedFormat(calleeHash, true);
 							callees.add(calleeName);
 						}
 					}

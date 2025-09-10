@@ -1919,4 +1919,76 @@ public class ASTNodeUtility {
             throw new UnsupportedOperationException();
         }
     }
+
+    /**
+     * Issue 3
+     * Find the position of an anonymous declaration inside
+     * the nearest container. The container is a container block,
+     * (a method declaration, a type declaration,
+     * an anonymous class declaration, an enum declaration, or an initializer)
+     *
+     * Currently, this is only implemented for the method declaration.
+     * For a method declaration, we calculate all the anonymous declarations
+     * inside the method body at the same level (i.e., not in a method local inner class)
+     * and calculate the same anonymous type declaration. A position of 3
+     * means that there are two other anonymous declarations of the same type
+     * before this anonymous type in the method body. Note there may be other
+     * anonymous declarations of different type before and after. Each will have
+     * its own position ranking. 
+     *
+     * @param node the anonymous declaration node whose position is sought
+     * @return -1 for error, or the position starting from 1
+     */
+    public static int findAnonymousDeclarationPositionInContainer(ASTNode node) {
+        ASTNode containerBlock = findFirstContainerBlock(node);
+        if (containerBlock != null) {
+            if (containerBlock instanceof MethodDeclaration m) {
+                // For a method declaration, we get all the class
+                // instance creations at the same level, and then
+                // count the class instance creations for the same thing as the anonymous
+                // class instance creation all the way to the node.
+                ASTNode classInstanceCreation = findNearestAncestor(node, ClassInstanceCreation.class);
+                String classType = ((ClassInstanceCreation) classInstanceCreation).getType().toString();
+                int counter = 1;
+                Iterable<ClassInstanceCreation> instanceCreations = findAll(m.getBody(), ClassInstanceCreation.class);
+                for (ClassInstanceCreation ci : instanceCreations) {
+                    // Only consider things in the same level
+                    if (findFirstContainerBlock(ci) == containerBlock) {
+                        if (ci == classInstanceCreation) {
+                            return counter;
+                        } else {
+                            if (classType.equals(ci.getType().toString())) {
+                                counter++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Issue 3
+     * Finds a container block (a method declaration, a type declaration,
+     * an anonymous class declaration, an enum declaration, or an initializer)
+     * whichever comes first.
+     * This is used to find the nearest enclosing and then using that
+     * to find other things contained inside the scope.
+     *
+     * @param node the AST node from which we will search.
+     * @return the nearest container block.
+     */
+    public static ASTNode findFirstContainerBlock(ASTNode node) {
+        ASTNode temp = node.getParent();
+        while (temp != null) {
+            if ((temp instanceof MethodDeclaration) || (temp instanceof TypeDeclaration)
+                    || (temp instanceof Initializer) || (temp instanceof AnonymousClassDeclaration)
+                    || (temp instanceof EnumDeclaration)) {
+                break;
+            }
+            temp = temp.getParent();
+        }
+        return temp;
+    }
 }
