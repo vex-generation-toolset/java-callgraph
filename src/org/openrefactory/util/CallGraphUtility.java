@@ -1890,7 +1890,10 @@ public class CallGraphUtility {
                 className = getClassNameInCanonicalizedFormat(CallGraphUtility.getClassHashFromMethodHash(methodHash));
             }
             if (identity.isConstructor() && !identity.hasBody()) {
-                return className + ".<init>()";
+                // Issue 3
+                // We are describing the default constructor for static initialization
+                // with <staticinit> which is non-standard.
+                return className + (identity.isStatic() ? ".<staticinit>()" : ".<init>()");
             } else {
                 return className + (identity.isStatic() ? "." : "#") + identity.getMethodName() + "("
                     + argBuf.toString() + ")";

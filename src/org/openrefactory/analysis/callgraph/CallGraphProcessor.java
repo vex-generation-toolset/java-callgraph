@@ -1259,6 +1259,12 @@ public class CallGraphProcessor implements Runnable {
                         // Defensive checking, there should be default cons hash for all constructors
                         if (defaultConsHash != null) {
                             CallGraphDataStructures.getCallGraph().addEdge(thisMethodHashAndSign.fst, defaultConsHash);
+                            // Issue 3
+                            // Adding extended call graph entry regular constructor to default constructor
+                            TokenRange methodTokenRange = CallGraphUtility
+                                    .getTokeRangeFromMethodHash(thisMethodHashAndSign.fst);
+                            CallGraphDataStructures.getExtendedCallGraph().addEdge(thisMethodHashAndSign.fst,
+                                    defaultConsHash, methodTokenRange);
                             int defaultConsHashIndex = CallGraphDataStructures.getMethodIndexFromHash(defaultConsHash);
                             // Since the default constructor is a virtual method, we do not
                             // create a mapping from a method call. But we create a data type for
@@ -1409,6 +1415,13 @@ public class CallGraphProcessor implements Runnable {
                                 // that we do not process like enum, test files .etc.
                                 if (staticConstructor != null && !methodHash.equals(staticConstructor)) {
                                     CallGraphDataStructures.getCallGraph().addEdge(methodHash, staticConstructor);
+                                    TokenRange invocationTokenRange = CallGraphUtility
+                                            .getTokeRangeFromMethodHash(methodHash);
+                                    // Issue 3
+                                    // Added information from a static constructor hash to a method
+                                    // for a static field
+                                    CallGraphDataStructures.getExtendedCallGraph().addEdge(methodHash,
+                                            staticConstructor, invocationTokenRange);
                                 }
                             }
                         }
