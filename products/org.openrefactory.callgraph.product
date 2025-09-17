@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2025-present OpenRefactory, Inc.
+  ~
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+<?pde version="3.5"?>
+<product name="Java Callgraph CLI"
+         uid="org.openrefactory.callgraph.product"
+         application="org.openrefactory.callgraph.ORDaemon"
+         version="1.0.0.qualifier"
+         type="features"
+         includeLaunchers="false"
+         autoIncludeRequirements="true">
+
+   <configIni use="default"/>
+
+   <launcherArgs>
+      <programArgs>-nosplash</programArgs>
+   </launcherArgs>
+
+   <features>
+      <feature id="org.openrefactory.callgraph.feature" version="1.0.0.qualifier"/>
+   </features>
+
+   <configurations>
+      <plugin id="org.apache.felix.scr" autoStart="true"/>
+      <plugin id="org.eclipse.equinox.common" autoStart="true"/>
+      <plugin id="org.eclipse.core.runtime" autoStart="true"/>
+   </configurations>
+</product>

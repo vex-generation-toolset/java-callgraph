@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# Copyright (C) 2025-present OpenRefactory, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+PRG="$0"
+
+# resolve symlinks
+while [ -h "$PRG" ]; do
+  ls=$(ls -ld "$PRG")
+  link=$(expr "$ls" : '.*-> \(.*\)$')
+  if expr "$link" : '/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG=$(dirname "$PRG")/"$link"
+  fi
+done
+
+PRGDIR=$(dirname "$PRG")
+
+# Compute some environment variables
+if [ -z "$CALLGRAPH_HOME" ]; then
+  CALLGRAPH_HOME=$(cd "$PRGDIR"; pwd)
+fi
+
+# Find launcher jar
+LAUNCHER_JAR=$(find "$CALLGRAPH_HOME/plugins" -name "org.eclipse.equinox.launcher_*.jar" 2>/dev/null | head -n 1)
+
+if [ -z "$LAUNCHER_JAR" ]; then
+  echo "Error: Unable to find launcher jar in $CALLGRAPH_HOME" 1>&2
+  exit 1
+fi
+
+# JVM options
+if [ -z "$CALLGRAPH_OPTS" ]; then
+  CALLGRAPH_OPTS="-Xmx8192m -Xss4m -XX:-UseTLAB -XX:+UseG1GC -XX:-UseTransparentHugePages -XX:+AlwaysPreTouch -XX:-OmitStackTraceInFastThrow"
+fi
+
+# Execute the callgraph tool
+exec java $CALLGRAPH_OPTS \
+  -Dcallgraph.home="$CALLGRAPH_HOME" \
+  -jar "$LAUNCHER_JAR" \
+  -configuration "$CALLGRAPH_HOME/configuration" \
+  "$@"
