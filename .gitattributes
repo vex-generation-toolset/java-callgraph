@@ -1,0 +1,12 @@
+#
+# Copyright (C) 2025-present OpenRefactory, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+##
+# Maven wrapper files
+#
+# These are sources by the shell, so they need to have Unix line endings
+/mvnw text eol=lf
+/.mvn/wrapper/maven-wrapper.properties text eol=lf
+
