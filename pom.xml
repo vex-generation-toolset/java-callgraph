@@ -27,14 +27,6 @@
     <module>products</module>
   </modules>
 
-  <repositories>
-    <repository>
-      <id>2023-12</id>
-      <layout>p2</layout>
-      <url>https://download.eclipse.org/releases/2023-12</url>
-    </repository>
-  </repositories>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -61,7 +53,7 @@
     <plugins>
 
       <!--
-        ~ Tycho extension for building Eclipse plugins, RCP applications and OSGi bundles with Maven.
+        ~ Tycho extension for building Eclipse plugins, RCP applications, and OSGi bundles with Maven.
         -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
@@ -73,19 +65,9 @@
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>target-platform-configuration</artifactId>
         <configuration>
-          <environments>
-            <environment><os>linux</os><ws>gtk</ws><arch>x86_64</arch></environment>
-          </environments>
+          <!-- Location of the target platform relative to the submodules -->
           <target>
-            <location includeDependencyDepth="infinite" includeDependencyScopes="runtime" includeSource="true" missingManifest="generate" type="Maven">
-              <dependencies>
-                <dependency>
-                  <groupId>org.json</groupId>
-                  <artifactId>json</artifactId>
-                  <version>20250517</version>
-                </dependency>
-              </dependencies>
-            </location>
+            <file>${maven.multiModuleProjectDirectory}/target-platform.target</file>
           </target>
         </configuration>
       </plugin>
