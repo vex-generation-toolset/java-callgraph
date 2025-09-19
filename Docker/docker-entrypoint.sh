@@ -1,5 +1,10 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/sh
+#
+# Copyright (C) 2025-present OpenRefactory, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+set -e
 
 # Switch to workspace
 cd /workspace
