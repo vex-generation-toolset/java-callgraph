@@ -12,9 +12,11 @@
 .classpath
 .project
 .settings/
+bin/
 
 ## IntelliJ IDEA
 /.idea/
+*.iml
 
 ## Maven build
 target/
