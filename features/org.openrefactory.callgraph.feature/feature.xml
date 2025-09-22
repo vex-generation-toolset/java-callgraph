@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2025-present OpenRefactory, Inc.
+  ~
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+<feature
+      id="org.openrefactory.callgraph.feature"
+      label="Java Call Graph Generator"
+      version="1.0.0.qualifier">
+
+   <plugin id="org.openrefactory.callgraph" version="1.0.0.qualifier"/>
+
+   <!-- minimal headless runtime -->
+   <plugin id="org.eclipse.equinox.launcher" version="0.0.0"/>
+   <plugin id="org.eclipse.equinox.app" version="0.0.0"/>
+   <plugin id="org.eclipse.core.runtime" version="0.0.0"/>
+   <plugin id="org.eclipse.swt" version="0.0.0"/>
+
+</feature>

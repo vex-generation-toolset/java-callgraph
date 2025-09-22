@@ -16,16 +16,18 @@ git clone git@github.com:vex-generation-toolset/java-callgraph.git
 ## Build (maven):
 ```sh
 cd java-callgraph
-mvn clean install
+./mvnw clean verify
 ```
 
-## Import to eclipse
-   1. Open eclipse and create a workspace
-   2. Select `File` -> `import` -> `Maven` -> `Existing Maven Projects`
-   3. Select the project root directory `java-callgraph` and finish
-   4. Select `Project` -> `Update Maven Project`
-   5. Create a directory `lib` inside the project root `java-callgraph` and copy the the `~/.m2/repository/org/json/json/20250517/json-20250517.jar` to `java-callgraph/lib/json-20250517.jar`
+## Import into Eclipse
 
+1. Launch Eclipse and create (or open) a workspace.
+2. Go to **File ▸ Import… ▸ Maven ▸ Existing Maven Projects**.
+3. Browse to the project root directory (`java-callgraph`) and finish the import.
+4. In the Project Explorer, open `target-platform.target`.
+
+    * The Target Definition editor opens.
+    * Click **Set as Active Target Platform** (upper right corner).
 
 ## Run applicaton from eclipse
 To run `java-callgraph` on a java project, first create a `config.json` inside eclipse directory:
@@ -45,7 +47,7 @@ Here
 - `debug` field can be used to get additional logs.
 
 After creating `config.json`, go to eclipse editor.
-- In the `Package Explorer` right click on the project root.
+- In the `Package Explorer` right click on the project `org.openrafactory.callgraph`.
 - From the menu, `Run as` -> `Eclipse Application`.
 - If any warning popup is shown, ignore and click `Continue`.
 Then the run will start and logs will be shown in the `console` tab.
@@ -68,10 +70,9 @@ configuration to run that test suite.
 To build docker image, run (may require `sudo`):
 ```sh
 cd java-callgraph
-mvn -DskipTests clean package
-cd Docker
-sudo ./build_image.sh -i java-cg:latest
+./build_image.sh -i java-cg:latest
 ```
+
 Next, run the docker container. The source code needs to be mounted at the `/workspace/source` directory.
 The call-graph is generated at the `/workspace/result` directory. Mount a directory at `/workspace/result` for the call-graph to persist. 
 ```sh
