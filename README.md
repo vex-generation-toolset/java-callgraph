@@ -47,7 +47,7 @@ Here
 - `debug` field can be used to get additional logs.
 
 After creating `config.json`, go to eclipse editor.
-- In the `Package Explorer` right click on the project root.
+- In the `Package Explorer` right click on the project `org.openrafactory.callgraph`.
 - From the menu, `Run as` -> `Eclipse Application`.
 - If any warning popup is shown, ignore and click `Continue`.
 Then the run will start and logs will be shown in the `console` tab.
