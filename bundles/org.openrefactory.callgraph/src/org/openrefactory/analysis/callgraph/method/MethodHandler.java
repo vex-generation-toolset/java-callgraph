@@ -226,6 +226,17 @@ public class MethodHandler extends ASTVisitor {
             constructorNameAtInvocation =
                     constructorNameAtInvocation.substring(0, constructorNameAtInvocation.indexOf("<"));
         }
+        int dotIndex = constructorNameAtInvocation.indexOf(".");
+        if (dotIndex >= 0) {
+            // Issue 23
+            // The constructor name may have dots in it for inner classes
+            //   e.g.,   new Example6Custom.Pair<String, Integer>("B", 2)
+            // In the previous step, we removed the part starting from <
+            // But we shall still have: Example6Custom.Pair
+            // This is coming from the enclosing class, but it is not a part of the method name.
+            // So, we remove it.
+            constructorNameAtInvocation = constructorNameAtInvocation.substring(dotIndex + 1);
+        }
         methodIdentity = new MethodIdentity(constructorNameAtInvocation, voidType, argParamTypeInfos);
         // No need to set any bits for a method invocation,
         // still setting the constructor info since at least we are sure about i
