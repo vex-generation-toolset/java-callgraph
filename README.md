@@ -1,12 +1,12 @@
 # java-callgraph
 
 ## Prerequisites
-1. Java 17
+1. Java 21
 ```sh
-sudo apt install openjdk-17-jdk
+sudo apt install openjdk-21-jdk
 ```
 2. [maven 3.9.11](https://maven.apache.org/install.html)
-3. [Eclipse IDE for Eclipse Committers (2023-12)](https://www.eclipse.org/downloads/packages/release/2023-12/r/eclipse-ide-eclipse-committers)
+3. [Eclipse IDE for Eclipse Committers (2025-09)](https://www.eclipse.org/downloads/packages/release/2025-09/r/eclipse-ide-eclipse-committers)
 
 ## Clone the repository:
 ```
