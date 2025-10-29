@@ -1549,7 +1549,8 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                         // Case for the <> operator
                         // Use the inferred type arguments
                         for (TypeInfo elementType : elementTypes) {
-                            String fieldName = typeBinding.getName() + Constants.FIELDNAME_SEPARATOR + dummy + i;
+                            String bindingName = TypeCalculator.getParameterizedTypeWithErasure(typeBinding.getName());
+                            String fieldName = bindingName + Constants.FIELDNAME_SEPARATOR + dummy + i;
                             fields.put(fieldName, Pair.of(Pair.of(null, null), elementType));
                             typeArgsToFields.put(i - 1, fieldName);
                             i++;
@@ -1560,8 +1561,8 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                                     getAtomicTypeInfo(typeArg, null, null, false, true);
                             if (argTypeInfoWithHash != null) {
                                 elementTypes.add(argTypeInfoWithHash.snd);
-                                String fieldName =
-                                        typeBinding.getName() + Constants.FIELDNAME_SEPARATOR + dummy + i;
+                                String bindingName = TypeCalculator.getParameterizedTypeWithErasure(typeBinding.getName());
+                                String fieldName = bindingName + Constants.FIELDNAME_SEPARATOR + dummy + i;
                                 fields.put(fieldName, Pair.of(Pair.of(null, null), argTypeInfoWithHash.snd));
                                 typeArgsToFields.put(i - 1, fieldName);
                                 i++;
@@ -1857,7 +1858,8 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                                 getAtomicTypeInfo(typeArg, null, null, false, calculateSoftType, false);
                         if (argTypeInfoWithHash != null) {
                             elementTypes.add(argTypeInfoWithHash.snd);
-                            String fieldName = typeBinding.getName() + Constants.FIELDNAME_SEPARATOR + dummy + i;
+                            String bindingName = TypeCalculator.getParameterizedTypeWithErasure(typeBinding.getName());
+                            String fieldName = bindingName + Constants.FIELDNAME_SEPARATOR + dummy + i;
                             fields.put(fieldName, Pair.of(Pair.of(null, null), argTypeInfoWithHash.snd));
                             typeArgsToFields.put(i - 1, fieldName);
                             i++;
