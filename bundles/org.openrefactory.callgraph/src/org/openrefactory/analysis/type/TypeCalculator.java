@@ -625,4 +625,31 @@ public class TypeCalculator {
         }
         return name;
     }
+
+    /**
+     * Issue 26
+     *
+     * A parameterized type is cleaned
+     *
+     * @param typeInfo the typeInfo to clean
+     * @return the cleaned type info is String format
+     */
+    public static String getTypeWithErasure(TypeInfo typeInfo) {
+        if (typeInfo instanceof ParameterizedTypeInfo pt) {
+            return getParameterizedTypeWithErasure(pt.toString());
+        } else if (typeInfo instanceof ArrayTypeInfo at) {
+            String typeString = getTypeWithErasure(at.getElementType());
+            for (int i = 0; i < at.getDimension(); i++) {
+                typeString = typeString + "[]";
+            }
+            // The varargs type is denoted as an array followed by a ... symbol
+            // Introduce that ... symbol if needed.
+            if (at.isVarArgsType()) {
+                typeString = typeString + "...";
+            }
+            return typeString;
+        } else {
+            return typeInfo.toString();
+        }
+    }
 }

@@ -14,6 +14,6 @@ public class Example12 {
 
 /*$$$$$
   Example12#demo(), 2,
-  org.springframework.context.annotation.AnnotationConfigApplicationContext#AnnotationConfigApplicationContext(Class<Config>),
-  org.springframework.context.ApplicationContext#getBean(Class<Random>),
+  org.springframework.context.annotation.AnnotationConfigApplicationContext#AnnotationConfigApplicationContext(Class),
+  org.springframework.context.ApplicationContext#getBean(Class),
 */
