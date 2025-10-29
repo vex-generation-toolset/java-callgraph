@@ -470,4 +470,21 @@ public class TypeCalculator {
         }
         return null;
     }
+
+    /**
+     * Issue 35
+     * A parameterized type is cleaned such
+     * that the parameter is removed. This is done so the type going to the
+     * access path name is simpler. Done for readability of locations, nothing functional.
+     *
+     * @param name the parameter/type binding in String form to clean
+     * @return a String with the parameter in the parameterized type removed if any.
+     */
+    public static String getParameterizedTypeWithErasure(String name) {
+        int parameterizedAngleBrace = name.indexOf("<");
+        if (parameterizedAngleBrace >= 0) {
+            name = name.substring(0, parameterizedAngleBrace);
+        }
+        return name;
+    }
 }
