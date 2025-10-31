@@ -19,4 +19,4 @@ class A extends Dummy {
     }
 }
 
-/*$$$$$ Test.main(String[]), 2, A#b(), Test.<init>() */
+/*$$$$$ Test.main(String[]), 3, org.dummy.Dummy#b(), A#b(), Test.<init>() */
