@@ -8,6 +8,7 @@ package org.openrefactory.analysis.callgraph;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,7 +40,9 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
@@ -1657,6 +1660,10 @@ public class CallGraphProcessor implements Runnable {
                                         invocation, callerMethodHash, methodCallingContextCache);
                         if (callingContextDeclaredTypeHash != null
                                 && callingContextDeclaredTypeHash.startsWith(Constants.LIB_TYPE)) {
+                            // Issue 25
+                            // Added extended call graph information for implementor of a library method.
+                            ExtendedCallGraphUtils.addEntryForLibraryMethodInvocation(invocation, callerMethodHash,
+                                invocationTokenRange, callingContextDeclaredTypeHash, filePath);
                             Set<String> subTypes =
                                     CallGraphDataStructures.getAllSubClass(callingContextDeclaredTypeHash);
                             if (subTypes != null) {
@@ -1664,7 +1671,13 @@ public class CallGraphProcessor implements Runnable {
                                 int matchingMethodHashIndex = Constants.INVALID_METHOD_HASH_INDEX;
                                 for (String subType : subTypes) {
                                     if (subType.startsWith(Constants.LIB_TYPE)) {
-                                        // Subclass is also a library.
+                                        // Issue 25
+                                        // We considered adding entries to library subclasses that may
+                                        // also service the call. This will be an over-approximation.
+                                        // But then we backed away since we were getting submerged by
+                                        // tens of subclasses. For now, doing nothing.
+
+                                        // Subclass is also a library. No need to process anymore.
                                         // Ignore it.
                                         continue;
                                     }
@@ -1824,17 +1837,6 @@ public class CallGraphProcessor implements Runnable {
                                         // Added extended call graph information as described above
                                         CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
                                                 defaultConsOfAnonClass, invocationTokenRange);
-                                        // Create information about this class instance creation
-                                        // No overriding here. So only update method invocation type in CG
-                                        calleeContenders =
-                                                MethodMatchFinderUtil.updateCGAndGetSingleServicingMethodInvocation(
-                                                        null, defaultConsHashIndex, defaultConsOfAnonClass, false);
-                                        if (calleeContenders != null
-                                                && !calleeContenders.isEmpty()
-                                                && consHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
-                                            CallGraphDataStructures.addToMethodInvocationToCalleeCandidatesMap(
-                                                    invocationTokenRange, defaultConsHashIndex, calleeContenders);
-                                        }
                                     }
                                 }
                             }
@@ -1858,6 +1860,30 @@ public class CallGraphProcessor implements Runnable {
                                     && consHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
                                 CallGraphDataStructures.addToMethodInvocationToCalleeCandidatesMap(
                                         invocationTokenRange, consHashIndex, calleeContenders);
+                            }
+                        } else {
+                            // Issue 25
+                            // Added extended call graph information for a library constructor call
+                            // We need to find the type of the constructor
+                            ASTNode instanceName = ((ClassInstanceCreation)classCreate).getType();
+                            if (instanceName instanceof SimpleType) {
+                                // new B()
+                                String instanceType = CallGraphUtility
+                                    .getLibraryTypeQualifiedNameFromJSONData(instanceName.toString(), filePath);
+                                ExtendedCallGraphUtils.addEntryForLibraryMethodInvocation(classCreate,
+                                    callerMethodHash, invocationTokenRange, instanceType, filePath);
+                            } else if (instanceName instanceof ParameterizedType p) {
+                                // new ArrayList<String>()
+                                String paramTypeString = p.toString();
+                                // Get rid of the <>
+                                int angleBracketPos = paramTypeString.indexOf("<");
+                                if (angleBracketPos >= 0) {
+                                    paramTypeString = paramTypeString.substring(0, angleBracketPos);
+                                }
+                                String instanceType = CallGraphUtility
+                                    .getLibraryTypeQualifiedNameFromJSONData(paramTypeString, filePath);
+                                ExtendedCallGraphUtils.addEntryForLibraryMethodInvocation(classCreate,
+                                    callerMethodHash, invocationTokenRange, instanceType, filePath);
                             }
                         }
                     }
@@ -1956,6 +1982,13 @@ public class CallGraphProcessor implements Runnable {
                                 }
                             }
                         }
+                    } else {
+                        String callerClassHash = CallGraphUtility.getClassHashFromMethodHash(callerHash);
+                        String superClassHash = CallGraphDataStructures.getSuperClassOf(callerClassHash);
+                        // Issue 25
+                        // Added extended call graph information for implementor of a library method.
+                        ExtendedCallGraphUtils.addEntryForLibraryMethodInvocation(superMethod, callerHash,
+                            invocationTokenRange, superClassHash, filePath);
                     }
                 } catch (Exception e) {
                     // Ignore and continue processing the next
@@ -2080,6 +2113,10 @@ public class CallGraphProcessor implements Runnable {
                     if (superclassHash == null
                             || superclassHash.startsWith(Constants.LIB_TYPE)
                             || superclassHash.contains(CallGraphUtility.CG_ANONYMOUS_TYPE)) {
+                        // Issue 25
+                        // Added extended call graph information for implementor of a library method.
+                        ExtendedCallGraphUtils.addEntryForLibraryMethodInvocation(superCons, callerHash,
+                            superConsInvocationTokenRange, superclassHash, filePath);
                         // There must be a super class in order to have a
                         // super constructor. Library class also does not count.
                         // So skipping.
@@ -2169,7 +2206,7 @@ public class CallGraphProcessor implements Runnable {
         String hashOfConstructorContainer = CallGraphUtility.getClassHashFromMethodHash(constructorHash);
         if (hashOfConstructorContainer != null) {
             String superClassHash = CallGraphDataStructures.getSuperClassOf(hashOfConstructorContainer);
-            if (superClassHash != null && !superClassHash.startsWith(Constants.LIB_TYPE)) {
+            if (superClassHash != null) {
                 boolean allowedToLinkToSuperClassConstructors = true;
                 String superClassFilePath = CallGraphUtility.getFileNameFromHash(superClassHash);
                 if (superClassFilePath == null || CallGraphDataStructures.isExcludedFile(superClassFilePath)) {
@@ -2221,8 +2258,33 @@ public class CallGraphProcessor implements Runnable {
                     }
                 }
                 if (allowedToLinkToSuperClassConstructors) {
-                    addCGEdgeToAppropriateSuperClassConstructor(
+                    if (superClassHash.startsWith(Constants.LIB_TYPE)) {
+                        // Issue 25
+                        // Added extended call graph information for a link
+                        // from the default constructor of a class to the default constructor of the superclass.
+                        MethodIdentity superClassConstructorIdentity = new MethodIdentity("<init>",
+                            new ScalarTypeInfo("void"), Collections.emptyList());
+                        superClassConstructorIdentity.setVirtualMethodBit();
+                        // Even though the constructor is not static, we are giving it
+                        // this way such that we can generate . in the .<init> for the method name
+                        superClassConstructorIdentity.setStaticBit();
+                        superClassConstructorIdentity.setConstructorBit();
+                        superClassConstructorIdentity.setDefaultBit();
+                        TokenRange range = CallGraphUtility.getTokeRangeFromMethodHash(constructorHash);
+                        Pair<String, String> methodInfoPair = CallGraphUtility.getHashCodeAndSignatureOfLibraryMethod(
+                            superClassConstructorIdentity, superClassHash, range);
+                        if (methodInfoPair != null) {
+                            int index = CallGraphDataStructures
+                                .getMethodHashIndexAndPotentiallyUpdateOtherInitialStructures(methodInfoPair.fst,
+                                    methodInfoPair.snd);
+                            CallGraphDataStructures.addMethodIdentity(index, superClassConstructorIdentity);
+                            CallGraphDataStructures.getExtendedCallGraph().addEdge(constructorHash,
+                                methodInfoPair.fst, range);
+                        }
+                    } else {
+                        addCGEdgeToAppropriateSuperClassConstructor(
                             superClassHash, constructorHash, anonymousInnerInstanceCreation, null);
+                    }
                 }
             }
         }

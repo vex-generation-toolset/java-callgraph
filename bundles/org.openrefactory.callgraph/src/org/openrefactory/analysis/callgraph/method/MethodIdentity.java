@@ -213,6 +213,18 @@ public class MethodIdentity implements Serializable {
     }
 
     /**
+     * Checks if the method is a virtual method.
+     *
+     * <p>Virtual methods can be overridden in subclasses and are subject
+     * to dynamic dispatch.</p>
+     *
+     * @return {@code true} if the method is virtual, {@code false} otherwise
+     */
+    public boolean isVirtualMethod() {
+        return methodBits.get(MethodIdentityBits.VIRTUAL.ordinal());
+    }
+
+    /**
      * Sets the default bit indicating this is a default method in an interface.
      *
      * <p>Default methods in interfaces provide a default implementation

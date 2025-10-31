@@ -49,6 +49,7 @@ import org.openrefactory.analysis.callgraph.method.MethodInfoBundle;
 import org.openrefactory.analysis.callgraph.method.MethodMatchFinderUtil;
 import org.openrefactory.analysis.type.TypeCalculator;
 import org.openrefactory.analysis.type.typeinfo.ArrayTypeInfo;
+import org.openrefactory.analysis.type.typeinfo.ClassTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.SymbolicTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.TypeInfo;
 import org.openrefactory.util.datastructure.IntPair;
@@ -1047,6 +1048,82 @@ public class CallGraphUtility {
     }
 
     /**
+     * Issue 25
+     * Returns the SHA1 hash and the method signature of a library method
+     * from a library method invocation.
+     *
+     * Complete signature = filename (the container file) +"::"+
+     *                      full-method-name +"::"+
+     *                      methodInvocationOffset +"::"+ methodInvocationLength +"::"+
+     *                      parentClassOffset (0) + "::" + parentClassLength (0)
+     *                      + "::" + parentClassName ("Dummy") + "::" + parentClassType +
+     *                      "::" + static/nonstatic/init
+     *
+     * @param identity                       the identity of the method for which
+     *                                       the hash and signature will ne created.
+     * @param callingContextDeclaredTypeHash the fully qualified library type hash for
+     *                                       the calling context
+     * @param range                          the token range of the call expression
+     * @return pair of the method's SHA1 hash and its signature
+     */
+    public static Pair<String, String> getHashCodeAndSignatureOfLibraryMethod(
+        MethodIdentity identity,
+        String callingContextDeclaredTypeHash,
+        TokenRange range)
+    {
+        // Get static information from the method identity
+        String staticOrNonStatic = CG_NONSTATIC;
+        if (identity.isStatic()) {
+            staticOrNonStatic = CG_STATIC;
+        }
+
+        // Get the name of the method. This comes from gathering the name
+        // from the import list.
+        // We start by identifying the caller's type and from that
+        // get the full package name. We know that the calling context declared type
+        // hash is fully qualified.
+        StringBuilder methodNameBuilder = new StringBuilder();
+        if (callingContextDeclaredTypeHash != null) {
+            if (callingContextDeclaredTypeHash.contains(CG_SEPARATOR)) {
+                methodNameBuilder.append(callingContextDeclaredTypeHash.split(CG_SEPARATOR)[1]);
+            } else {
+                methodNameBuilder.append(callingContextDeclaredTypeHash);
+            }
+            if (identity.isStatic()) {
+                methodNameBuilder.append(".").append(identity.getMethodName());
+            } else {
+                methodNameBuilder.append("#").append(identity.getMethodName());
+            }
+        }
+
+        // Get the class specific information, which is fictitious here.
+        StringBuilder typeSignatureBuilder = new StringBuilder();
+        typeSignatureBuilder.append("0")
+                            .append(CG_SEPARATOR)
+                            .append("0")
+                            .append(CG_SEPARATOR)
+                            .append(new ClassTypeInfo(Constants.JAVA_LANG_OBJECT))
+                            .append(CG_SEPARATOR)
+                            .append(CG_CLASS_CLASS);
+
+        // Combine the parts
+        StringBuilder fullMethodSignatureBuilder = new StringBuilder();
+        fullMethodSignatureBuilder.append(range.getFileName())
+                                  .append(CG_SEPARATOR)
+                                  .append(methodNameBuilder.toString())
+                                  .append(CG_SEPARATOR)
+                                  .append(range.getOffset())
+                                  .append(CG_SEPARATOR)
+                                  .append(range.getLength())
+                                  .append(CG_SEPARATOR)
+                                  .append(typeSignatureBuilder.toString())
+                                  .append(CG_SEPARATOR)
+                                  .append(staticOrNonStatic);
+        return new Pair<String, String>(HashUtility.generateSHA1(fullMethodSignatureBuilder.toString()),
+            fullMethodSignatureBuilder.toString());
+    }
+
+    /**
      * Generates the SHA1 hash of a method signature from a method binding.
      *
      * @param binding the method binding to hash
@@ -1884,19 +1961,25 @@ public class CallGraphUtility {
         if (methodHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
             MethodInfoBundle bundle = CallGraphDataStructures.getHashToMethodInfoBundleList().get(methodHashIndex);
             MethodIdentity identity = bundle.getIdentity();
-            String className = "";
-            StringBuffer argBuf = getMethodArgs(identity);
-            if (calculateClassName) {
-                className = getClassNameInCanonicalizedFormat(CallGraphUtility.getClassHashFromMethodHash(methodHash));
-            }
-            if (identity.isConstructor() && !identity.hasBody()) {
-                // Issue 3
-                // We are describing the default constructor for static initialization
-                // with <staticinit> which is non-standard.
-                return className + (identity.isStatic() ? ".<staticinit>()" : ".<init>()");
+            if (identity.isVirtualMethod()) {
+                StringBuffer argBuf = getMethodArgs(identity);
+                String signature = bundle.getSignature();
+                return signature.split(CG_SEPARATOR)[1] + "(" + argBuf.toString() + ")";
             } else {
-                return className + (identity.isStatic() ? "." : "#") + identity.getMethodName() + "("
-                    + argBuf.toString() + ")";
+                String className = "";
+                StringBuffer argBuf = getMethodArgs(identity);
+                if (calculateClassName) {
+                    className = getClassNameInCanonicalizedFormat(CallGraphUtility.getClassHashFromMethodHash(methodHash));
+                }
+                if (identity.isConstructor() && !identity.hasBody()) {
+                    // Issue 3
+                    // We are describing the default constructor for static initialization
+                    // with <staticinit> which is non-standard.
+                    return className + (identity.isStatic() ? ".<staticinit>()" : ".<init>()");
+                } else {
+                    return className + (identity.isStatic() ? "." : "#") + identity.getMethodName() + "("
+                        + argBuf.toString() + ")";
+                }
             }
         }
         return "";

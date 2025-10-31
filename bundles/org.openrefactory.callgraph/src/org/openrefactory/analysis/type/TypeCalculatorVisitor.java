@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.openrefactory.analysis.callgraph.CallGraphDataStructures;
@@ -1031,7 +1032,7 @@ public class TypeCalculatorVisitor extends ASTVisitor {
         // set last argument to false
         Pair<String, TypeInfo> typeInfoWithHash =
                 getAtomicTypeInfo(typeBinding, containerTokenRange, containerHash, true, calculateSoftType, false);
-        if (typeInfoWithHash != null) {
+        if (typeInfoWithHash != null && typeInfoWithHash.snd != null) {
             TypeInfo typeInfo = typeInfoWithHash.snd;
             return TypeCalculator.putOrGetTypeInfoFromMemo(typeInfo);
         }
