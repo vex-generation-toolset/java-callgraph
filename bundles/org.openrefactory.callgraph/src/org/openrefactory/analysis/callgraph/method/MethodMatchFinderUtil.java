@@ -661,8 +661,13 @@ public class MethodMatchFinderUtil {
         if (hashIndicesOfMethodsWithSameName != null && !hashIndicesOfMethodsWithSameName.isEmpty()) {
             int actualParamCount = identityFromInvocation.getArgParamTypeInfos().size();
             Iterator<Integer> methodsIterator = hashIndicesOfMethodsWithSameName.iterator();
+            // Issue 27
+            // We need to ensure that we first match with all possible methods with exact number of parameters
+            // before we go ahead and check with the methods with variadic parameters. Otherwise, we may loose matches non-deterministically.
 
-            List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>> mismatchInfo = null;
+            // We keep them in separate lists.
+            List<Pair<MethodIdentity, Integer>> methodCandidatesWithFixedParams = new ArrayList<>();
+            List<Pair<MethodIdentity, Integer>> methodCandidatesWithVariadicParams = new ArrayList<>();
             while (methodsIterator.hasNext()) {
                 int hashIndexOfMethodWithSameSame = methodsIterator.next();
                 MethodIdentity identityOfDeclaredMethod =
@@ -670,122 +675,171 @@ public class MethodMatchFinderUtil {
                 if (identityOfDeclaredMethod != null) {
                     int formalParamCount =
                             identityOfDeclaredMethod.getArgParamTypeInfos().size();
-                    // Check if there is varargs in the last formal parameter
                     boolean varArgsMatch = false;
+                    // Check if there is varargs in the last formal parameter
                     if (formalParamCount > 0) {
                         TypeInfo lastParam =
                                 identityOfDeclaredMethod.getArgParamTypeInfos().get(formalParamCount - 1);
                         if (lastParam instanceof ArrayTypeInfo && ((ArrayTypeInfo) lastParam).isVarArgsType()) {
                             varArgsMatch = true;
-                            // For varargs, the size of formal parameters must be equal or smaller
-                            // than actual parameters. Filter that case first
-                            if (formalParamCount <= actualParamCount) {
-                                // The parameters must match up till the last formal parameter
-                                // The actual parameters for the last formal could be one of the two
-                                //    (1) comma separated params,
-                                //    (2) an Array of params
-                                // Match without the variadic part
-                                Pair<TriBool, List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>>> matchInfo =
-                                        MethodMatchFinderUtil.getBestMatchInfo(
-                                                identityFromInvocation, identityOfDeclaredMethod, true);
-                                if (matchInfo.fst.isTrue()) {
-                                    // Now match the variadic part in the actual parameters
-                                    // To do the matching create artificial types from the formal and actual parameters.
-                                    // Get the actual parameters in variadic position and create a false formal
-                                    // parameter
-                                    // that matches the count.
-                                    int variadicParamStartPosition = formalParamCount - 1;
-                                    TypeInfo firstVariadicActualParamType = identityFromInvocation
-                                            .getArgParamTypeInfos()
-                                            .get(variadicParamStartPosition);
-                                    if (formalParamCount == actualParamCount
-                                            && firstVariadicActualParamType instanceof ArrayTypeInfo) {
-                                        // Case 2
-                                        // Just match the array types
-                                        List<TypeInfo> tempActual = new ArrayList<>(1);
-                                        tempActual.add(firstVariadicActualParamType);
-                                        MethodIdentity fakeActualParam = new MethodIdentity(
-                                                identityFromInvocation.getMethodName(),
-                                                identityFromInvocation.getReturnTypeInfo(),
-                                                tempActual);
-                                        List<TypeInfo> tempFormal = new ArrayList<>(1);
-                                        tempFormal.add(lastParam);
-                                        MethodIdentity fakeAFormalParam = new MethodIdentity(
-                                                identityOfDeclaredMethod.getMethodName(),
-                                                identityOfDeclaredMethod.getReturnTypeInfo(),
-                                                tempFormal);
-                                        matchInfo = MethodMatchFinderUtil.getBestMatchInfo(
-                                                fakeActualParam, fakeAFormalParam, false);
-                                        if (matchInfo.fst.isTrue()) {
-                                            return hashIndexOfMethodWithSameSame;
-                                        }
-                                    } else {
-                                        // Case 1
-                                        // Comma separated actual parameters
-                                        List<TypeInfo> tempActual = new ArrayList<>(identityFromInvocation
-                                                        .getArgParamTypeInfos()
-                                                        .size()
-                                                - variadicParamStartPosition
-                                                + 1);
-                                        for (int i = variadicParamStartPosition;
-                                                i
-                                                        < identityFromInvocation
-                                                                .getArgParamTypeInfos()
-                                                                .size();
-                                                i++) {
-                                            tempActual.add(identityFromInvocation
-                                                    .getArgParamTypeInfos()
-                                                    .get(i));
-                                        }
-                                        MethodIdentity fakeActualParam = new MethodIdentity(
-                                                identityFromInvocation.getMethodName(),
-                                                identityFromInvocation.getReturnTypeInfo(),
-                                                tempActual);
-                                        List<TypeInfo> tempFormal = new ArrayList<>(tempActual.size());
-                                        for (int i = variadicParamStartPosition;
-                                                i
-                                                        < identityFromInvocation
-                                                                .getArgParamTypeInfos()
-                                                                .size();
-                                                i++) {
-                                            tempFormal.add(((ArrayTypeInfo) lastParam).getElementType());
-                                        }
-                                        MethodIdentity fakeAFormalParam = new MethodIdentity(
-                                                identityOfDeclaredMethod.getMethodName(),
-                                                identityOfDeclaredMethod.getReturnTypeInfo(),
-                                                tempFormal);
-                                        matchInfo = MethodMatchFinderUtil.getBestMatchInfo(
-                                                fakeActualParam, fakeAFormalParam, false);
-                                        if (matchInfo.fst.isTrue()) {
-                                            return hashIndexOfMethodWithSameSame;
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
+                    if (varArgsMatch) {
+                        methodCandidatesWithVariadicParams
+                                .add(Pair.of(identityOfDeclaredMethod, hashIndexOfMethodWithSameSame));
+                    } else {
+                        methodCandidatesWithFixedParams
+                                .add(Pair.of(identityOfDeclaredMethod, hashIndexOfMethodWithSameSame));
+                    }
+                }
+            }
 
-                    // A basic sniff test of params matching, the name already matches
-                    if (!varArgsMatch && formalParamCount == actualParamCount) {
-                        Pair<TriBool, List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>>> matchInfo =
-                                MethodMatchFinderUtil.getBestMatchInfo(
-                                        identityFromInvocation, identityOfDeclaredMethod, false);
-                        if (matchInfo.fst.isTrue()) {
-                            return hashIndexOfMethodWithSameSame;
-                        } else if (matchInfo.fst.isMayBe()) {
-                            if (bestMatchedMethodHashIndex == Constants.INVALID_METHOD_HASH_INDEX) {
-                                bestMatchedMethodHashIndex = hashIndexOfMethodWithSameSame;
-                                mismatchInfo = matchInfo.snd;
-                            } else {
-                                // There was a previous mismatch
-                                // Check if this is a better match
-                                if (isABetterMatch(mismatchInfo, matchInfo.snd)) {
+            // First process the methods with exact parameters
+            List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>> mismatchInfo = null;
+            for (Pair<MethodIdentity, Integer> methodData: methodCandidatesWithFixedParams) {
+                MethodIdentity identityOfDeclaredMethod = methodData.fst;
+                int formalParamCount = identityOfDeclaredMethod.getArgParamTypeInfos().size();
+                int hashIndexOfMethodWithSameSame = methodData.snd;
+                if (formalParamCount == actualParamCount) {
+                    Pair<TriBool, List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>>> matchInfo = MethodMatchFinderUtil
+                            .getBestMatchInfo(identityFromInvocation, identityOfDeclaredMethod, false);
+                    if (matchInfo.fst.isTrue()) {
+                        return hashIndexOfMethodWithSameSame;
+                    } else if (matchInfo.fst.isMayBe()) {
+                        if (bestMatchedMethodHashIndex == Constants.INVALID_METHOD_HASH_INDEX
+                                || isABetterMatch(mismatchInfo, matchInfo.snd)) {
+                            bestMatchedMethodHashIndex = hashIndexOfMethodWithSameSame;
+                            mismatchInfo = matchInfo.snd;
+                        }
+                    } else {
+                        // If this does not match, we look for a better one
+                    }
+                }
+            }
+
+            // Then process the methods with variadic parameters
+            for (Pair<MethodIdentity, Integer> methodData: methodCandidatesWithVariadicParams) {
+                MethodIdentity identityOfDeclaredMethod = methodData.fst;
+                int hashIndexOfMethodWithSameSame = methodData.snd;
+                int formalParamCount = identityOfDeclaredMethod.getArgParamTypeInfos().size();
+                // Since variadic, must have a last parameter.
+                TypeInfo lastParam = identityOfDeclaredMethod.getArgParamTypeInfos().get(formalParamCount - 1);
+                // For varargs, the size of formal parameters must be equal or smaller
+                // than actual parameters. Filter that case first
+                if (formalParamCount <= actualParamCount) {
+                    // The parameters must match up till the last formal parameter
+                    // The actual parameters for the last formal could be one of the two
+                    //    (1) comma separated parameters,
+                    //    (2) an Array of parameters
+                    // Match without the variadic part
+                    Pair<TriBool, List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>>> matchInfo =
+                            MethodMatchFinderUtil.getBestMatchInfo(
+                                    identityFromInvocation, identityOfDeclaredMethod, true);
+                    if (matchInfo.fst.isTrue()) {
+                        // Now match the variadic part in the actual parameters
+                        // To do the matching create artificial types from the formal and actual parameters.
+                        // Get the actual parameters in variadic position and create a false formal
+                        // parameter
+                        // that matches the count.
+                        int variadicParamStartPosition = formalParamCount - 1;
+                        TypeInfo firstVariadicActualParamType = identityFromInvocation
+                                .getArgParamTypeInfos()
+                                .get(variadicParamStartPosition);
+                        if (formalParamCount == actualParamCount
+                                && firstVariadicActualParamType instanceof ArrayTypeInfo) {
+                            // Case 2
+                            // Just match the array types
+                            List<TypeInfo> tempActual = List.of(firstVariadicActualParamType);
+                            MethodIdentity fakeActualParam = new MethodIdentity(
+                                    identityFromInvocation.getMethodName(),
+                                    identityFromInvocation.getReturnTypeInfo(),
+                                    tempActual);
+                            List<TypeInfo> tempFormal = List.of(lastParam);
+                            MethodIdentity fakeAFormalParam = new MethodIdentity(
+                                    identityOfDeclaredMethod.getMethodName(),
+                                    identityOfDeclaredMethod.getReturnTypeInfo(),
+                                    tempFormal);
+                            matchInfo = MethodMatchFinderUtil.getBestMatchInfo(
+                                    fakeActualParam, fakeAFormalParam, false);
+                            if (matchInfo.fst.isTrue()) {
+                                return hashIndexOfMethodWithSameSame;
+                            } else if (matchInfo.fst.isMayBe()) {
+                                if (bestMatchedMethodHashIndex == Constants.INVALID_METHOD_HASH_INDEX
+                                        || isABetterMatch(mismatchInfo, matchInfo.snd)) {
                                     bestMatchedMethodHashIndex = hashIndexOfMethodWithSameSame;
                                     mismatchInfo = matchInfo.snd;
                                 }
                             }
                         } else {
-                            // If this does not match, we look for a better one
+                            // Case 1
+                            // Comma separated actual parameters
+                            List<TypeInfo> tempActual = new ArrayList<>(identityFromInvocation
+                                    .getArgParamTypeInfos()
+                                    .size()
+                                    - variadicParamStartPosition
+                                    + 1);
+                            for (int i = variadicParamStartPosition;
+                                    i < identityFromInvocation
+                                            .getArgParamTypeInfos()
+                                            .size();
+                                    i++) {
+                                tempActual.add(identityFromInvocation
+                                        .getArgParamTypeInfos()
+                                        .get(i));
+                            }
+                            MethodIdentity fakeActualParam = new MethodIdentity(
+                                    identityFromInvocation.getMethodName(),
+                                    identityFromInvocation.getReturnTypeInfo(),
+                                    tempActual);
+                            List<TypeInfo> tempFormal = new ArrayList<>(tempActual.size());
+                            for (int i = variadicParamStartPosition;
+                                    i < identityFromInvocation
+                                            .getArgParamTypeInfos()
+                                            .size();
+                                    i++) {
+                                tempFormal.add(((ArrayTypeInfo) lastParam).getElementType());
+                            }
+                            MethodIdentity fakeAFormalParam = new MethodIdentity(
+                                    identityOfDeclaredMethod.getMethodName(),
+                                    identityOfDeclaredMethod.getReturnTypeInfo(),
+                                    tempFormal);
+                            matchInfo = MethodMatchFinderUtil.getBestMatchInfo(
+                                    fakeActualParam, fakeAFormalParam, false);
+                            if (matchInfo.fst.isTrue()) {
+                                return hashIndexOfMethodWithSameSame;
+                            } else if (matchInfo.fst.isMayBe()) {
+                                if (bestMatchedMethodHashIndex == Constants.INVALID_METHOD_HASH_INDEX
+                                        || isABetterMatch(mismatchInfo, matchInfo.snd)) {
+                                    bestMatchedMethodHashIndex = hashIndexOfMethodWithSameSame;
+                                    mismatchInfo = matchInfo.snd;
+                                }
+                            }
+                        }
+                    }
+                } else if (actualParamCount == formalParamCount - 1) {
+                    // Issue 27
+                    // The variadic parameter may also match with the case when there are no
+                    // parameters passed. In that case, say if there are 3 formal parameters
+                    // (2 normal and the last one variadic), there will be 2 actual parameters
+                    // (the 2 normal ones).
+                    if (actualParamCount == 0 && formalParamCount == 1) {
+                        // First we filter out the case where there are no actual params
+                        // but there is one formal param, which is variadic
+                        return hashIndexOfMethodWithSameSame;
+                    } else {
+                        // If not, we match all the way to end excluding the last formal parameter
+                        // and if that match works out, we are still good (because the last parameter is
+                        // allowed to be empty)
+                        Pair<TriBool, List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>>> matchInfo = MethodMatchFinderUtil
+                                .getBestMatchInfo(identityFromInvocation, identityOfDeclaredMethod, true);
+                        if (matchInfo.fst.isTrue()) {
+                            return hashIndexOfMethodWithSameSame;
+                        } else {
+                            if (bestMatchedMethodHashIndex == Constants.INVALID_METHOD_HASH_INDEX
+                                    || isABetterMatch(mismatchInfo, matchInfo.snd)) {
+                                bestMatchedMethodHashIndex = hashIndexOfMethodWithSameSame;
+                                mismatchInfo = matchInfo.snd;
+                            }
                         }
                     }
                 }
