@@ -33,6 +33,7 @@ class Outer {
   0, 
 */
 
-/*$$$$ org.openrefactory.test.Outer.Nested#show(), 
-  0,
+/*$$$$$ org.openrefactory.test.Outer.Nested#show(),
+  1,
+  org.openrefactory.test.Outer.<staticinit>()
 */

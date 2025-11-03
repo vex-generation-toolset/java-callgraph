@@ -35,6 +35,6 @@ class Outer {
   0, 
 */
 
-/*$$$$ org.openrefactory.test.Outer.Inner#show(), 
+/*$$$$$ org.openrefactory.test.Outer.Inner#show(),
   0,
 */
