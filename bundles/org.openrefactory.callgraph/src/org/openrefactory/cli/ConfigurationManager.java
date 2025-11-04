@@ -67,6 +67,10 @@ public class ConfigurationManager {
     // During a test run, we do not want to store info on disk.
     public static boolean isTestRun = false;
 
+    /** Default summaries directory used during test runs */
+    public static final String SUMMARIES_PATH =
+            "../../features/org.openrefactory.callgraph.feature/rootfiles/summaries";
+
     /**
      * Loads configuration info from config.json to the config
      *
@@ -103,7 +107,7 @@ public class ConfigurationManager {
 
     /** Method to load dummy configuration for test suite run. Only orHome and summaries are necessary to run tests. */
     public static void loadConfigForTest() {
-        config = new Configuration("", "", "", false);
+        config = new Configuration("", "", SUMMARIES_PATH, false);
         isTestRun = true;
     }
 }
