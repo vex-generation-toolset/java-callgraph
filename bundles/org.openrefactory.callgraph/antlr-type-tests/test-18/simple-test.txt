@@ -1,0 +1,3 @@
+ArrayList<? super Foo>
+
+*****(type (paramType (identifier ArrayList) (typeArguments < (typeArgumentList (typeArgument (wildcard ? (wildcardBounds super (referenceType (classOrParamOrSymbolicType (classType (identifier Foo)))))))) >)))__OR__ArrayList<? super Foo>

@@ -1,0 +1,3 @@
+List<? extends Number>
+
+*****(type (paramType (identifier List) (typeArguments < (typeArgumentList (typeArgument (wildcard ? (wildcardBounds extends (referenceType (classOrParamOrSymbolicType (classType (identifier Number)))))))) >)))__OR__List<? extends Number>

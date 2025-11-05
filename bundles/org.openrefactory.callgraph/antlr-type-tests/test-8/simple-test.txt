@@ -1,0 +1,3 @@
+Map<Integer,List<Pair<Foo,Bar>>>
+
+*****(type (paramType (identifier Map) (typeArguments < (typeArgumentList (typeArgument (scalarBoxed Integer)) , (typeArgument (referenceType (classOrParamOrSymbolicType (paramType (identifier List) (typeArguments < (typeArgumentList (typeArgument (referenceType (classOrParamOrSymbolicType (paramType (identifier Pair) (typeArguments < (typeArgumentList (typeArgument (referenceType (classOrParamOrSymbolicType (classType (identifier Foo))))) , (typeArgument (referenceType (classOrParamOrSymbolicType (classType (identifier Bar)))))) >)))))) >)))))) >)))__OR__Map<Integer, List<Pair<Foo, Bar>>>

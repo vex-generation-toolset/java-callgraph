@@ -25,6 +25,7 @@ import org.openrefactory.analysis.type.typeinfo.SymbolicTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.TypeInfo;
 import org.openrefactory.analysis.type.typeinfo.WildCardTypeInfo;
 import org.openrefactory.util.ASTNodeUtility;
+import org.openrefactory.util.AntlrUtil;
 import org.openrefactory.util.CallGraphUtility;
 import org.openrefactory.util.Constants;
 import org.openrefactory.util.datastructure.NeoLRUCache;
@@ -1259,21 +1260,18 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                 } else {
                     // If the return type is a symbolic type (i.e. K, U, etc)
                     // and the calling context location is a parameterized type
-                    // we need to infer the actual type of the return type from
-                    //                    TypeInfo retTypeInfo =
-                    // AntlrUtil.parseAndReturnTypeInfo(specInfo.getReturnType());
-                    //                    if (retTypeInfo instanceof SymbolicTypeInfo || retTypeInfo instanceof
-                    // ParameterizedTypeInfo) {
-                    //                        List<ASTNode> args = node.arguments();
-                    //                        List<TypeInfo> locFrameTypeInfos = new ArrayList<>(args.size() + 1);
-                    //                        locFrameTypeInfos.add(callingContextType);
-                    //                        for(int i=0; i<args.size(); i++) {
-                    //                            locFrameTypeInfos.add(TypeCalculator.typeOf(args.get(i), false));
-                    //                        }
-                    //                        retTypeInfo = TypeCalculator.checkAndReplaceSymbolicType(retTypeInfo,
-                    // specInfo, locFrameTypeInfos);
-                    //                    }
-                    //                    return retTypeInfo;
+                    // we need to infer the actual type of the return type.
+                    TypeInfo retTypeInfo = AntlrUtil.parseAndReturnTypeInfo(specInfo.getReturnType());
+                    if (retTypeInfo instanceof SymbolicTypeInfo || retTypeInfo instanceof ParameterizedTypeInfo) {
+                        List<ASTNode> args = node.arguments();
+                        List<TypeInfo> locFrameTypeInfos = new ArrayList<>(args.size() + 1);
+                        locFrameTypeInfos.add(callingContextType);
+                        for(int i=0; i<args.size(); i++) {
+                            locFrameTypeInfos.add(TypeCalculator.typeOf(args.get(i), false));
+                        }
+                        retTypeInfo = TypeCalculator.checkAndReplaceSymbolicType(retTypeInfo, specInfo, locFrameTypeInfos);
+                    }
+                    return retTypeInfo;
                 }
             }
         } catch (Exception e) {

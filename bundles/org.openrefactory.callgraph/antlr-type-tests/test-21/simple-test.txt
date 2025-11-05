@@ -1,0 +1,3 @@
+@VarArgs Strin
+
+*****(type (classType (annotation (at @) (identifier VarArgs)) (identifier Strin)))__OR__Strin

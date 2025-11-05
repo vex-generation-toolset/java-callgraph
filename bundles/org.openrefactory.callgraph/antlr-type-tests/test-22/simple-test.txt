@@ -1,0 +1,3 @@
+Ac.Bc.Cc.Dd
+
+*****(type (classType (classType (classType (classType (identifier Ac)) . (identifier Bc)) . (identifier Cc)) . (identifier Dd)))__OR__Dd

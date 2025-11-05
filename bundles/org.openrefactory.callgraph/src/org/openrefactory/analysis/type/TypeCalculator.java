@@ -31,12 +31,14 @@ import org.openrefactory.analysis.type.typeinfo.SymbolicTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.TypeInfo;
 import org.openrefactory.analysis.type.typeinfo.WildCardTypeInfo;
 import org.openrefactory.util.ASTNodeUtility;
+import org.openrefactory.util.AntlrUtil;
 import org.openrefactory.util.CallGraphUtility;
 import org.openrefactory.util.Constants;
 import org.openrefactory.util.datastructure.NeoLRUCache;
 import org.openrefactory.util.datastructure.ObjectIntPair;
 import org.openrefactory.util.datastructure.Pair;
 import org.openrefactory.util.datastructure.TokenRange;
+import org.openrefactory.util.manager.FNDSpecInfo;
 
 /**
  * Calculate TypeInfo representations of Java types from AST nodes.
@@ -469,6 +471,142 @@ public class TypeCalculator {
             }
         }
         return null;
+    }
+
+    /**
+     * Checks and replaces symbolic types in the return type info with concrete types
+     * by matching against the location frame type infos and spec info.
+     *
+     * <p>For example:
+     * <pre>
+     * void foo(Map&lt;String, List&lt;String&gt;&gt; map) {
+     *     map.get("key").get(0);
+     * }
+     * </pre>
+     * Here, Map::get has a return `V` which in this case will be substituted by `List&lt;String&gt;`
+     * Again, in case of map.get("key").get(0) the return type `E` of get method
+     * will be replaced by the element type `Integer`.
+     *
+     * <p>A type info replacement may come from multiple places. Say we have
+     * Map&lt;K, Map&lt;V, Set&lt;M&gt;&gt;&gt; as return type and K, V, M comes from the calling context
+     * and then the first, second and the third param. So, we will continue to match every
+     * matching choices.
+     *
+     * @param retTypeInfo the return type info of the method
+     * @param specInfo the spec info from json
+     * @param locFrameTypeInfos the location frames
+     * @return the return type info after replacement
+     */
+    public static TypeInfo checkAndReplaceSymbolicType(
+            TypeInfo retTypeInfo, FNDSpecInfo specInfo, List<TypeInfo> locFrameTypeInfos) {
+        // Start matching from the parameters
+        // Because the method may be a generic method inside generic class
+        // using same name for Type parameter
+        // For example:
+        // class Foo<T> {
+        //     public <T> T bar(T cls) {
+        //     }
+        // }
+        // Here, The `T` inside the method will be
+        // determined by method param type `T` not the
+        // Type argument of class Foo
+        int matchIndex = 1;
+        Set<ObjectIntPair<TypeInfo>> matchedTraversalTypesDuringParsing = new HashSet<>(4);
+        Set<ObjectIntPair<TypeInfo>> matchedTraversalTypesDuringReplcement = new HashSet<>(4);
+        while (retTypeInfo.needsReplacement() && matchIndex < locFrameTypeInfos.size()) {
+            retTypeInfo = matchAndReplace(
+                    matchIndex,
+                    retTypeInfo,
+                    specInfo,
+                    locFrameTypeInfos,
+                    matchedTraversalTypesDuringParsing,
+                    matchedTraversalTypesDuringReplcement);
+            matchIndex++;
+        }
+        // Match the calling context in the end
+        retTypeInfo = matchAndReplace(
+                0,
+                retTypeInfo,
+                specInfo,
+                locFrameTypeInfos,
+                matchedTraversalTypesDuringParsing,
+                matchedTraversalTypesDuringReplcement);
+        return retTypeInfo;
+    }
+
+    /**
+     * Helper method for matching and replacing symbolic type
+     *
+     * @param matchIndex the index of location frames
+     * @param retTypeInfo the return type info of method
+     * @param specInfo the spec info form json
+     * @param locFrameTypeInfos the location frames
+     * @param matchedTraversalTypesDuringParsing the set of types matched during parsing
+     * @param matchedTraversalTypesDuringReplcement the set of types matched during replacement
+     * @return the return type info after matching and replacement
+     */
+    private static TypeInfo matchAndReplace(
+            int matchIndex,
+            TypeInfo retTypeInfo,
+            FNDSpecInfo specInfo,
+            List<TypeInfo> locFrameTypeInfos,
+            Set<ObjectIntPair<TypeInfo>> matchedTraversalTypesDuringParsing,
+            Set<ObjectIntPair<TypeInfo>> matchedTraversalTypesDuringReplcement) {
+        // Calculate the matches for this type separately and perform the
+        // matches before moving on
+        Map<TypeInfo, TypeInfo> capturedSymbolicTypes = new HashMap<>(3);
+        Map<ObjectIntPair<TypeInfo>, TypeInfo> capturedWildCardTypes = new HashMap<>(3);
+        TypeInfo targetTypeInfo = locFrameTypeInfos.get(matchIndex);
+        // Null literal can be used in place of object of any type.
+        // For target with null object type, we should not resolve
+        // the symbolic type to null type.
+        if (targetTypeInfo != null && !targetTypeInfo.getName().equals(Constants.NULL_OBJECT_TYPE)) {
+            String specifiedTypeString = null;
+            if (matchIndex == 0) {
+                specifiedTypeString = specInfo.getDeclaringType() + specInfo.getDeclaringTypeParam();
+            } else {
+                // Param 1 in location frame is param 0 in the param types list
+                specifiedTypeString = specInfo.getParams().get(matchIndex - 1);
+            }
+            if (specifiedTypeString != null) {
+                // Handling variadic parameters
+                if (specifiedTypeString.endsWith("...")) {
+                    specifiedTypeString =
+                            specifiedTypeString.substring(0, specifiedTypeString.length() - "...".length());
+                    if (targetTypeInfo instanceof ArrayTypeInfo) {
+                        targetTypeInfo = ((ArrayTypeInfo) targetTypeInfo).getElementType();
+                    }
+                }
+                TypeInfo specifiedType = AntlrUtil.parseAndReturnTypeInfo(specifiedTypeString);
+                if (specifiedType != null && specifiedType.needsReplacement()) {
+                    specifiedType.parseAndMapSymbols(
+                            targetTypeInfo,
+                            null,
+                            matchedTraversalTypesDuringParsing,
+                            capturedSymbolicTypes,
+                            capturedWildCardTypes);
+                    if (!capturedSymbolicTypes.isEmpty() || !capturedWildCardTypes.isEmpty()) {
+                        // When we replace the symbol, we also get bound wild card types if we can
+                        // This is because say we replaced <T> with <? extends Foo>, in the
+                        // next iteration of this loop, we will try to replace <? extends Foo>
+                        // even though it is already replaced. Worse, it may actually be successful
+                        // and replace to something wrong. So, when we do the replacement and
+                        // the result is a wild card type, we make sure we get it fixed.
+                        Pair<Boolean, TypeInfo> replacementResult = retTypeInfo.replaceSymbol(
+                                null,
+                                matchedTraversalTypesDuringReplcement,
+                                capturedSymbolicTypes,
+                                capturedWildCardTypes);
+                        if (replacementResult != null
+                                && replacementResult.fst
+                                && replacementResult.snd != null) {
+                            retTypeInfo = replacementResult.snd;
+                        }
+                    }
+                }
+            }
+        }
+        return retTypeInfo;
     }
 
     /**

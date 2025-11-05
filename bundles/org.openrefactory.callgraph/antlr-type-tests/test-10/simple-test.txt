@@ -1,0 +1,3 @@
+MyCustomClass@MyCoolAnnotation [][][]
+
+*****(type (arrayType (classOrParamOrSymbolicType (classType (identifier MyCustomClass))) (dims (annotation (at @) (identifier MyCoolAnnotation)) [ ] [ ] [ ])))__OR__MyCustomClass[][][]

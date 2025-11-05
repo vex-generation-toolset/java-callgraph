@@ -1,0 +1,3 @@
+JAXBElement<T,R>
+
+*****(type (paramType (identifier JAXBElement) (typeArguments < (typeArgumentList (typeArgument (referenceType (classOrParamOrSymbolicType (symbolicType (upperCase T))))) , (typeArgument (referenceType (classOrParamOrSymbolicType (symbolicType (upperCase R)))))) >)))__OR__JAXBElement<T, R>

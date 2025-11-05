@@ -1,0 +1,3 @@
+Foo<T extends Animal>
+
+*****(type (paramType (identifier Foo) (typeArguments < (typeArgumentList (typeArgument (referenceType (classOrParamOrSymbolicType (symbolicType (upperCase T) (typeBound extends (typeVariable (identifier Animal)))))))) >)))__OR__Foo<T extends Animal>

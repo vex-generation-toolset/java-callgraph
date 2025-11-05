@@ -1,0 +1,3 @@
+int[]
+
+*****(type (arrayType (scalarType (primitiveType (numericType (integralType int)))) (dims [ ])))__OR__int[]
