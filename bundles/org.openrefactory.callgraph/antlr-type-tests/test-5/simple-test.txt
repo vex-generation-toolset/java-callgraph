@@ -1,0 +1,3 @@
+B[]
+
+*****(type (arrayType (classOrParamOrSymbolicType (symbolicType (upperCase B))) (dims [ ])))__OR__B[]

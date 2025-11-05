@@ -1,0 +1,3 @@
+BFoo<Bar<Little, Big<F>>>[][] extends A
+
+*****(type (arrayType (classOrParamOrSymbolicType (paramType (identifier BFoo) (typeArguments < (typeArgumentList (typeArgument (referenceType (classOrParamOrSymbolicType (paramType (identifier Bar) (typeArguments < (typeArgumentList (typeArgument (referenceType (classOrParamOrSymbolicType (classType (identifier Little))))) , (typeArgument (referenceType (classOrParamOrSymbolicType (paramType (identifier Big) (typeArguments < (typeArgumentList (typeArgument (referenceType (classOrParamOrSymbolicType (symbolicType (upperCase F)))))) >)))))) >)))))) >))) (dims [ ] [ ]) (typeBound extends (referenceType (classOrParamOrSymbolicType (symbolicType (upperCase A)))))))__OR__BFoo<Bar<Little, Big<F>>>[][]

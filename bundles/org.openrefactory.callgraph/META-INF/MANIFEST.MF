@@ -5,6 +5,8 @@ Bundle-SymbolicName: org.openrefactory.callgraph;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: OpenRefactory
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-ClassPath: .,
+ lib/antlr-4.9.1-complete.jar
 Import-Package: org.json;version="20250517.0.0"
 Require-Bundle: 
  org.eclipse.jface.text;bundle-version="3.28.100",

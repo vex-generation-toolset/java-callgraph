@@ -1,0 +1,3 @@
+String@MyAnnotation[]
+
+*****(type (arrayType (scalarType (scalarBoxed String)) (dims (annotation (at @) (identifier MyAnnotation)) [ ])))__OR__String[]

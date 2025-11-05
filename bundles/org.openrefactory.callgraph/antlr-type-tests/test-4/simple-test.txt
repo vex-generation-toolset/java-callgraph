@@ -1,0 +1,3 @@
+B extends Z
+
+*****(type (symbolicType (upperCase B) (typeBound extends (referenceType (classOrParamOrSymbolicType (symbolicType (upperCase Z)))))))__OR__B extends Z

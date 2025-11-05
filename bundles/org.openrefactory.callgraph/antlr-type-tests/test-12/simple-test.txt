@@ -1,0 +1,3 @@
+Afloat<String>	
+*****(type (paramType (identifier Afloat) (typeArguments < (typeArgumentList (typeArgument (scalarBoxed String))) >)))__OR__Afloat<String>
+## test for scalerType

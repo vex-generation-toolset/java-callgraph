@@ -1,0 +1,2 @@
+T extends Foo
+*****(type (symbolicType (upperCase T) (typeBound extends (typeVariable (identifier Foo)))))__OR__T extends Foo

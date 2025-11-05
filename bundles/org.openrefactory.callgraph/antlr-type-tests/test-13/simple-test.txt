@@ -1,0 +1,3 @@
+@Annotation int
+*****(type (scalarType (primitiveType (annotation (at @) (identifier Annotation)) (numericType (integralType int)))))__OR__int
+## test for scalarType: primitiveType

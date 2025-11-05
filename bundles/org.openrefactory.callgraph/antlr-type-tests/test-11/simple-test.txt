@@ -1,0 +1,3 @@
+@Annotation MyCustomClass<String, Foo> extends B
+
+*****(type (paramType (annotation (at @) (identifier Annotation)) (identifier MyCustomClass) (typeArguments < (typeArgumentList (typeArgument (scalarBoxed String)) , (typeArgument (referenceType (classOrParamOrSymbolicType (classType (identifier Foo)))))) >) (typeBound extends (referenceType (classOrParamOrSymbolicType (symbolicType (upperCase B)))))))__OR__@AnnotationMyCustomClass<String, Foo>
