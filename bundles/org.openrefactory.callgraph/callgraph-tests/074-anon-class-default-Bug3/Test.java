@@ -57,10 +57,14 @@ class AnonymousDemo {
    AnonymousDemo#foo2()$Polygon$2#getVal(), 
  */
 
+/*!!!!! AnonymousDemo#foo1(),  2, 424, 105, 542,11 */
+
 /*$$$$$ AnonymousDemo#foo1()$Polygon$1.<init>(), 
   1, 
   Polygon#Polygon(String@@@String) 
 */
+
+/*!!!!! AnonymousDemo#foo1()$Polygon$1.<init>(), 1, 448, 81 */
 
 
 /*$$$$$ AnonymousDemo#foo2(), 
@@ -73,12 +77,18 @@ class AnonymousDemo {
    AnonymousDemo#foo2()$Polygon$1#getVal(), 
  */
 
+/*!!!!! AnonymousDemo#foo2(), 3, 600, 99, 713,99,  826, 11 */
+
 /*$$$$$ AnonymousDemo#foo2()$Polygon$1.<init>(), 
   1,
   Polygon#Polygon() 
 */
 
+/*!!!!! AnonymousDemo#foo2()$Polygon$1.<init>(), 1, 614, 85 */
+
 /*$$$$$ AnonymousDemo#foo2()$Polygon$2.<init>(), 
   1,
   Polygon#Polygon() 
 */
+
+/*!!!!! AnonymousDemo#foo2()$Polygon$2.<init>(), 1, 727, 85*/

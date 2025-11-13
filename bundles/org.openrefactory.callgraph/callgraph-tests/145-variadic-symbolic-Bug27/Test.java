@@ -22,4 +22,4 @@ public class Example6 {
    Example6.display(int)
  */
 
-/*!!!!! Example6.main(String[]), 2,  374,10, 432,16 */
+/*!!!!! Example6.main(String[]), 2,  372,10, 430,16 */

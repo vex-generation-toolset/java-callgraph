@@ -37,3 +37,6 @@ public class AnotherClass {
 AnotherClass.main(String[]), 1,
 Example6Custom.Pair#Pair(K@@@V)
 */
+
+/*!!!!! Example6Custom#demo(), 1, 339,33 */
+/*!!!!! AnotherClass.main(String[]), 1, 562,48 */

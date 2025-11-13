@@ -1815,8 +1815,12 @@ public class CallGraphProcessor implements Runnable {
                                         // Added extended call graph information as described above
                                         CallGraphDataStructures.getExtendedCallGraph().addEdge(callerMethodHash,
                                                 defaultConsOfAnonClass, invocationTokenRange);
+                                        // Issue 30
+                                        // Get the token range of the body of the anonymous class declaration
+                                        TokenRange anonymousDeclarationTokenRange = ASTNodeUtility
+                                            .getTokenRangeFromNode(anonClass, filePath);
                                         CallGraphDataStructures.getExtendedCallGraph().addEdge(defaultConsOfAnonClass,
-                                                superclassServicingConstructorHash, invocationTokenRange);
+                                            superclassServicingConstructorHash, anonymousDeclarationTokenRange);
                                         // Create information about the servicing method for this class instance
                                         // creation
                                         calleeContenders =
@@ -2258,6 +2262,10 @@ public class CallGraphProcessor implements Runnable {
                     }
                 }
                 if (allowedToLinkToSuperClassConstructors) {
+                    // Issue 30
+                    // The caller is the default constructor
+                    // The call site is the body of the class
+                    TokenRange range = CallGraphUtility.getTokeRangeFromClassHash(hashOfConstructorContainer);
                     if (superClassHash.startsWith(Constants.LIB_TYPE)) {
                         // Issue 25
                         // Added extended call graph information for a link
@@ -2270,7 +2278,6 @@ public class CallGraphProcessor implements Runnable {
                         superClassConstructorIdentity.setStaticBit();
                         superClassConstructorIdentity.setConstructorBit();
                         superClassConstructorIdentity.setDefaultBit();
-                        TokenRange range = CallGraphUtility.getTokeRangeFromMethodHash(constructorHash);
                         Pair<String, String> methodInfoPair = CallGraphUtility.getHashCodeAndSignatureOfLibraryMethod(
                             superClassConstructorIdentity, superClassHash, range);
                         if (methodInfoPair != null) {
@@ -2283,7 +2290,7 @@ public class CallGraphProcessor implements Runnable {
                         }
                     } else {
                         addCGEdgeToAppropriateSuperClassConstructor(
-                            superClassHash, constructorHash, anonymousInnerInstanceCreation, null);
+                            superClassHash, constructorHash, anonymousInnerInstanceCreation, range);
                     }
                 }
             }

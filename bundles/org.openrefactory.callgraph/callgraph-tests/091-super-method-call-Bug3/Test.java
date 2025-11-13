@@ -41,3 +41,6 @@ class SubOuter extends Outer {
    1,
    org.openrefactory.test.BaseInner#display(),
 */
+
+/*!!!!! org.openrefactory.test.SubOuter.main(String[]), 3, 593,14, 593,26, 629,12 */
+/*!!!!! org.openrefactory.test.SubOuter.Inner#show(), 1, 483,15 */

@@ -17,3 +17,5 @@ public class Example10 {
   java.lang.Thread#Thread(Object),
   java.lang.Thread#start()
 */
+
+/*!!!!! Example10#demo(), 2, 106, 48, 164, 9 */

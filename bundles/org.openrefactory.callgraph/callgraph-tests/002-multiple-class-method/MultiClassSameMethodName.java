@@ -40,6 +40,10 @@ public class MultiClassSameMethodName {
     }
 }
 
+/*<<<<<8,4,10,4,caller,MultiClassSameMethodName:main([QString;)V,D:foo(QA;)QA;*/
+
+/*<<<<<35,16,35,29,caller, MultiClassSameMethodName:main([QString;)V,D:foo(QA;)QA;*/
+
 // Explanation:
 // (1) marker 1 selected class B's foo() method and its caller is according
 //     to the algorithm class D's foo() and class MultiClassSameMethodName's main().

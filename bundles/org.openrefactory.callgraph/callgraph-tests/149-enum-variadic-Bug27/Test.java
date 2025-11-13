@@ -21,4 +21,4 @@ public class Example8 {
    Priority.<staticinit>()
  */
 
-/*!!!!! Example8.main(String[]), 2, 315, 42, 266, 98 */
+/*!!!!! Example8.main(String[]), 2, 313, 42, 264, 98 */

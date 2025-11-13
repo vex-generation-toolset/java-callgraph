@@ -16,3 +16,5 @@ public class Example10 {
   java.util.ArrayList.<init>(),
   java.util.ArrayList#clone()
 */
+
+/*!!!!! Example10#demo(), 2, 164,17, 237, 13*/

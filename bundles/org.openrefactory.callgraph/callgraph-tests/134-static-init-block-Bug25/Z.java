@@ -29,3 +29,6 @@ public class Example3 {
   java.time.LocalDateTime.now(),
   LocalDateTime#format(Object),
 */
+
+/*!!!!! Example3.main(String[]), 1, 360,103 */
+/*!!!!! Example3.<staticinit>(), 2, 265,19, 265,82 */

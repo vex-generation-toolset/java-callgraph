@@ -37,3 +37,7 @@ class Outer {
 /*$$$$$ org.openrefactory.test.Outer.<init>(), 
   0, 
 */
+
+/*!!!!! org.openrefactory.test.Outer.main(String[]), 2, 431,11, 431,21 */
+/*!!!!! org.openrefactory.test.Outer#display(), 2, 331,16, 357,12 */
+/*!!!!! org.openrefactory.test.Outer.<init>(), 0 */

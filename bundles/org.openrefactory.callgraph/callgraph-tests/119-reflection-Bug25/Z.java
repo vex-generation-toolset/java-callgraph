@@ -16,3 +16,5 @@ public class Example9 {
   java.lang.Class#getConstructor(),
   java.lang.reflect.Constructor#newInstance()
 */
+
+/*!!!!! Example9#demo(), 2, 178, 27, 224, 15 */

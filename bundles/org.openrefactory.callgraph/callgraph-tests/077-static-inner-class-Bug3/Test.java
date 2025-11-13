@@ -37,3 +37,8 @@ class Outer {
   1,
   org.openrefactory.test.Outer.<staticinit>()
 */
+
+/*!!!!! org.openrefactory.test.Outer.main(String[]), 2, 348,18, 376,13 */
+/*!!!!! org.openrefactory.test.Outer.Nested.<init>(), 0 */
+/*!!!!! org.openrefactory.test.Outer.<init>(), 0 */
+/*!!!!! org.openrefactory.test.Outer.Nested#show(), 1, 201, 64 */

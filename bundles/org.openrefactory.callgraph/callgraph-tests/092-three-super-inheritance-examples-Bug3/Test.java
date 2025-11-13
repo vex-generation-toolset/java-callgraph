@@ -52,3 +52,5 @@ class BaseInner {
    org.openrefactory.test.SubOuter.Inner#display(),
    org.openrefactory.test.Outer#display(),
 */
+
+/*!!!!! org.openrefactory.test.SubOuter.Inner#show(), 3, 548,14, 676,15, 813,24 */

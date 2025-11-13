@@ -42,3 +42,6 @@ class B{
    1,
    org.openrefactory.test.Counter.<init>(),
 */
+
+/*!!!!! org.openrefactory.test.Counter.<init>(), 2, 156,7, 156,14 */
+/*!!!!! org.openrefactory.test.Counter#Counter(), 1, 191,36 */

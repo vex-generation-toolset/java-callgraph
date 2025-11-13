@@ -86,3 +86,8 @@ org.openrefactory.test.B#getS(),
 org.openrefactory.test.Counter#Counter(), 1, 
 org.openrefactory.test.Counter.<init>(),
 */
+
+/*!!!!! org.openrefactory.test.Counter.<init>(), 2, 316,7, 316,14 */
+/*!!!!! org.openrefactory.test.Counter.main(String[]), 2, 443,13, 382, 202 */
+/*!!!!! org.openrefactory.test.Counter.<staticinit>(), 4, 211,7, 211,14, 271,7, 271,14 */
+/*!!!!! org.openrefactory.test.Counter#Counter(), 1, 343,33 */

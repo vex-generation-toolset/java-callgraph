@@ -26,3 +26,5 @@ class Outer {
    org.openrefactory.test.Outer.Nested.InnerInNested.<init>(),
    org.openrefactory.test.Outer.Nested.InnerInNested#show(),
  */
+
+/*!!!!! org.openrefactory.test.Outer.main(String[]), 3, 386,18, 449,26, 485,12 */

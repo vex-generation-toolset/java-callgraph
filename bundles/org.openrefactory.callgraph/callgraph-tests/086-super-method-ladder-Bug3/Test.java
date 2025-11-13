@@ -33,3 +33,6 @@ class Child extends Parent {
    1,
    org.openrefactory.test.Parent#work(),
 */
+
+/*!!!!! org.openrefactory.test.Child.main(String[]), 2, 412,11, 412,18 */
+/*!!!!! org.openrefactory.test.Child#work(), 1, 258,12 */

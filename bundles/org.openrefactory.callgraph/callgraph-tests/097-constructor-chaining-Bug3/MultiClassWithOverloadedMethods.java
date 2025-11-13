@@ -59,3 +59,7 @@ public class MultiClassWithOverloadedMethods {
 
 /*$$$$$ D.<init>(), 1, A.<init>() */
 
+/*!!!!! A.<init>(), 0 */
+/*!!!!! B.<init>(), 1, 240,68 */
+/*!!!!! C.<init>(), 1, 483,111 */
+/*!!!!! D.<init>(), 1, 310,171 */
