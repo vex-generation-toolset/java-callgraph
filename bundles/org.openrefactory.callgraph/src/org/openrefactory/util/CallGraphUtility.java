@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -2167,4 +2168,25 @@ public class CallGraphUtility {
         }
     }
 
+    /**
+     * Issue 32
+     *
+     * Get the package and module name in which a class is in.
+     *
+     * @param classHash the class for which the package and module name is calculated
+     * @return A pair containing the package name and module name if available. Package name and
+     *         module name will be null if not found.
+     */
+    public static Pair<Name, Name> getPackageAndModuleName(String classHash) {
+        String sign = CallGraphDataStructures.getClassSignatureFromHash(classHash);
+        if (sign == null) return Pair.of(null, null);
+        ASTNode classNode = CallGraphUtility.getClassFromClassSignature(sign);
+        if (classNode == null) { return Pair.of(null, null); }
+        CompilationUnit comp = ASTNodeUtility.findNearestAncestor(classNode, CompilationUnit.class);
+        if (comp == null) { return Pair.of(null, null); }
+
+        Name packageName = comp.getPackage() == null ? null : comp.getPackage().getName();
+        Name moduleName = comp.getModule() == null ? null : comp.getModule().getName();
+        return Pair.of(packageName, moduleName);
+    }
 }
