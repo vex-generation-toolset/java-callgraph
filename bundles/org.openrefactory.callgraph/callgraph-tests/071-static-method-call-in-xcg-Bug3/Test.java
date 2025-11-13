@@ -24,6 +24,9 @@ class A {
 }
 
 /*$$$$$ Test.main(String[]), 2, Test.foo(), Test.bar() */
+
+/*!!!!! Test.main(String[]), 2, 145,5, 160, 10 */
+
 /*$$$$$ Test.foo(), 2, A.b(), Test.bar() */
 /*$$$$$ Test.bar(), 0 */
 

@@ -45,3 +45,5 @@ class MultithreadingDemo implements Callable<Integer>
   MultithreadingDemo#call(), 1,
   Z.<staticinit>()
 */
+
+/*!!!!! MultithreadingDemo#call(), 1, 531,110 */

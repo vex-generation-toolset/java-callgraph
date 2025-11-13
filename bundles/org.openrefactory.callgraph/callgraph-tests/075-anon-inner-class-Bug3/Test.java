@@ -41,12 +41,18 @@ class AnonymousDemo {
    org.openrefactory.test.Polygon#getVal() 
  */
 
+/*!!!!! org.openrefactory.test.AnonymousDemo#foo2(), 3, 366, 99, 479, 99, 592,11 */
+
 /*$$$$$ org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1.<init>(), 
   1,
   org.openrefactory.test.Polygon.<init>() 
 */
 
+/*!!!!! org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1.<init>(), 1, 380,85 */
+
 /*$$$$$ org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2.<init>(), 
   1,
   org.openrefactory.test.Polygon.<init>() 
 */
+
+/*!!!!! org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2.<init>(), 1, 493, 85 */

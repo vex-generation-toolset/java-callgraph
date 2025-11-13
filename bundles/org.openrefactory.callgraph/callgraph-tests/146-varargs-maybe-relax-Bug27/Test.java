@@ -17,4 +17,4 @@ public class Example7 {
    Example7.log(String@@@Object[]...)
  */
 
-/*!!!!! Example7.main(String[]), 1, 246, 56*/
+/*!!!!! Example7.main(String[]), 1, 244, 56*/

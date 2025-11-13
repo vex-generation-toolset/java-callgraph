@@ -36,3 +36,6 @@ public class Example1 {
   Example1.<init>(), 1,
   java.time.LocalDate.now(),
 */
+
+/*!!!!! Example1#show(), 0 */
+/*!!!!! Example1.<init>(), 1, 197,15 */

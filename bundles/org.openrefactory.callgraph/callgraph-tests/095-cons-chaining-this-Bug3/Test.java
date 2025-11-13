@@ -44,3 +44,6 @@ class Person {
     1,
     org.openrefactory.test.Person#Person(String@@@int),
 */
+
+/*!!!!! org.openrefactory.test.Person#Person(String), 1, 215,14 */
+/*!!!!! org.openrefactory.test.Person#Person(int), 1, 307,21 */

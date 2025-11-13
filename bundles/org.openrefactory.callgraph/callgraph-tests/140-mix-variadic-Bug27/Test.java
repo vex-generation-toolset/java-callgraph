@@ -26,6 +26,6 @@ public class Example2 {
   1, Example2.printSum(String@@@int[]...)
 */
 
-/*!!!!! Example2.main(String[]), 2,  299,26, 335,17, */
+/*!!!!! Example2.main(String[]), 2,  297,26, 333,17, */
 
-/*!!!!! Example2.main2(String[]), 1,  419,17, */
+/*!!!!! Example2.main2(String[]), 1,  417,17, */

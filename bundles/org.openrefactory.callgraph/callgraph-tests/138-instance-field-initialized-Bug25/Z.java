@@ -21,3 +21,6 @@ public class Example8 {
   Example8.<init>(), 1,
   java.util.List.of(String@@@String@@@String),
 */
+
+/*!!!!! Example8.main(String[]), 1, 286,14 */
+/*!!!!! Example8.<init>(), 1, 151,31 */

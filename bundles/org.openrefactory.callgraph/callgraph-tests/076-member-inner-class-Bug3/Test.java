@@ -27,14 +27,22 @@ class Outer {
    org.openrefactory.test.Outer.Inner#show(),
  */
 
+/*!!!!! org.openrefactory.test.Outer.main(String[]), 3, 339,11, 380,17, 407,12 */
+
 /*$$$$$ org.openrefactory.test.Outer.Inner.<init>(), 
   0, 
 */
+
+/*!!!!! org.openrefactory.test.Outer.Inner.<init>(), 0 */
 
 /*$$$$$ org.openrefactory.test.Outer.<init>(), 
   0, 
 */
 
+/*!!!!! org.openrefactory.test.Outer.<init>(), 0 */
+
 /*$$$$$ org.openrefactory.test.Outer.Inner#show(),
   0,
 */
+
+/*!!!!! org.openrefactory.test.Outer.Inner#show(), 0, */

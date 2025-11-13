@@ -19,3 +19,6 @@ public class Example4 {
   Example4#demo(), 1,
   Example4#demo()$Timer$1.<init>()
 */
+
+/*!!!!!
+Example4#demo(), 1, 127, 181 */

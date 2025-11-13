@@ -12,11 +12,14 @@ public class Example2 {
     }
 }
 
+/*!!!!! Example2.main(String[]), 1,  249, 95  */
+
 /*$$$$$
   Example2.main(String[]), 1,
   Example2.<staticinit>()
 */
 
+/*!!!!! Example2.<staticinit>(), 2, 214, 17, 214, 28 */
 
 /*$$$$$
   Example2.<staticinit>(), 2,

@@ -24,3 +24,5 @@ public class MyList<E> extends ArrayList<E> {
   MyList#add(E), 1,
   java.util.ArrayList#add(E)
  */
+
+/*!!!!! MyList#add(E), 1, 246,12 */

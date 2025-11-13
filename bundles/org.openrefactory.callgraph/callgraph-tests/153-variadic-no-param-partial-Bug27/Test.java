@@ -18,4 +18,4 @@ public class Example2 {
   1, Example2.printSum(Object@@@int[]...)
 */
 
-/*!!!!! Example2.main2(String[]),  1, 376,17 */
+/*!!!!! Example2.main2(String[]),  1, 374,17 */

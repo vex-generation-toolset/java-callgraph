@@ -42,3 +42,7 @@ class Box {
     1,
     org.openrefactory.test.Box#Box(int@@@int@@@int),
 */
+
+/*!!!!! org.openrefactory.test.Box.main(String[]), 1, 554,9 */
+/*!!!!! org.openrefactory.test.Box#Box(), 1, 199,8 */
+/*!!!!! org.openrefactory.test.Box#Box(int), 1, 262,23 */

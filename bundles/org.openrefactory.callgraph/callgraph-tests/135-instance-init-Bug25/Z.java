@@ -29,3 +29,6 @@ public class Example4 {
   java.util.Random#Random(),
   java.util.Random#nextInt(int),
 */
+
+/*!!!!! Example4.main(String[]), 1, 302, 14 */
+/*!!!!! Example4.<init>(), 2, 201, 12, 201, 26 */

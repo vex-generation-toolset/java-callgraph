@@ -34,3 +34,5 @@ class Child extends Parent {
    1,
    org.openrefactory.test.Parent#show(String),
 */
+
+/*!!!!! org.openrefactory.test.Child#show(), 1, 345,30 */

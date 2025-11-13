@@ -25,6 +25,6 @@ public class Example3 {
   1, Example3.joinStrings(String[]...)
 */
 
-/*!!!!! Example3.main(String[]),  2, 263,43, 316,13 */
+/*!!!!! Example3.main(String[]),  2, 261,43, 314,13 */
 
-/*!!!!! Example3.main2(String[]),  1, 414,13 */
+/*!!!!! Example3.main2(String[]),  1, 412,13 */

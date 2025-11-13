@@ -54,7 +54,7 @@ public class Z {
     }
 }
 
-/*!!!!! Z#foo(), 1, 1251, 34 */
+/*!!!!! Z#foo(), 1, 1249, 34 */
 
 /*$$$$$ Z#foo(), 
    1,
@@ -87,8 +87,8 @@ ComposedIterable#ComposedIterable(T@@@Iterable),
 ComposedIterable#ComposedIterable(Iterable@@@Iterable),
 */
 
-/*!!!!! Z#bar(), 1, 1358,34 */
-/*!!!!! Z#bazz(), 1, 1472,32 */
-/*!!!!! IterUtil.compose(Iterable@@@T), 1, 934,35 */
-/*!!!!! IterUtil.compose(T@@@Iterable), 1, 780,36 */
-/*!!!!! IterUtil.compose(Iterable@@@Iterable), 1,1103,31 */
+/*!!!!! Z#bar(), 1, 1356,34 */
+/*!!!!! Z#bazz(), 1, 1470,32 */
+/*!!!!! IterUtil.compose(Iterable@@@T), 1, 932,35 */
+/*!!!!! IterUtil.compose(T@@@Iterable), 1, 778,36 */
+/*!!!!! IterUtil.compose(Iterable@@@Iterable), 1,1101,31 */

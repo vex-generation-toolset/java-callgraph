@@ -23,3 +23,5 @@ class Outer {
    org.openrefactory.test.Outer.main(String[])$Greeting$1.<init>(),
    org.openrefactory.test.Outer.main(String[])$Greeting$1#sayHello(),
  */
+
+/*!!!!! org.openrefactory.test.Outer.main(String[]), 2, 239,168, 417,12 */

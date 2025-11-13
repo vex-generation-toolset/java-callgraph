@@ -25,3 +25,5 @@ public class Example6 {
   LocalDateTime#format(DateTimeFormatter),
   java.time.format.DateTimeFormatter.ofPattern(String)
 */
+
+/*!!!!! Example6.<init>(), 3, 193,19, 193, 111, 253, 50*/

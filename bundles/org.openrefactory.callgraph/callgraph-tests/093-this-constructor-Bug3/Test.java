@@ -32,3 +32,5 @@ class Car {
    1,
    org.openrefactory.test.Car#Car(),
 */
+
+/*!!!!! org.openrefactory.test.Car#Car(String), 1, 272,7 */

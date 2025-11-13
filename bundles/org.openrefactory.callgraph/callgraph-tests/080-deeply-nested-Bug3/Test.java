@@ -31,3 +31,5 @@ class Outer {
    org.openrefactory.test.Outer.Inner1.Inner2.Inner3.<init>(),
    org.openrefactory.test.Outer.Inner1.Inner2.Inner3#show(),
  */
+
+/*!!!!! org.openrefactory.test.Outer.main(String[]), 5, 400,11, 443,18, 500,19, 565,19, 594,13 */
