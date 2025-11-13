@@ -834,7 +834,7 @@ public class MethodMatchFinderUtil {
                                 .getBestMatchInfo(identityFromInvocation, identityOfDeclaredMethod, true);
                         if (matchInfo.fst.isTrue()) {
                             return hashIndexOfMethodWithSameSame;
-                        } else {
+                        } else if (matchInfo.fst.isMayBe()) {
                             if (bestMatchedMethodHashIndex == Constants.INVALID_METHOD_HASH_INDEX
                                     || isABetterMatch(mismatchInfo, matchInfo.snd)) {
                                 bestMatchedMethodHashIndex = hashIndexOfMethodWithSameSame;
