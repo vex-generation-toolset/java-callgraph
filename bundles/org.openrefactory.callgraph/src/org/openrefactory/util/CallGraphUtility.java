@@ -49,7 +49,6 @@ import org.openrefactory.analysis.callgraph.method.MethodInfoBundle;
 import org.openrefactory.analysis.callgraph.method.MethodMatchFinderUtil;
 import org.openrefactory.analysis.type.TypeCalculator;
 import org.openrefactory.analysis.type.typeinfo.ArrayTypeInfo;
-import org.openrefactory.analysis.type.typeinfo.ClassTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.SymbolicTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.TypeInfo;
 import org.openrefactory.util.datastructure.IntPair;
@@ -97,6 +96,11 @@ public class CallGraphUtility {
     // it is a spring specific dummy method.
     public static final String CG_DUMMY_METHOD = "DUMMY";
     public static final String CG_SPRING_BEAN_DUMMY_METHOD = "DUMMY__SPRING__BEAN";
+
+    // Issue 25, 27, 31
+    // Denotes library methods so that they can be filtered out
+    // from summary calculations.
+    public static final String CG_LIBRARY_CLASS = "CG_LIBRARY_CLASS";
 
     // We are creating a virtual connecting method, whose job is to play a role as a bridge
     // between all Beanfactory::getBean method to all Dummy method
@@ -495,8 +499,20 @@ public class CallGraphUtility {
         CompilationUnit cu = ASTNodeUtility.getCompilationUnitFromFilePath(splits[CG_FILENAME_INDEX]);
         int startPos = Integer.parseInt(splits[CG_METHOD_OFFSET]);
         int length = Integer.parseInt(splits[CG_METHOD_LENGTH]);
-        MethodDeclaration methodDeclaration = ASTNodeUtility.findNode(MethodDeclaration.class, cu, startPos, length);
-        return methodDeclaration;
+        String classType = splits[CG_METHOD_CLASS_TYPE];
+        // Issue 27, 31
+        // We have created library method hashes from the method invocations only.
+        // These are contained by a library class hash and that class hash does not have any more info.
+        // Here we filter those and return a null method declaration.
+        // Previously, Eclipse was giving us the enclosing the method declaration
+        // because it found the method invocation's hash and calculated the enclosing node
+        // that is of type method declaration. Now, stopped that path.
+        if (classType.equals(CallGraphUtility.CG_LIBRARY_CLASS)) {
+            return null;
+        } else {
+            MethodDeclaration methodDeclaration = ASTNodeUtility.findNode(MethodDeclaration.class, cu, startPos, length);
+            return methodDeclaration;
+        }
     }
 
     /**
@@ -1083,28 +1099,27 @@ public class CallGraphUtility {
         // get the full package name. We know that the calling context declared type
         // hash is fully qualified.
         StringBuilder methodNameBuilder = new StringBuilder();
-        if (callingContextDeclaredTypeHash != null) {
-            if (callingContextDeclaredTypeHash.contains(CG_SEPARATOR)) {
-                methodNameBuilder.append(callingContextDeclaredTypeHash.split(CG_SEPARATOR)[1]);
-            } else {
-                methodNameBuilder.append(callingContextDeclaredTypeHash);
-            }
-            if (identity.isStatic()) {
-                methodNameBuilder.append(".").append(identity.getMethodName());
-            } else {
-                methodNameBuilder.append("#").append(identity.getMethodName());
-            }
+        if (callingContextDeclaredTypeHash == null) {
+            callingContextDeclaredTypeHash = Constants.JAVA_LANG_OBJECT;
         }
-
+        if (callingContextDeclaredTypeHash.contains(CG_SEPARATOR)) {
+            callingContextDeclaredTypeHash = callingContextDeclaredTypeHash.split(CG_SEPARATOR)[1];
+        }
+        methodNameBuilder.append(callingContextDeclaredTypeHash);
+        if (identity.isStatic()) {
+            methodNameBuilder.append(".").append(identity.getMethodName());
+        } else {
+            methodNameBuilder.append("#").append(identity.getMethodName());
+        }
         // Get the class specific information, which is fictitious here.
         StringBuilder typeSignatureBuilder = new StringBuilder();
         typeSignatureBuilder.append("0")
                             .append(CG_SEPARATOR)
                             .append("0")
                             .append(CG_SEPARATOR)
-                            .append(new ClassTypeInfo(Constants.JAVA_LANG_OBJECT))
+                            .append(callingContextDeclaredTypeHash)
                             .append(CG_SEPARATOR)
-                            .append(CG_CLASS_CLASS);
+                            .append(CG_LIBRARY_CLASS);
 
         // Combine the parts
         StringBuilder fullMethodSignatureBuilder = new StringBuilder();
