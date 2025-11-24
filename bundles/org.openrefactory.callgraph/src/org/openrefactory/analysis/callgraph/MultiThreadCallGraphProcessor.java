@@ -638,7 +638,7 @@ public class MultiThreadCallGraphProcessor {
             // Clear the parametric class to typeInfo map, they are only used for CG phase 4
             CallGraphDataStructures.getParametricClassTypeInfoMap().clear();
 
-            progressReporter.showProgress("Call Graph Construction Complete");
+            progressReporter.showProgress("Call Graph Construction Complete. Now writing to a file....");
             // Previously we used to store call graph related data from here.
             // Currently, we are storing call graph data after framework analysis.
             isFreshlyCalculated = true;
