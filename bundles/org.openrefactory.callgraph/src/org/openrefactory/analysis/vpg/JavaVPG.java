@@ -103,7 +103,7 @@ public final class JavaVPG {
 	protected CompilationUnit parse(String filename) {
         IModelFileElement fileElement = Model.getInstance().getFile(filename);
         if (fileElement == null) return null;
-        ASTParser parser = ASTParser.newParser(AST.JLS11);
+        ASTParser parser = ASTParser.newParser(AST.JLS21);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         if (fileElement instanceof EclipseModelFileElement) {
             // If we are using eclipse model, then use the ICompilationUnit
