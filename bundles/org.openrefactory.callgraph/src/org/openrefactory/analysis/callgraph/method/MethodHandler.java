@@ -497,10 +497,27 @@ public class MethodHandler extends ASTVisitor {
         List<TypeInfo> argParamTypeInfos = new ArrayList<>();
         @SuppressWarnings("unchecked")
         List<SingleVariableDeclaration> params = node.parameters();
-        for (SingleVariableDeclaration param : params) {
-            // For a method's identity, use soft type
-            TypeInfo paramTypeInfo = TypeCalculator.typeOf(param, true);
-            argParamTypeInfos.add(paramTypeInfo);
+
+        // Issue 52: Handle compact constructors in records
+        // Compact constructors have no parameters in AST, but semantically they have parameters matching record components
+        if (node.isConstructor() && params.isEmpty() && node.getParent() instanceof RecordDeclaration) {
+            RecordDeclaration recordDecl = (RecordDeclaration) node.getParent();
+            List<?> components = recordDecl.recordComponents();
+            if (!components.isEmpty()) {
+                for (Object componentObj : components) {
+                    if (componentObj instanceof SingleVariableDeclaration) {
+                        SingleVariableDeclaration component = (SingleVariableDeclaration) componentObj;
+                        TypeInfo componentTypeInfo = TypeCalculator.typeOf(component, true);
+                        argParamTypeInfos.add(componentTypeInfo);
+                    }
+                }
+            }
+        } else {
+            for (SingleVariableDeclaration param : params) {
+                // For a method's identity, use soft type
+                TypeInfo paramTypeInfo = TypeCalculator.typeOf(param, true);
+                argParamTypeInfos.add(paramTypeInfo);
+            }
         }
         methodIdentity = new MethodIdentity(node.getName().getIdentifier(), returnTypeInfo, argParamTypeInfos);
         int modifiers = node.getModifiers();

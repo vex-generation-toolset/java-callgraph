@@ -106,4 +106,18 @@ public enum MethodIdentityBits {
      * interface hierarchies and call graph construction.</p>
      */
     DEFAULT,
+
+    /**
+     * Indicates that the method is an implicit method (e.g., record accessors).
+     *
+     * <p>Implicit methods are synthesized by the compiler and do not appear
+     * in the source code. Examples include:</p>
+     * <ul>
+     *   <li>Record canonical constructors</li>
+     *   <li>Record accessors</li>
+     *   <li>Record equals, hashCode, toString</li>
+     *   <li>Enum values() and valueOf()</li>
+     * </ul>
+     */
+    IMPLICIT,
 }

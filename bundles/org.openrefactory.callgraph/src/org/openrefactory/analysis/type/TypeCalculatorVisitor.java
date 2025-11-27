@@ -21,6 +21,7 @@ import org.openrefactory.analysis.type.typeinfo.ArrayTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.ClassTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.EnumTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.ParameterizedTypeInfo;
+import org.openrefactory.analysis.type.typeinfo.RecordTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.ScalarTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.SymbolicTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.TypeInfo;
@@ -705,6 +706,12 @@ public class TypeCalculatorVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(RequiresDirective node) {
+        return false;
+    }
+
+    @Override
+    public boolean visit(RecordDeclaration node) {
+        calculatedTypeInfo = getTypeInfo(node.resolveBinding(), null, null, visitorCalculatesSoftType);
         return false;
     }
 
@@ -1503,8 +1510,9 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                         // type parameters. We will try to get the actual type declaration node of
                         // this type binding and get the type parameters from that.
                         if (typeElementCount == 0) {
-                            typeDec = (TypeDeclaration) ASTNodeUtility.getDeclaringNode(typeBinding);
-                            if (typeDec != null) {
+                            ASTNode declaringNode = ASTNodeUtility.getDeclaringNode(typeBinding);
+                            if (declaringNode instanceof TypeDeclaration) {
+                                typeDec = (TypeDeclaration) declaringNode;
                                 typeElementCount = typeDec.typeParameters().size();
                             }
                         }
@@ -1928,6 +1936,15 @@ public class TypeCalculatorVisitor extends ASTVisitor {
             typeInfo = new ScalarTypeInfo(typeBinding.getName());
         } else if (typeBinding.isEnum()) {
             typeInfo = new EnumTypeInfo(hash);
+        } else if (typeBinding.isRecord()) {
+            Map<String, Pair<Pair<TokenRange, Integer>, TypeInfo>> fields = null;
+            if (!calculateSoftType && isCalculatingContainerType) {
+                fields = getFieldsFromClassType(hash);
+            }
+            if (fields == null) {
+                fields = Collections.emptyMap();
+            }
+            typeInfo = new RecordTypeInfo(hash, fields, typeBinding.isNested());
         } else {
             // If a class type is the container, then we calculate its fields if asked
             // If a class type is a field, then we have a soft type for it
@@ -2067,26 +2084,47 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                     } else {
                         // when we can not resolve binding
                         // we will create typeInfo of field using Type
+                        Type fieldType = null;
+                        // Try to find the field declaration type from different sources
                         FieldDeclaration fd = ASTNodeUtility.findNearestAncestor(fieldName, FieldDeclaration.class);
-                        Type fieldType = fd.getType();
-                        TypeDeclaration declaringClass =
-                                ASTNodeUtility.findNearestAncestor(fieldName, TypeDeclaration.class);
-                        // Skip if binding is null
-                        if (declaringClass.resolveBinding() == null) {
+                        if (fd != null) {
+                            fieldType = fd.getType();
+                        } else {
+                            // Check if it's a record component (SingleVariableDeclaration)
+                            SingleVariableDeclaration svd =
+                                    ASTNodeUtility.findNearestAncestor(fieldName, SingleVariableDeclaration.class);
+                            if (svd != null) {
+                                fieldType = svd.getType();
+                            }
+                        }
+                        AbstractTypeDeclaration declaringClass =
+                                ASTNodeUtility.findNearestAncestor(fieldName, AbstractTypeDeclaration.class);
+                        // Skip if declaring class or its binding is null
+                        if (declaringClass == null || declaringClass.resolveBinding() == null) {
                             continue;
                         }
                         String declaringClassHash = CallGraphUtility.getClassHashFromTypeBinding(
                                 declaringClass.resolveBinding(), null, filePath);
                         int declaringClassIndex = CallGraphDataStructures.getBitIndexFromClassHash(declaringClassHash);
-
                         TypeInfo calculatedFieldTypeInfo = null;
-                        Pair<String, TypeInfo> typeInfoAndHash = getAtomicTypeInfo(fieldType, null, null, false, true);
-                        if (typeInfoAndHash != null) {
-                            calculatedFieldTypeInfo = typeInfoAndHash.snd;
+                        if (fieldType == null) {
+                            // If fieldType is still null, check if it's an EnumConstant
+                            // For enum constants, the type is the enum itself
+                            EnumConstantDeclaration ecd =
+                                    ASTNodeUtility.findNearestAncestor(fieldName, EnumConstantDeclaration.class);
+                            if (ecd != null) {
+                                calculatedFieldTypeInfo = CallGraphUtility.getTypeInfoFromClassHash(declaringClassHash);
+                            }
+                        } else {
+                            // We have a fieldType, so calculate its TypeInfo
+                            Pair<String, TypeInfo> typeInfoAndHash = getAtomicTypeInfo(fieldType, null, null, false, true);
+                            if (typeInfoAndHash != null) {
+                                calculatedFieldTypeInfo = typeInfoAndHash.snd;
+                            }
                         }
                         if (calculatedFieldTypeInfo != null) {
                             fieldsMap.put(
-                                    declaringClass.getName() + Constants.FIELDNAME_SEPARATOR + fieldName,
+                                    declaringClass.getName().getIdentifier() + Constants.FIELDNAME_SEPARATOR + fieldName.getIdentifier(),
                                     Pair.of(Pair.of(fieldRange, declaringClassIndex), calculatedFieldTypeInfo));
                             if (fieldInfo != null) {
                                 fieldInfo.setTypeInfo(calculatedFieldTypeInfo);
@@ -2105,12 +2143,12 @@ public class TypeCalculatorVisitor extends ASTVisitor {
      * @param classHash the hash of the parameterized type
      * @param typeBinding the binding of the parameterized type
      * @param elementTypes the list containing the type info of the parameterized type arguments
-     * @param typeDec the type declaration node of current type binding
+     * @param typeDec the type declaration node of current type binding (can be TypeDeclaration or RecordDeclaration)
      * @return pair containing fields map and type arguments to fields mapping
      */
     private Pair<Map<String, Pair<Pair<TokenRange, Integer>, TypeInfo>>, Map<Integer, String>>
             getFieldsFromParameterizedType(
-                    String classHash, ITypeBinding typeBinding, List<TypeInfo> elementTypes, TypeDeclaration typeDec) {
+                    String classHash, ITypeBinding typeBinding, List<TypeInfo> elementTypes, AbstractTypeDeclaration typeDec) {
         Map<String, Pair<Pair<TokenRange, Integer>, TypeInfo>> fieldsMap = new HashMap<>();
         Map<Integer, String> typeArgsToFieldsMap = new HashMap<>();
 
@@ -2118,13 +2156,20 @@ public class TypeCalculatorVisitor extends ASTVisitor {
         // If we have already calculated type declaration in this methods caller method then we'll
         // use that from passed argument instead of recalculating again.
         if (typeDec == null) {
-            typeDec = (TypeDeclaration) ASTNodeUtility.getDeclaringNode(typeBinding);
+            ASTNode declaringNode = ASTNodeUtility.getDeclaringNode(typeBinding);
+            if (declaringNode instanceof AbstractTypeDeclaration) {
+                typeDec = (AbstractTypeDeclaration) declaringNode;
+            }
         }
-        if (typeDec != null) {
-            FieldDeclaration[] fieldDecs = typeDec.getFields();
+
+        // Records don't support type parameters in the same way as classes
+        // So we only process TypeDeclaration (classes/interfaces) here
+        if (typeDec != null && typeDec instanceof TypeDeclaration) {
+            TypeDeclaration typeDeclaration = (TypeDeclaration) typeDec;
+            FieldDeclaration[] fieldDecs = typeDeclaration.getFields();
             // The type parameters are the parameters in the parameterized type declaration
             @SuppressWarnings("unchecked")
-            List<TypeParameter> typeParams = typeDec.typeParameters();
+            List<TypeParameter> typeParams = typeDeclaration.typeParameters();
             int i = 0;
             // We are matching the type parameters, say
             //    Pair <S, T>
@@ -2137,7 +2182,7 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                         List<VariableDeclarationFragment> fragments = fieldDeclaration.fragments();
                         for (VariableDeclarationFragment fragment : fragments) {
                             TypeInfo fieldTypeInfo = null;
-                            String fieldName = typeDec.getName().getIdentifier()
+                            String fieldName = typeDeclaration.getName().getIdentifier()
                                     + Constants.FIELDNAME_SEPARATOR
                                     + fragment.getName().getIdentifier();
                             if (!elementTypes.isEmpty()) {
@@ -2156,11 +2201,11 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                             if (fieldTypeInfo != null) {
                                 typeArgsToFieldsMap.put(i, fieldName);
                                 // Skip if binding is null
-                                if (typeDec.resolveBinding() != null) {
+                                if (typeDeclaration.resolveBinding() != null) {
                                     String containerTypeHash = CallGraphUtility.getClassHashFromTypeBinding(
-                                            typeDec.resolveBinding(), null, filePath);
+                                            typeDeclaration.resolveBinding(), null, filePath);
                                     CompilationUnit cu =
-                                            ASTNodeUtility.findNearestAncestor(typeDec, CompilationUnit.class);
+                                            ASTNodeUtility.findNearestAncestor(typeDeclaration, CompilationUnit.class);
                                     String fileName = ASTNodeUtility.getFilePathFromCompilationUnit(cu);
                                     TokenRange fieldRange =
                                             new TokenRange(fragment.getStartPosition(), fragment.getLength(), fileName);
@@ -2183,16 +2228,16 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                             @SuppressWarnings("unchecked")
                             List<VariableDeclarationFragment> fragments = fieldDeclaration.fragments();
                             for (VariableDeclarationFragment fragment : fragments) {
-                                String fieldName = typeDec.getName().getIdentifier()
+                                String fieldName = typeDeclaration.getName().getIdentifier()
                                         + Constants.FIELDNAME_SEPARATOR
                                         + fragment.getName().getIdentifier();
                                 typeArgsToFieldsMap.put(i, fieldName);
                                 // Skip if binding is null
-                                if (typeDec.resolveBinding() != null) {
+                                if (typeDeclaration.resolveBinding() != null) {
                                     String containerClassHash = CallGraphUtility.getClassHashFromTypeBinding(
-                                            typeDec.resolveBinding(), null, filePath);
+                                            typeDeclaration.resolveBinding(), null, filePath);
                                     CompilationUnit cu =
-                                            ASTNodeUtility.findNearestAncestor(typeDec, CompilationUnit.class);
+                                            ASTNodeUtility.findNearestAncestor(typeDeclaration, CompilationUnit.class);
                                     String fileName = ASTNodeUtility.getFilePathFromCompilationUnit(cu);
                                     TokenRange fieldRange =
                                             new TokenRange(fragment.getStartPosition(), fragment.getLength(), fileName);

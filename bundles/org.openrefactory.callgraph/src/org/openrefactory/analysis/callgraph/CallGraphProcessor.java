@@ -41,8 +41,10 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
@@ -56,6 +58,7 @@ import org.openrefactory.analysis.callgraph.method.MethodInvocationCalculationSc
 import org.openrefactory.analysis.callgraph.method.MethodInvocationType;
 import org.openrefactory.analysis.callgraph.method.MethodMatchFinderUtil;
 import org.openrefactory.analysis.type.TypeCalculator;
+import org.openrefactory.analysis.type.typeinfo.ArrayTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.ParameterizedTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.ScalarTypeInfo;
 import org.openrefactory.analysis.type.typeinfo.SymbolicTypeInfo;
@@ -481,11 +484,19 @@ public class CallGraphProcessor implements Runnable {
         // Adding a default and static constructor and updating the map
         // We use the same function to create both default and static constructor,
         // for normal default constructor, we pass 'false' in last the parameter
-        createAndPopulateDefaultConstructor(binding, tokenRange, pairClassHashAndSign, false);
-        // Create static constructor only if any static field exist for this class,
-        // for static constructor we pass 'true' in last the parameter
-        if (hasStaticFields) {
-            createAndPopulateDefaultConstructor(binding, tokenRange, pairClassHashAndSign, true);
+        // Issue 52: Records have canonical constructors, not default constructors
+        if (!(declaration instanceof RecordDeclaration)) {
+            createAndPopulateDefaultConstructor(binding, tokenRange, pairClassHashAndSign, false);
+            // Create static constructor only if any static field exist for this class,
+            // for static constructor we pass 'true' in last the parameter
+            if (hasStaticFields) {
+                createAndPopulateDefaultConstructor(binding, tokenRange, pairClassHashAndSign, true);
+            }
+        }
+
+        if (declaration instanceof RecordDeclaration) {
+            createAndPopulateRecordImplicitMethods(
+                    (RecordDeclaration) declaration, binding, tokenRange, pairClassHashAndSign);
         }
         // Step (7)
         // Calculate and populate soft type info
@@ -551,6 +562,127 @@ public class CallGraphProcessor implements Runnable {
             CallGraphDataStructures.addToClassToDefaultConstructorMap(classHashAndSign.fst, defaultConstructor.fst);
         }
         CallGraphDataStructures.addMethodIdentity(methodHashIndex, identity);
+    }
+
+    /**
+     * Issue 52
+     *
+     * Creates implicit methods for a record (canonical constructor, accessors, equals, hashCode, toString).
+     *
+     * @param recordDeclaration the record declaration
+     * @param binding the type binding of the record
+     * @param tokenRange the token range of the record
+     * @param classHashAndSign the class hash and signature pair
+     */
+    private void createAndPopulateRecordImplicitMethods(
+            RecordDeclaration recordDeclaration,
+            ITypeBinding binding,
+            TokenRange tokenRange,
+            Pair<String, String> classHashAndSign) {
+        IMethodBinding[] declaredMethods = binding.getDeclaredMethods();
+        // Get explicit methods from body declarations to include compact constructors
+        Set<String> explicitMethodKeys = new HashSet<>();
+        for (Object bodyDecl : recordDeclaration.bodyDeclarations()) {
+            if (bodyDecl instanceof MethodDeclaration) {
+                MethodDeclaration md = (MethodDeclaration) bodyDecl;
+                IMethodBinding mb = md.resolveBinding();
+                if (mb != null) {
+                    explicitMethodKeys.add(mb.getKey());
+                }
+            }
+        }
+        for (IMethodBinding methodBinding : declaredMethods) {
+            // Check if it is an implicit method
+            if (!explicitMethodKeys.contains(methodBinding.getKey())) {
+                // Skip canonical constructor.
+                // It's always explicit for records
+                // even when using compact constructor syntax.
+                if (methodBinding.isConstructor() && isCanonicalConstructor(methodBinding, recordDeclaration)) {
+                    continue;
+                }
+                // For implicit methods, we need to create a synthetic signature
+                // Use the provided container signature
+                if (classHashAndSign.snd == null) {
+                    continue;
+                }
+                Pair<String, String> methodHashAndSign = CallGraphUtility.createImplicitRecordMethod(
+                        methodBinding, classHashAndSign.snd, tokenRange.getFileName());
+                if (methodHashAndSign == null) {
+                    continue;
+                }
+                // Create MethodIdentity
+                String methodName = methodBinding.getName();
+                TypeInfo returnTypeInfo =
+                        TypeCalculator.typeOf(methodBinding.getReturnType(), tokenRange.getFileName(), null, null, true);
+                List<TypeInfo> argTypeInfos = new ArrayList<>();
+                ITypeBinding[] paramTypes = methodBinding.getParameterTypes();
+                for (int i = 0; i < paramTypes.length; i++) {
+                    TypeInfo paramTypeInfo = TypeCalculator.typeOf(paramTypes[i], tokenRange.getFileName(), null, null, true);
+                    // Handle varargs for record methods
+                    // If this is the last parameter and the method has varargs, mark it as varargs
+                    if (i == paramTypes.length - 1 && methodBinding.isVarargs()) {
+                        if (paramTypeInfo instanceof ArrayTypeInfo) {
+                            paramTypeInfo = new ArrayTypeInfo(
+                                    ((ArrayTypeInfo) paramTypeInfo).getDimension(),
+                                    ((ArrayTypeInfo) paramTypeInfo).getElementType(),
+                                    true);
+                        }
+                    }
+                    argTypeInfos.add(paramTypeInfo);
+                }
+                MethodIdentity identity = new MethodIdentity(methodName, returnTypeInfo, argTypeInfos);
+                identity.setImplicitBit();
+                if (methodBinding.isConstructor()) {
+                    identity.setConstructorBit();
+                    CallGraphDataStructures.addToClassToDefaultConstructorMap(classHashAndSign.fst, methodHashAndSign.fst);
+                }
+                if (Modifier.isStatic(methodBinding.getModifiers())) {
+                    identity.setStaticBit();
+                }
+                // Add to data structures
+                int index = CallGraphDataStructures.getMethodHashIndexAndPotentiallyUpdateOtherInitialStructures(
+                        methodHashAndSign.fst, methodHashAndSign.snd);
+                CallGraphDataStructures.addToClassToMethodsMap(classHashAndSign.fst, methodName, index);
+                CallGraphDataStructures.addMethodIdentity(index, identity);
+            }
+        }
+    }
+
+    /**
+     * Issue 52
+     *
+     * Checks if a constructor is the canonical constructor for a record.
+     * The canonical constructor has parameters matching the record components.
+     *
+     * @param constructorBinding the constructor binding to check
+     * @param recordDeclaration the record declaration
+     * @return true if this is the canonical constructor
+     */
+    private boolean isCanonicalConstructor(IMethodBinding constructorBinding, RecordDeclaration recordDeclaration) {
+        if (!constructorBinding.isConstructor()) {
+            return false;
+        }
+        // Get record components
+        List<?> components = recordDeclaration.recordComponents();
+        ITypeBinding[] paramTypes = constructorBinding.getParameterTypes();
+        // Canonical constructor has same number of parameters as components
+        if (components.size() != paramTypes.length) {
+            return false;
+        }
+        // Check if parameter types match component types
+        for (int i = 0; i < components.size(); i++) {
+            SingleVariableDeclaration component = (SingleVariableDeclaration) components.get(i);
+            ITypeBinding componentType = component.getType().resolveBinding();
+            ITypeBinding paramType = paramTypes[i];
+            if (componentType == null || paramType == null) {
+                continue;
+            }
+            // Check if types match (considering erasure for generics)
+            if (!paramType.isEqualTo(componentType) && !paramType.getErasure().isEqualTo(componentType.getErasure())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -904,6 +1036,15 @@ public class CallGraphProcessor implements Runnable {
                     fields.add((FieldDeclaration) bodyDecl);
                 }
             }
+        } else if (declaration instanceof RecordDeclaration) {
+            RecordDeclaration recordDeclaration = (RecordDeclaration) declaration;
+            for (Object bodyDecl : recordDeclaration.bodyDeclarations()) {
+                if (bodyDecl instanceof MethodDeclaration) {
+                    methods.add((MethodDeclaration) bodyDecl);
+                } else if (bodyDecl instanceof FieldDeclaration) {
+                    fields.add((FieldDeclaration) bodyDecl);
+                }
+            }
         }
         // Step (2)
         // Calculate method hashes and method identities from method declarations
@@ -1082,6 +1223,8 @@ public class CallGraphProcessor implements Runnable {
             } else if (declaration instanceof AnonymousClassDeclaration) {
                 addCGEdgeFromThisClassToSuperClassConstructor(
                         defaultConstructorHash, binding, null, ((AnonymousClassDeclaration) declaration).getParent());
+            } else if (declaration instanceof RecordDeclaration) {
+                addCGEdgeFromThisClassToSuperClassConstructor(defaultConstructorHash, binding, null, null);
             }
             // Step (2)
             // Link default constructor with field init method invocations
@@ -1104,6 +1247,8 @@ public class CallGraphProcessor implements Runnable {
             bodyDeclarations = ((AnonymousClassDeclaration) declaration).bodyDeclarations();
         } else if (declaration instanceof EnumDeclaration) {
             bodyDeclarations = ((EnumDeclaration) declaration).bodyDeclarations();
+        } else if (declaration instanceof RecordDeclaration) {
+            bodyDeclarations = ((RecordDeclaration) declaration).bodyDeclarations();
         }
         if (bodyDeclarations != null) {
             for (BodyDeclaration bodyDeclaration : bodyDeclarations) {

@@ -45,6 +45,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.SwitchStatement;
@@ -189,6 +190,10 @@ public class ASTNodeUtility {
                         && ((TypeDeclarationStatement) temp).getDeclaration() instanceof EnumDeclaration) {
                     temp = ((TypeDeclarationStatement) temp).getDeclaration();
                     break;
+                } else if (nodeType.isAssignableFrom(RecordDeclaration.class)
+                        && ((TypeDeclarationStatement) temp).getDeclaration() instanceof RecordDeclaration) {
+                    temp = ((TypeDeclarationStatement) temp).getDeclaration();
+                    break;
                 }
             }
             temp = temp.getParent();
@@ -206,6 +211,9 @@ public class ASTNodeUtility {
                     return (T) ((TypeDeclarationStatement) temp).getDeclaration();
                 } else if (nodeType.isAssignableFrom(EnumDeclaration.class)
                         && ((TypeDeclarationStatement) temp).getDeclaration() instanceof EnumDeclaration) {
+                    return (T) ((TypeDeclarationStatement) temp).getDeclaration();
+                } else if (nodeType.isAssignableFrom(RecordDeclaration.class)
+                        && ((TypeDeclarationStatement) temp).getDeclaration() instanceof RecordDeclaration) {
                     return (T) ((TypeDeclarationStatement) temp).getDeclaration();
                 }
             }
@@ -755,7 +763,8 @@ public class ASTNodeUtility {
             for (ASTNode child : children) {
                 if (child instanceof AnonymousClassDeclaration
                         || child instanceof TypeDeclaration
-                        || child instanceof EnumDeclaration) {
+                        || child instanceof EnumDeclaration
+                        || child instanceof RecordDeclaration) {
                     continue;
                 }
                 findAndPopulateAllInThisScope(child, clazzes, resultsMap);

@@ -37,6 +37,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -135,6 +136,7 @@ public class CallGraphUtility {
     public static final String CG_CLASS_ENUM = "enum";
     // Separate abstract class from regular class
     public static final String CG_CLASS_ABSTRACT = "abstract";
+    public static final String CG_CLASS_RECORD = "record";
 
     // Various kinds of annotations detected at call graph stage
     public static final String ANNOTATION_THREADSAFE = "ThreadSafe";
@@ -142,7 +144,7 @@ public class CallGraphUtility {
     // Class signature indices
     public static final int CG_FILENAME_INDEX = 0;
     public static final int CG_CLASS_OFFSET = 1;
-    public static final int CG_CLASS_LENTGH = 2;
+    public static final int CG_CLASS_LENGTH = 2;
     public static final int CG_CLASS_NAME = 3;
     public static final int CG_CLASS_TYPE = 4;
     // Method signature indices
@@ -347,7 +349,8 @@ public class CallGraphUtility {
                 && !((containerClassOrEnum instanceof TypeDeclaration)
                         || (containerClassOrEnum instanceof EnumDeclaration)
                         || (containerClassOrEnum instanceof AnonymousClassDeclaration)
-                        || (containerClassOrEnum instanceof AnnotationTypeDeclaration))) {
+                        || (containerClassOrEnum instanceof AnnotationTypeDeclaration)
+                        || (containerClassOrEnum instanceof RecordDeclaration))) {
             containerClassOrEnum = containerClassOrEnum.getParent();
         }
         return containerClassOrEnum;
@@ -363,7 +366,8 @@ public class CallGraphUtility {
         ASTNode containerNode;
         if (node instanceof TypeDeclaration
                 || node instanceof AnonymousClassDeclaration
-                || node instanceof EnumDeclaration) {
+                || node instanceof EnumDeclaration
+                || node instanceof RecordDeclaration) {
             containerNode = node;
         } else {
             containerNode = getContainerClassOrEnumOfFieldOrMethod(node);
@@ -375,6 +379,8 @@ public class CallGraphUtility {
                 return ((AnonymousClassDeclaration) containerNode).resolveBinding();
             } else if (containerNode instanceof EnumDeclaration) {
                 return ((EnumDeclaration) containerNode).resolveBinding();
+            } else if (containerNode instanceof RecordDeclaration) {
+                return ((RecordDeclaration) containerNode).resolveBinding();
             } else {
                 return null;
             }
@@ -593,7 +599,7 @@ public class CallGraphUtility {
         int offset, length;
         if (isClass) {
             offset = Integer.parseInt(splits[CG_CLASS_OFFSET]);
-            length = Integer.parseInt(splits[CG_CLASS_LENTGH]);
+            length = Integer.parseInt(splits[CG_CLASS_LENGTH]);
         } else {
             offset = Integer.parseInt(splits[CG_METHOD_CLASS_OFFSET]);
             length = Integer.parseInt(splits[CG_METHOD_CLASS_LENGTH]);
@@ -622,11 +628,14 @@ public class CallGraphUtility {
      * @return the AST node representing the class, enum, or anonymous class
      */
     public static ASTNode getClassFromClassSignature(String signature) {
+        if (signature == null) {
+            return null;
+        }
         String[] splits = signature.split(CG_SEPARATOR);
         String fileName = splits[CG_FILENAME_INDEX];
         CompilationUnit cu = ASTNodeUtility.getCompilationUnitFromFilePath(fileName);
         int offset = Integer.parseInt(splits[CG_CLASS_OFFSET]);
-        int length = Integer.parseInt(splits[CG_CLASS_LENTGH]);
+        int length = Integer.parseInt(splits[CG_CLASS_LENGTH]);
         ASTNode typeDeclaration = null;
         if (splits[CG_CLASS_TYPE].equals(CG_CLASS_CLASS)
                 || splits[CG_CLASS_TYPE].equals(CG_CLASS_INTERFACE)
@@ -636,6 +645,8 @@ public class CallGraphUtility {
             typeDeclaration = ASTNodeUtility.findNode(EnumDeclaration.class, cu, offset, length);
         } else if (splits[CG_CLASS_TYPE].equals(CG_CLASS_ANON)) {
             typeDeclaration = ASTNodeUtility.findNode(AnonymousClassDeclaration.class, cu, offset, length);
+        } else if (splits[CG_CLASS_TYPE].equals(CG_CLASS_RECORD)) {
+            typeDeclaration = ASTNodeUtility.findNode(RecordDeclaration.class, cu, offset, length);
         }
         return typeDeclaration;
     }
@@ -668,6 +679,8 @@ public class CallGraphUtility {
                 return EnumDeclaration.class;
             } else if (splits[CG_CLASS_TYPE].equals(CG_CLASS_ANON)) {
                 return AnonymousClassDeclaration.class;
+            } else if (splits[CG_CLASS_TYPE].equals(CG_CLASS_RECORD)) {
+                return RecordDeclaration.class;
             }
         }
         return null;
@@ -740,6 +753,8 @@ public class CallGraphUtility {
             // binding already calculated above
         } else if (containerDeclaration instanceof AnonymousClassDeclaration) {
             typeBinding = ((AnonymousClassDeclaration) containerDeclaration).resolveBinding();
+        } else if (containerDeclaration instanceof RecordDeclaration) {
+            typeBinding = ((RecordDeclaration) containerDeclaration).resolveBinding();
         }
         if (typeBinding != null) {
             return getClassHashFromTypeBinding(typeBinding, declarationTokenRange, filePath);
@@ -818,6 +833,8 @@ public class CallGraphUtility {
                 typeType = CG_CLASS_INTERFACE;
             } else if (binding.isEnum()) {
                 typeType = CG_CLASS_ENUM;
+            } else if (binding.isRecord()) {
+                typeType = CG_CLASS_RECORD;
             } else if (Modifier.isAbstract(binding.getModifiers())) {
                 // Separate abstract class from regular class
                 typeType = CG_CLASS_ABSTRACT;
@@ -1033,11 +1050,17 @@ public class CallGraphUtility {
                     typeSignatureBuilder.append(CG_CLASS_INTERFACE);
                 } else if (type.isEnum()) {
                     typeSignatureBuilder.append(CG_CLASS_ENUM);
+                } else if (type.isRecord()) {
+                    typeSignatureBuilder.append(CG_CLASS_RECORD);
                 } else {
                     CompilationUnit cu = ASTNodeUtility.getCompilationUnitFromFilePath(fileName);
-                    TypeDeclaration parent = ASTNodeUtility.findNode(
+                    AbstractTypeDeclaration parent = ASTNodeUtility.findNode(
                             TypeDeclaration.class, cu, source.getOffset(), source.getLength());
-                    if (Modifier.isAbstract(parent.getModifiers())) {
+                    if (parent == null) {
+                        parent = ASTNodeUtility.findNode(
+                                RecordDeclaration.class, cu, source.getOffset(), source.getLength());
+                    }
+                    if (parent != null && Modifier.isAbstract(parent.getModifiers())) {
                         // Separate abstract class from regular class
                         typeSignatureBuilder.append(CG_CLASS_ABSTRACT);
                     } else {
@@ -1246,7 +1269,8 @@ public class CallGraphUtility {
                 && containerClassBinding != null
                 && (containerClassBinding.isClass()
                         || containerClassBinding.isInterface()
-                        || containerClassBinding.isEnum())) {
+                        || containerClassBinding.isEnum()
+                        || containerClassBinding.isRecord())) {
             boolean processMethod = false;
             if (declaration.getBody() == null) {
                 // For methods marked abstract or methods with empty bodies that are in an
@@ -1487,12 +1511,58 @@ public class CallGraphUtility {
                 if (callingContextDeclaredtype != null && !(callingContextDeclaredtype instanceof ArrayTypeInfo)) {
                     callingContextDeclaredTypeHash = callingContextDeclaredtype.getName();
                 }
+            TypeInfo callingContextDeclaredtype = TypeCalculator.getCallingContextType(
+                    callingContextExpressionOfInvocation, methodCallingContextCache);
+            // Skip if the calling context type is Array
+            if (callingContextDeclaredtype != null && !(callingContextDeclaredtype instanceof ArrayTypeInfo)) {
+                callingContextDeclaredTypeHash = callingContextDeclaredtype.getName();
+                // Issue 52
+                // When TypeInfo returns a simple type name (like "String")
+                // instead of a library type hash, convert it to the proper library type hash.
+                // This happens when resolving library types from record method contexts.
+                if (callingContextDeclaredTypeHash != null && !callingContextDeclaredTypeHash.contains("@")) {
+                    // Check if it's a simple name (no package separator, no hash separator)
+                    // Try to get the library type hash for common library classes
+                    String potentialLibraryHash = getLibraryTypeHashFromSimpleName(callingContextDeclaredTypeHash, invocation);
+                    if (potentialLibraryHash != null) {
+                        callingContextDeclaredTypeHash = potentialLibraryHash;
+                    }
+                }
             }
         } else {
             // No calling context expression, so calling context type is this
             callingContextDeclaredTypeHash = getContainerHashFromInvocation(invocation, callerMethodHash);
         }
         return callingContextDeclaredTypeHash;
+    }
+
+    /**
+     * Issue 52
+     *
+     * Converts a simple type name to a library type hash.
+     * This is a workaround for cases where TypeInfo returns simple names instead of proper hashes.
+     *
+     * @param simpleName the simple type name (e.g., "String", "Integer")
+     * @param invocation the method invocation context for getting AST
+     * @return the library type hash, or null if not a known library type
+     */
+    private static String getLibraryTypeHashFromSimpleName(String simpleName, MethodInvocation invocation) {
+        // For common java.lang types, construct the fully qualified name
+        // and get the library hash
+        try {
+            // Try to resolve as java.lang type first
+            String qualifiedName = "java.lang." + simpleName;
+            // Get compilation unit from the invocation
+            CompilationUnit cu = ASTNodeUtility.findNearestAncestor(invocation, CompilationUnit.class);
+            if (cu != null && cu.getAST() != null) {
+                ITypeBinding binding = cu.getAST().resolveWellKnownType(qualifiedName);
+                if (binding != null) {
+                    return getLibraryTypeHash(binding, null);
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     /**
@@ -1575,14 +1645,14 @@ public class CallGraphUtility {
         boolean isResolved = false;
         if (binding.isArray()) {
             ITypeBinding elementType = binding.getElementType();
-            isResolved = (elementType.isClass() || elementType.isInterface() || binding.isEnum())
+            isResolved = (elementType.isClass() || elementType.isInterface() || binding.isEnum() || binding.isRecord())
                     && elementType.isFromSource()
                     && (elementType.getJavaElement() instanceof IType);
         } else {
             // 'binding.getJavaElement()' was causing an internal NPE. So added a try-catch to
             // suppress the exception.
             try {
-                isResolved = (binding.isClass() || binding.isInterface() || binding.isEnum())
+                isResolved = (binding.isClass() || binding.isInterface() || binding.isEnum() || binding.isRecord())
                         && binding.isFromSource()
                         && (binding.getJavaElement() instanceof IType);
             } catch (Exception e) {
@@ -1599,7 +1669,7 @@ public class CallGraphUtility {
      * @return true if the binding is a library type, false otherwise
      */
     public static boolean isLibraryType(ITypeBinding binding) {
-        return binding != null && (binding.isClass() || binding.isInterface()) && !binding.isFromSource();
+        return binding != null && (binding.isClass() || binding.isInterface() || binding.isRecord()) && !binding.isFromSource();
     }
 
     /**
@@ -1884,6 +1954,65 @@ public class CallGraphUtility {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Creates the SHA1 hash and signature for an implicit record method.
+     * This is used for methods like accessors, equals, hashCode, toString that are
+     * synthesized by the compiler and don't exist in source code.
+     *
+     * @param methodBinding the method binding for the implicit method
+     * @param containerSignature the signature of the containing record class
+     * @param filePath the file path of the record
+     * @return pair containing the method's SHA1 hash and signature
+     */
+    public static Pair<String, String> createImplicitRecordMethod(
+            IMethodBinding methodBinding, String containerSignature, String filePath) {
+        try {
+            // Parse the container signature to extract the components
+            String[] containerParts = containerSignature.split(CG_SEPARATOR);
+            if (containerParts.length < 5) {
+                return null;
+            }
+            String containerFileName = containerParts[CG_FILENAME_INDEX];
+            int classOffset = Integer.parseInt(containerParts[CG_CLASS_OFFSET]);
+            int classLength = Integer.parseInt(containerParts[CG_CLASS_LENGTH]);
+            String className = containerParts[CG_CLASS_NAME];
+            String classType = containerParts[CG_CLASS_TYPE];
+            // Build method signature based on binding
+            String methodName = methodBinding.getName();
+            // For implicit methods, use the class offset/length as the method location
+            // since these methods don't actually exist in source code
+            int methodOffset = classOffset;
+            int methodLength = classLength;
+            String methodLocation = methodOffset + CG_SEPARATOR + methodLength;
+            String staticOrNonStatic = methodBinding.isConstructor() ? CG_INIT : 
+                                      (Modifier.isStatic(methodBinding.getModifiers()) ? CG_STATIC : CG_NONSTATIC);
+            // Create the full method signature
+            // Format: fileName::methodName::methodOffset::methodLength::classOffset::classLength::className::classType::static/nonstatic
+            StringBuilder signatureBuilder = new StringBuilder();
+            signatureBuilder
+                    .append(containerFileName)
+                    .append(CG_SEPARATOR)
+                    .append(methodName)
+                    .append(CG_SEPARATOR)
+                    .append(methodLocation)
+                    .append(CG_SEPARATOR)
+                    .append(classOffset)
+                    .append(CG_SEPARATOR)
+                    .append(classLength)
+                    .append(CG_SEPARATOR)
+                    .append(className)
+                    .append(CG_SEPARATOR)
+                    .append(classType)
+                    .append(CG_SEPARATOR)
+                    .append(staticOrNonStatic);
+            String generatedSHA1Hash = HashUtility.generateSHA1(signatureBuilder.toString());
+            return Pair.of(generatedSHA1Hash, signatureBuilder.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
