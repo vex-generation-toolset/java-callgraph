@@ -33,8 +33,9 @@ public class Example1 {
 // Linking default constructor to library method calls for field initialization.
 
 /*$$$$$
-  Example1.<init>(), 1,
+  Example1.<init>(), 2,
   java.time.LocalDate.now(),
+  java.lang.String#hashCode()
 */
 
 /*!!!!! Example1#show(), 0 */
