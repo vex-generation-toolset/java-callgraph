@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -1464,14 +1465,28 @@ public class CallGraphUtility {
             MethodInvocation invocation,
             String callerMethodHash,
             NeoLRUCache<String, Pair<TypeInfo, TokenRange>> methodCallingContextCache) {
-        ASTNode callingContextExpressionOfInvocation = invocation.getExpression();
+        Expression callingContextExpressionOfInvocation = invocation.getExpression();
         String callingContextDeclaredTypeHash = null;
         if (callingContextExpressionOfInvocation != null) {
-            TypeInfo callingContextDeclaredtype = TypeCalculator.getCallingContextType(
-                    callingContextExpressionOfInvocation, methodCallingContextCache);
-            // Skip if the calling context type is Array
-            if (callingContextDeclaredtype != null && !(callingContextDeclaredtype instanceof ArrayTypeInfo)) {
-                callingContextDeclaredTypeHash = callingContextDeclaredtype.getName();
+            // Issue 54
+            // First try to use the type binding of the calling-context expression so that
+            // both source & library types map to the correct class hash or library type hash.
+            ITypeBinding typeBinding = callingContextExpressionOfInvocation.resolveTypeBinding();
+            if (typeBinding != null) {
+                CompilationUnit cu = ASTNodeUtility.findNearestAncestor(invocation, CompilationUnit.class);
+                String filePath = ASTNodeUtility.getFilePathFromCompilationUnit(cu);
+                callingContextDeclaredTypeHash = CallGraphUtility.getClassHashFromTypeBinding(
+                        typeBinding, null, filePath);
+            }
+            if (callingContextDeclaredTypeHash == null) {
+                // Fallback to the previous behavior based on TypeInfo
+                // when binding is unavailable
+                TypeInfo callingContextDeclaredtype = TypeCalculator.getCallingContextType(
+                        callingContextExpressionOfInvocation, methodCallingContextCache);
+                // Skip if the calling context type is Array
+                if (callingContextDeclaredtype != null && !(callingContextDeclaredtype instanceof ArrayTypeInfo)) {
+                    callingContextDeclaredTypeHash = callingContextDeclaredtype.getName();
+                }
             }
         } else {
             // No calling context expression, so calling context type is this
