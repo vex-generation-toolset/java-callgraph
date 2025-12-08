@@ -215,13 +215,13 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 temp = TestUtility.getTestContainerDirectory(temp);
                 File copiedFileContainingMarker = TestUtility.copyFolder(
                         temp, new File(projectPath + File.separator + absoluteFile.getName()), absoluteFile);
-                // Create Eclipse File System Model
-                try {
-                    Model.useModel(new EclipseModel(
-                            new File(projectPath + File.separator + copiedFileContainingMarker.getName())));
-                } catch (CoreException e) {
-                    e.printStackTrace();
-                }
+				// Create Eclipse File System Model
+				try {
+					Model.useModel(new EclipseModel(
+							new File(projectPath + File.separator + copiedFileContainingMarker.getName())));
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
                 javaVPG.releaseAllASTs();
 
                 CompilationUnit unit = javaVPG.acquireAST(projectPath
@@ -251,8 +251,8 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 Set<String> methods = null;
                 if (selectedNode instanceof MethodDeclaration) {
                     MethodDeclaration method = (MethodDeclaration) selectedNode;
-                    Pair<String, String> methodHashAndSig = CallGraphUtility
-                            .getHashCodeAndSignatureOfADeclaredMethod(method, null);
+                    Pair<String, String> methodHashAndSig =
+                            CallGraphUtility.getHashCodeAndSignatureOfADeclaredMethod(method, null);
                     if (methodHashAndSig != null && methodHashAndSig.fst != null) {
                         if (choice.equals("caller")) {
                             methods = getCallers(methodHashAndSig.fst);

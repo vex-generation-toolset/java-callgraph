@@ -1,4 +1,5 @@
 // Issue 52
+// Test for generic record
 
 record Box<T>(T content) {}
 

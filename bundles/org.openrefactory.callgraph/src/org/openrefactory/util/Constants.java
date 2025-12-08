@@ -38,6 +38,9 @@ public class Constants {
     // it may throw a StackOverflowError in the TypeCOnstraint operations.
     public static final String JAVA_LANG_OBJECT = "LIB__OR__TYPE::java.lang.Object";
 
+    // The special type name representation for the java.lang.Record class
+    public static final String JAVA_LANG_RECORD = "LIB__OR__TYPE::java.lang.Record";
+
     // The special type name representation for the java.lang.Enum class
     // It is the common base class for all enums in java
     public static final String JAVA_LANG_ENUM = "LIB__OR__TYPE::java.lang.Enum";

@@ -1,4 +1,5 @@
 // Issue 52
+// Test for record with non-canonical constructor that calls a library method
 
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class Demo {
 
 /*$$ Point#Point(int@@@int),
   1,
-  java.util.Objects#requireNonNull(java.lang.Object)
+  java.util.Objects#requireNonNull(int)
 */
 
 // This test is currently disabled because it fails in extended callgraph test suite run.

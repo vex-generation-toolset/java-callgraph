@@ -88,7 +88,7 @@ public final class RecordTypeInfo extends TypeInfo {
 
     @Override
     public boolean covers(TypeInfo invocationType) {
-        if (this.getName().equals(Constants.JAVA_LANG_OBJECT) || this.getName().equals("java.lang.Record")) {
+        if (this.getName().equals(Constants.JAVA_LANG_OBJECT) || this.getName().equals(Constants.JAVA_LANG_RECORD)) {
             return true;
         }
         if (invocationType instanceof RecordTypeInfo) {
@@ -110,7 +110,9 @@ public final class RecordTypeInfo extends TypeInfo {
             List<ObjectIntPair<TypeInfo>> pastContainers,
             Set<ObjectIntPair<TypeInfo>> seenTraversalPaths,
             Map<TypeInfo, TypeInfo> capturedSymbolicTypes,
-            Map<ObjectIntPair<TypeInfo>, TypeInfo> capturedWildCardTypes) {
+            Map<ObjectIntPair<TypeInfo>, TypeInfo> capturedWildCardTypes)
+    {
+        // Nothing to be done for a record type
     }
 
     @Override
@@ -118,7 +120,8 @@ public final class RecordTypeInfo extends TypeInfo {
             List<ObjectIntPair<TypeInfo>> pastContainers,
             Set<ObjectIntPair<TypeInfo>> alreadyReplacedPaths,
             Map<TypeInfo, TypeInfo> capturedSymbolicTypes,
-            Map<ObjectIntPair<TypeInfo>, TypeInfo> capturedWildCardTypes) {
+            Map<ObjectIntPair<TypeInfo>, TypeInfo> capturedWildCardTypes)
+    {
         return Pair.of(false, this);
     }
 

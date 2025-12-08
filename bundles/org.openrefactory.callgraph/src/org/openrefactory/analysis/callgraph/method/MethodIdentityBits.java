@@ -116,7 +116,6 @@ public enum MethodIdentityBits {
      *   <li>Record canonical constructors</li>
      *   <li>Record accessors</li>
      *   <li>Record equals, hashCode, toString</li>
-     *   <li>Enum values() and valueOf()</li>
      * </ul>
      */
     IMPLICIT,

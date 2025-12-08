@@ -1939,6 +1939,8 @@ public class TypeCalculatorVisitor extends ASTVisitor {
         } else if (typeBinding.isRecord()) {
             Map<String, Pair<Pair<TokenRange, Integer>, TypeInfo>> fields = null;
             if (!calculateSoftType && isCalculatingContainerType) {
+                // Records store their components in the same class-hash keyed structures as classes,
+                // so we can use getFieldsFromClassType to retrieve field info for record components.
                 fields = getFieldsFromClassType(hash);
             }
             if (fields == null) {
@@ -2091,10 +2093,9 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                             fieldType = fd.getType();
                         } else {
                             // Check if it's a record component (SingleVariableDeclaration)
-                            SingleVariableDeclaration svd =
-                                    ASTNodeUtility.findNearestAncestor(fieldName, SingleVariableDeclaration.class);
-                            if (svd != null) {
-                                fieldType = svd.getType();
+                            ASTNode parent = fieldName.getParent();
+                            if (parent instanceof SingleVariableDeclaration) {
+                                fieldType = ((SingleVariableDeclaration) parent).getType();
                             }
                         }
                         AbstractTypeDeclaration declaringClass =

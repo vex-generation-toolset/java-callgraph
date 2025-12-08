@@ -1,4 +1,5 @@
 // Issue 52
+// Test for implicit methods of record
 
 record Point(int x, int y) {}
 

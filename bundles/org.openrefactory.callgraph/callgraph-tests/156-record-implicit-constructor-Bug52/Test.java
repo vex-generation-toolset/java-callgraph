@@ -1,4 +1,5 @@
 // Issue 52
+// Test for implicit constructor of record
 
 record Point(int x, int y) {}
 

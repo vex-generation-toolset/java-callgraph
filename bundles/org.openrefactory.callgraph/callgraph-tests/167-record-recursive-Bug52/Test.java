@@ -1,4 +1,5 @@
 // Issue 52
+// Test for recursive record
 
 record Node(int val, Node next) {}
 

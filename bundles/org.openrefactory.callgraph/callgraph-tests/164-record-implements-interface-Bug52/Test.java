@@ -1,4 +1,5 @@
 // Issue 52
+// Test for record implementing an interface
 
 interface I {
     void foo();

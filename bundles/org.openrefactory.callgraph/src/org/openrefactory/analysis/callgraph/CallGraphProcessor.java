@@ -481,22 +481,22 @@ public class CallGraphProcessor implements Runnable {
         populateImmediateSuperclassAndInterfaceInfo(binding, tokenRange, pairClassHashAndSign.fst);
 
         // Step (6)
-        // Adding a default and static constructor and updating the map
-        // We use the same function to create both default and static constructor,
-        // for normal default constructor, we pass 'false' in last the parameter
-        // Issue 52: Records have canonical constructors, not default constructors
-        if (!(declaration instanceof RecordDeclaration)) {
+        // Issue 52
+        // Handle record implicit methods first.
+        // Records have canonical constructors instead of defaults.
+        if (declaration instanceof RecordDeclaration) {
+            createAndPopulateRecordImplicitMethods(
+                    (RecordDeclaration) declaration, binding, tokenRange, pairClassHashAndSign);
+        } else {
+            // Adding a default and static constructor and updating the map
+            // We use the same function to create both default and static constructor,
+            // for normal default constructor, we pass 'false' in last the parameter
             createAndPopulateDefaultConstructor(binding, tokenRange, pairClassHashAndSign, false);
             // Create static constructor only if any static field exist for this class,
             // for static constructor we pass 'true' in last the parameter
             if (hasStaticFields) {
                 createAndPopulateDefaultConstructor(binding, tokenRange, pairClassHashAndSign, true);
             }
-        }
-
-        if (declaration instanceof RecordDeclaration) {
-            createAndPopulateRecordImplicitMethods(
-                    (RecordDeclaration) declaration, binding, tokenRange, pairClassHashAndSign);
         }
         // Step (7)
         // Calculate and populate soft type info
@@ -569,16 +569,17 @@ public class CallGraphProcessor implements Runnable {
      *
      * Creates implicit methods for a record (canonical constructor, accessors, equals, hashCode, toString).
      *
-     * @param recordDeclaration the record declaration
-     * @param binding the type binding of the record
-     * @param tokenRange the token range of the record
+     * @param recordDeclaration  the record declaration
+     * @param binding                   the type binding of the record
+     * @param tokenRange            the token range of the record
      * @param classHashAndSign the class hash and signature pair
      */
     private void createAndPopulateRecordImplicitMethods(
             RecordDeclaration recordDeclaration,
             ITypeBinding binding,
             TokenRange tokenRange,
-            Pair<String, String> classHashAndSign) {
+            Pair<String, String> classHashAndSign)
+    {
         IMethodBinding[] declaredMethods = binding.getDeclaredMethods();
         // Get explicit methods from body declarations to include compact constructors
         Set<String> explicitMethodKeys = new HashSet<>();
@@ -597,7 +598,8 @@ public class CallGraphProcessor implements Runnable {
                 // Skip canonical constructor.
                 // It's always explicit for records
                 // even when using compact constructor syntax.
-                if (methodBinding.isConstructor() && isCanonicalConstructor(methodBinding, recordDeclaration)) {
+                if (methodBinding.isConstructor()
+                        && ASTNodeUtility.isCanonicalRecordConstructor(methodBinding, recordDeclaration)) {
                     continue;
                 }
                 // For implicit methods, we need to create a synthetic signature
@@ -646,43 +648,6 @@ public class CallGraphProcessor implements Runnable {
                 CallGraphDataStructures.addMethodIdentity(index, identity);
             }
         }
-    }
-
-    /**
-     * Issue 52
-     *
-     * Checks if a constructor is the canonical constructor for a record.
-     * The canonical constructor has parameters matching the record components.
-     *
-     * @param constructorBinding the constructor binding to check
-     * @param recordDeclaration the record declaration
-     * @return true if this is the canonical constructor
-     */
-    private boolean isCanonicalConstructor(IMethodBinding constructorBinding, RecordDeclaration recordDeclaration) {
-        if (!constructorBinding.isConstructor()) {
-            return false;
-        }
-        // Get record components
-        List<?> components = recordDeclaration.recordComponents();
-        ITypeBinding[] paramTypes = constructorBinding.getParameterTypes();
-        // Canonical constructor has same number of parameters as components
-        if (components.size() != paramTypes.length) {
-            return false;
-        }
-        // Check if parameter types match component types
-        for (int i = 0; i < components.size(); i++) {
-            SingleVariableDeclaration component = (SingleVariableDeclaration) components.get(i);
-            ITypeBinding componentType = component.getType().resolveBinding();
-            ITypeBinding paramType = paramTypes[i];
-            if (componentType == null || paramType == null) {
-                continue;
-            }
-            // Check if types match (considering erasure for generics)
-            if (!paramType.isEqualTo(componentType) && !paramType.getErasure().isEqualTo(componentType.getErasure())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

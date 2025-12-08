@@ -1,4 +1,5 @@
 // Issue 52
+// Test for static members of record
 
 record Point(int x, int y) {
     static int zero = 0;

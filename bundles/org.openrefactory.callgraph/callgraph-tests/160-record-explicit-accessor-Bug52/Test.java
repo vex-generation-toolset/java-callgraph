@@ -1,4 +1,5 @@
 // Issue 52
+// Test for explicit accessor method of record
 
 record Point(int x, int y) {
     public int x() {

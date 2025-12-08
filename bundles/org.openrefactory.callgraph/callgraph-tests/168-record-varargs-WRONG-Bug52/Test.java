@@ -1,4 +1,5 @@
 // Issue 52
+// Test for varargs record
 
 record R(int... vals) {}
 

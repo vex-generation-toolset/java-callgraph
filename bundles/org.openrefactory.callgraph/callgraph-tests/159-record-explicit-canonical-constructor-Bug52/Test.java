@@ -1,4 +1,5 @@
 // Issue 52
+// Test for explicit canonical constructor of record
 
 record Point(int x, int y) {
     public Point(int x, int y) {

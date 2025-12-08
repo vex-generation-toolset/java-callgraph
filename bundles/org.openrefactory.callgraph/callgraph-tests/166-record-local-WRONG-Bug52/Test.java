@@ -1,4 +1,5 @@
 // Issue 52
+// Test for local record
 
 public class DemoClass {
     public static void foo() {

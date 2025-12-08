@@ -144,7 +144,7 @@ public class CallGraphUtility {
     // Class signature indices
     public static final int CG_FILENAME_INDEX = 0;
     public static final int CG_CLASS_OFFSET = 1;
-    public static final int CG_CLASS_LENGTH = 2;
+    public static final int CG_CLASS_LENTGH = 2;
     public static final int CG_CLASS_NAME = 3;
     public static final int CG_CLASS_TYPE = 4;
     // Method signature indices
@@ -599,7 +599,7 @@ public class CallGraphUtility {
         int offset, length;
         if (isClass) {
             offset = Integer.parseInt(splits[CG_CLASS_OFFSET]);
-            length = Integer.parseInt(splits[CG_CLASS_LENGTH]);
+            length = Integer.parseInt(splits[CG_CLASS_LENTGH]);
         } else {
             offset = Integer.parseInt(splits[CG_METHOD_CLASS_OFFSET]);
             length = Integer.parseInt(splits[CG_METHOD_CLASS_LENGTH]);
@@ -635,7 +635,7 @@ public class CallGraphUtility {
         String fileName = splits[CG_FILENAME_INDEX];
         CompilationUnit cu = ASTNodeUtility.getCompilationUnitFromFilePath(fileName);
         int offset = Integer.parseInt(splits[CG_CLASS_OFFSET]);
-        int length = Integer.parseInt(splits[CG_CLASS_LENGTH]);
+        int length = Integer.parseInt(splits[CG_CLASS_LENTGH]);
         ASTNode typeDeclaration = null;
         if (splits[CG_CLASS_TYPE].equals(CG_CLASS_CLASS)
                 || splits[CG_CLASS_TYPE].equals(CG_CLASS_INTERFACE)
@@ -1511,58 +1511,12 @@ public class CallGraphUtility {
                 if (callingContextDeclaredtype != null && !(callingContextDeclaredtype instanceof ArrayTypeInfo)) {
                     callingContextDeclaredTypeHash = callingContextDeclaredtype.getName();
                 }
-            TypeInfo callingContextDeclaredtype = TypeCalculator.getCallingContextType(
-                    callingContextExpressionOfInvocation, methodCallingContextCache);
-            // Skip if the calling context type is Array
-            if (callingContextDeclaredtype != null && !(callingContextDeclaredtype instanceof ArrayTypeInfo)) {
-                callingContextDeclaredTypeHash = callingContextDeclaredtype.getName();
-                // Issue 52
-                // When TypeInfo returns a simple type name (like "String")
-                // instead of a library type hash, convert it to the proper library type hash.
-                // This happens when resolving library types from record method contexts.
-                if (callingContextDeclaredTypeHash != null && !callingContextDeclaredTypeHash.contains("@")) {
-                    // Check if it's a simple name (no package separator, no hash separator)
-                    // Try to get the library type hash for common library classes
-                    String potentialLibraryHash = getLibraryTypeHashFromSimpleName(callingContextDeclaredTypeHash, invocation);
-                    if (potentialLibraryHash != null) {
-                        callingContextDeclaredTypeHash = potentialLibraryHash;
-                    }
-                }
             }
         } else {
             // No calling context expression, so calling context type is this
             callingContextDeclaredTypeHash = getContainerHashFromInvocation(invocation, callerMethodHash);
         }
         return callingContextDeclaredTypeHash;
-    }
-
-    /**
-     * Issue 52
-     *
-     * Converts a simple type name to a library type hash.
-     * This is a workaround for cases where TypeInfo returns simple names instead of proper hashes.
-     *
-     * @param simpleName the simple type name (e.g., "String", "Integer")
-     * @param invocation the method invocation context for getting AST
-     * @return the library type hash, or null if not a known library type
-     */
-    private static String getLibraryTypeHashFromSimpleName(String simpleName, MethodInvocation invocation) {
-        // For common java.lang types, construct the fully qualified name
-        // and get the library hash
-        try {
-            // Try to resolve as java.lang type first
-            String qualifiedName = "java.lang." + simpleName;
-            // Get compilation unit from the invocation
-            CompilationUnit cu = ASTNodeUtility.findNearestAncestor(invocation, CompilationUnit.class);
-            if (cu != null && cu.getAST() != null) {
-                ITypeBinding binding = cu.getAST().resolveWellKnownType(qualifiedName);
-                if (binding != null) {
-                    return getLibraryTypeHash(binding, null);
-                }
-            }
-        } catch (Exception e) {
-        }
-        return null;
     }
 
     /**
@@ -1976,7 +1930,7 @@ public class CallGraphUtility {
             }
             String containerFileName = containerParts[CG_FILENAME_INDEX];
             int classOffset = Integer.parseInt(containerParts[CG_CLASS_OFFSET]);
-            int classLength = Integer.parseInt(containerParts[CG_CLASS_LENGTH]);
+            int classLength = Integer.parseInt(containerParts[CG_CLASS_LENTGH]);
             String className = containerParts[CG_CLASS_NAME];
             String classType = containerParts[CG_CLASS_TYPE];
             // Build method signature based on binding

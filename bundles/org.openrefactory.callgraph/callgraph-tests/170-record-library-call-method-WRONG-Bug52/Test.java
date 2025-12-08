@@ -1,7 +1,8 @@
 // Issue 52
+// Test for record with method that calls a library method
 
 record Name(String val) {
-    public static void printUpper() {
+    public void printUpper() {
         String upper = "hello".toUpperCase();
     }
 }
