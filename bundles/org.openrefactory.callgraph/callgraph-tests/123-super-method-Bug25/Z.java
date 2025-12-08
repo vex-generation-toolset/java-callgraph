@@ -15,14 +15,10 @@ public class MyList<E> extends ArrayList<E> {
     }
 }
 
-/*$$$$$
-  MyList.main(String[]), 1,
-  MyList.<init>(),
+/*$$$$$ MyList.main(String[]), 1,
+  		14,31, 1, MyList.<init>(),
 */
 
-/*$$$$$
-  MyList#add(E), 1,
-  java.util.ArrayList#add(E)
- */
-
-/*!!!!! MyList#add(E), 1, 246,12 */
+/*$$$$$ MyList#add(E), 1,
+  		10,16, 1, java.util.ArrayList#add(E)
+*/

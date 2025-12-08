@@ -30,13 +30,7 @@ class B{
     }
 }
 
-/*$$$$$
-  org.openrefactory.test.Counter.<staticinit>(), 2,
-  org.openrefactory.test.B.<init>(),
-  org.openrefactory.test.B#getS(),
+/*$$$$$ org.openrefactory.test.Counter.<staticinit>(), 1,
+  		13,16, 2, org.openrefactory.test.B.<init>(), org.openrefactory.test.B#getS(),
 */
 
-/*!!!!!
-org.openrefactory.test.Counter.<staticinit>(), 2,
-280,7, 280,14
-*/

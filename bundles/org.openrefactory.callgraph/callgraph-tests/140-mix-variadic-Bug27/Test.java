@@ -18,14 +18,11 @@ public class Example2 {
     }
 }
 
-/*$$$$$ Example2.main(String[]), 
-   1, Example2.printSum(String@@@int[]...)
- */
-
-/*$$$$$ Example2.main2(String[]), 
-  1, Example2.printSum(String@@@int[]...)
+/*$$$$$ Example2.main(String[]), 2,
+		12,9, 1, Example2.printSum(String@@@int[]...),
+		13,9, 1, Example2.printSum(String@@@int[]...)
 */
 
-/*!!!!! Example2.main(String[]), 2,  297,26, 333,17, */
-
-/*!!!!! Example2.main2(String[]), 1,  417,17, */
+/*$$$$$ Example2.main2(String[]), 1,
+		17,9, 1, Example2.printSum(String@@@int[]...)
+*/

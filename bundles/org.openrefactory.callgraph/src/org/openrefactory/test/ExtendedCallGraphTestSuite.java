@@ -6,6 +6,7 @@
 package org.openrefactory.test;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -19,10 +20,10 @@ import org.openrefactory.analysis.callgraph.CallGraphDataStructures;
 import org.openrefactory.analysis.callgraph.ExtendedCallGraph;
 import org.openrefactory.analysis.callgraph.MultiThreadCallGraphProcessor;
 import org.openrefactory.analysis.vpg.JavaVPG;
+import org.openrefactory.capslock.Site;
+import org.openrefactory.cli.ConfigurationManager;
 import org.openrefactory.model.Model;
 import org.openrefactory.model.eclipse.EclipseModel;
-import org.openrefactory.util.CallGraphUtility;
-import org.openrefactory.util.datastructure.TokenRange;
 import org.openrefactory.util.manager.C2PManager;
 import org.openrefactory.util.manager.C2SManager;
 import org.openrefactory.util.manager.FNDSpecManager;
@@ -75,7 +76,7 @@ public class ExtendedCallGraphTestSuite extends GeneralTestSuiteFromMarkers {
         }
 
         /*
-         * Marker = caller, number of callees, [set of callees]
+         * Marker = caller, number of callsites, [callsite (line, column), no of callees, set of callees ]
          * Set of callers/callees are comma separated method signature strings.
          */
          public void test() throws Exception {
@@ -91,6 +92,7 @@ public class ExtendedCallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 String rootPath = root.getRawLocation().toOSString();
                 File rootFile = new File(rootPath);
                 String projectPath = rootFile.getAbsolutePath() + File.separator + "TestProject";
+                ConfigurationManager.loadConfigForTest(projectPath);
                 File absoluteFile = file.getAbsoluteFile();
                 File temp = file.getAbsoluteFile();
 
@@ -107,15 +109,23 @@ public class ExtendedCallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 javaVPG.releaseAllASTs();
 
                 LinkedList<String> markers = MarkerUtil.parseMarker(markerText);
-                String expectedCaller = markers.removeFirst();
-	            expectedCaller = expectedCaller.replaceAll(COMMA_PLACEHOLDER, ",");
-                int calleeCount = Integer.parseInt(markers.removeFirst());
-                Set<String> expectedCallees = new HashSet<String>(calleeCount);
-                for (int i = 0; i < calleeCount; i++) {
-                    String expectedCallee = markers.removeFirst();
-                    expectedCallee = expectedCallee.replaceAll(COMMA_PLACEHOLDER, ",");
-                    expectedCallees.add(expectedCallee);
+                String expectedCaller = markers.removeFirst().replaceAll(COMMA_PLACEHOLDER, ",");
+
+                int expectedCallsCount = Integer.parseInt(markers.removeFirst());
+                Map<Site, Set<String>> expectedCalls = new HashMap<>();
+                String fileName = absoluteFile.getName();
+                for (int i = 0; i < expectedCallsCount; i++) {
+                    int offset = Integer.parseInt(markers.removeFirst());
+                    int length = Integer.parseInt(markers.removeFirst());
+                    Site site = new Site(fileName, fileName, offset, length);
+                    int noOfCallees = Integer.parseInt(markers.removeFirst());
+                    Set<String> expectedCallees = new HashSet<>(noOfCallees);
+                    for (int j = 0; j < noOfCallees; j++) {
+                    	expectedCallees.add(markers.removeFirst().replaceAll(COMMA_PLACEHOLDER, ","));
+                    }
+                    expectedCalls.put(site, expectedCallees);
                 }
+                
                 IProgressReporter progressReporter = new NullProgressReporter();
                 CallGraphDataStructures.initialize();
                 C2PManager.loadC2PInfo(progressReporter);
@@ -128,47 +138,35 @@ public class ExtendedCallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 // Null check
                 assertNotNull("In " + file + ", Expected a call graph, but found null", callGraph);
                 // Match the caller
-                String matchedCallerHash = null;
-                for (String callerHash : callGraph.getCallerToCalleeMap().keySet()) {
-                    String callerName = CallGraphUtility.getMethodNameInCanonicalizedFormat(callerHash, true);
-                    if (callerName.equals(expectedCaller)) {
-                        matchedCallerHash = callerHash;
-                        break;
-                    }
-                }
-                if (calleeCount == 0) {
-                    assertNull("In " + file + ", The following caller should not be present: " + expectedCaller
-                            + ", but it was.", matchedCallerHash);
-                    return;
-                } else {
-                    assertNotNull("In " + file + ", Expected the following caller " + expectedCaller
-                            + ", but did not find it.", matchedCallerHash);
-                }
-                // Get the callsite and callees from the only caller in the map
-                Map<TokenRange, Set<String>> foundCallsitesAndCallees = callGraph.getCallerToCalleeMap()
-                        .get(matchedCallerHash);
-                // First collect the callees
-                Set<String> foundCallees = new HashSet<String>(2);
-                for (Entry<TokenRange, Set<String>> entry : foundCallsitesAndCallees.entrySet()) {
-                    for (String calleeHash : entry.getValue()) {
-                        foundCallees.add(CallGraphUtility.getMethodNameInCanonicalizedFormat(calleeHash, true));
-                    }
-                }
-                // Match the number of callees for the caller
-				assertTrue(
-						"In " + file + ", For the following caller " + expectedCaller + ", expected "
-								+ expectedCallees.size() + " callees, but found " + foundCallees.size(),
-						foundCallees.size() == expectedCallees.size());
-                // Match each callee
-                for (String expectedCallee : expectedCallees) {
+                boolean matched = callGraph.getAllCallers().contains(expectedCaller);
+
+				if (expectedCallsCount == 0) {
+					assertFalse("In " + file + ", The following caller should not be present: " + expectedCaller
+							+ ", but it was.", matched);
+					return;
+				} else {
+					assertTrue("In " + file + ", Expected the following caller " + expectedCaller
+							+ ", but did not find it.", matched);
+				}
+				// Get the callsite and callees from the only caller in the map
+				Map<Site, Set<String>> actualCalls = callGraph.getCalleesWithCallsites(expectedCaller);
+				// Match the number of callees for the caller
+				assertEquals("In " + file + ", For caller " + expectedCaller + ", number of method calls do not match.",
+						expectedCalls.size(), actualCalls.size());
+				// Match each callee
+				for (Entry<Site, Set<String>> expectedCall : expectedCalls.entrySet()) {
 					assertTrue(
-							"In " + file + ", For the following caller " + expectedCaller
-									+ ", expected the following callee: " + expectedCallee
-									+ ", but found the following " + foundCallees,
-							foundCallees.contains(expectedCallee));
-                }
+							"In " + file + ", For caller " + expectedCaller + ", expected callsite "
+									+ expectedCall.getKey() + " is not found in the actual callgraph: " + actualCalls,
+							actualCalls.containsKey(expectedCall.getKey()));
+
+					assertEquals(
+							"In " + file + ", For caller " + expectedCaller + ", for callsite: " + expectedCall.getKey()
+									+ " callees do not match.",
+							expectedCall.getValue(), actualCalls.get(expectedCall.getKey()));
+				}
             } catch (Exception e) {
-                throw e;
+                throw new Exception("For file: " + file, e);
             }
         }
     }

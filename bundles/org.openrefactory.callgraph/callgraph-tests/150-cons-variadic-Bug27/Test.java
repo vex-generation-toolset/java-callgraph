@@ -20,16 +20,10 @@ public class Example9 {
     }
 }
 
-
-
-/*$$$$$ Example9.main(String[]), 
-   3,
-   Example9#Example9(String[]...),
-   Example9#show(),
-   Example9.<init>()
- */
-
-/*!!!!! Example9.main(String[]),  4, 313,31, 313,38, 361,21, 361,14 */
+/*$$$$$ Example9.main(String[]), 2,
+   		18,9, 2, Example9#Example9(String[]...), Example9#show(),
+   		19,9, 2, Example9.<init>(), Example9#show()
+*/
 
 // For the second empty constructor, we shall match with the default constructor here
 // instead of the Example9(String... items) constructor.

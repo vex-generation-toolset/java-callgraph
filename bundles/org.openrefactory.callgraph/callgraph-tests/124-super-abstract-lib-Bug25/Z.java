@@ -26,21 +26,15 @@ public class MyList2 extends AbstractList<String> {
     }
 }
 
-/*$$$$$
-  MyList2.main(String[]), 2,
-  MyList2.<init>(),
-  MyList2#add(String)
+/*$$$$$ MyList2.main(String[]), 2,
+  		24,24, 1, MyList2.<init>(),
+  		25,9, 1, MyList2#add(String)
 */
 
-/*$$$$$
- MyList2#add(String), 1,
- java.util.AbstractList#add(String)
- */ 
+/*$$$$$ MyList2#add(String), 1,
+ 		20,16, 1, java.util.AbstractList#add(String)
+*/ 
 
-/*$$$$$
-MyList2#size(), 0,
-*/
+/*$$$$$ MyList2#size(), 0 */
 
-/*$$$$$
-MyList2#get(int), 0,
-*/
+/*$$$$$ MyList2#get(int), 0 */

@@ -18,7 +18,7 @@ import org.json.JSONObject;
  * 
  * @author Rifat Rubayatul Islam
  */
-public record Call(Long caller, Long callee, Site callSite) {
+public record Call(long caller, long callee, Site callSite) {
 
     public JSONObject toJson() {
         JSONObject call = new JSONObject();

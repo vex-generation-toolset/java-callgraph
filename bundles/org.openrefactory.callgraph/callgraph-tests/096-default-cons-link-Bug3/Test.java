@@ -25,23 +25,16 @@ class B{
     }
 }
 
-/*$$$$$ org.openrefactory.test.Counter.main(String[]), 
-   1,
-   org.openrefactory.test.Counter#Counter(),
+/*$$$$$ org.openrefactory.test.Counter.main(String[]), 1,
+   		16,21, 1, org.openrefactory.test.Counter#Counter(),
 */
 
-/*$$$$$ org.openrefactory.test.Counter.<init>(),
-   2,
-   org.openrefactory.test.B.<init>(),
-   org.openrefactory.test.B#getS(),
+/*$$$$$ org.openrefactory.test.Counter.<init>(), 1,
+   		8,20, 2, org.openrefactory.test.B.<init>(), org.openrefactory.test.B#getS(),
 */
 
 // This is the test that demonstrates this new feature.
 
-/*$$$$$ org.openrefactory.test.Counter#Counter(),
-   1,
-   org.openrefactory.test.Counter.<init>(),
+/*$$$$$ org.openrefactory.test.Counter#Counter(), 1,
+   		11,5, 1, org.openrefactory.test.Counter.<init>(),
 */
-
-/*!!!!! org.openrefactory.test.Counter.<init>(), 2, 156,7, 156,14 */
-/*!!!!! org.openrefactory.test.Counter#Counter(), 1, 191,36 */

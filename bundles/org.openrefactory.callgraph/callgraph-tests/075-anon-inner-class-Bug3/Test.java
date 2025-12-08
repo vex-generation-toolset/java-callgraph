@@ -32,27 +32,16 @@ class AnonymousDemo {
     }
 }
 
-/*$$$$$ org.openrefactory.test.AnonymousDemo#foo2(), 
-   5, 
-   org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1.<init>(), 
-   org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2.<init>(), 
-   org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1#getVal(),
-   org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2#getVal(),
-   org.openrefactory.test.Polygon#getVal() 
- */
-
-/*!!!!! org.openrefactory.test.AnonymousDemo#foo2(), 3, 366, 99, 479, 99, 592,11 */
-
-/*$$$$$ org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1.<init>(), 
-  1,
-  org.openrefactory.test.Polygon.<init>() 
+/*$$$$$ org.openrefactory.test.AnonymousDemo#foo2(), 3, 
+   		21,13, 1, org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1.<init>(), 
+   		26,13, 1, org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2.<init>(), 
+   		31,13, 3, org.openrefactory.test.Polygon#getVal(), org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1#getVal(), org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2#getVal(),
 */
 
-/*!!!!! org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1.<init>(), 1, 380,85 */
-
-/*$$$$$ org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2.<init>(), 
-  1,
-  org.openrefactory.test.Polygon.<init>() 
+/*$$$$$ org.openrefactory.test.AnonymousDemo#foo2()$Polygon$1.<init>(), 1,
+		21,27, 1, org.openrefactory.test.Polygon.<init>() 
 */
 
-/*!!!!! org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2.<init>(), 1, 493, 85 */
+/*$$$$$ org.openrefactory.test.AnonymousDemo#foo2()$Polygon$2.<init>(), 1,
+		26,27, 1, org.openrefactory.test.Polygon.<init>() 
+*/

@@ -15,13 +15,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.fooNested(),
-  2,
-  OuterName.Inner.<init>(),
-  OuterName.Inner#sanitize()
+/*$$$$$ Demo.fooNested(), 1,
+  		14, 9, 2, OuterName.Inner.<init>(), OuterName.Inner#sanitize()
 */
 
-/*$$$$$ OuterName.Inner#sanitize(),
-  1,
-  java.lang.String#replace(String@@@String)
+/*$$$$$ OuterName.Inner#sanitize(), 1,
+  		7, 30, 1, java.lang.String#replace(String@@@String)
 */

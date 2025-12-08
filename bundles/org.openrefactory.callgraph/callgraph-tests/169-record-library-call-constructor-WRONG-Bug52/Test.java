@@ -15,14 +15,12 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.foo(),
-  1,
-  Point#Point(int@@@int)
+/*$$$$$ Demo.foo(), 1,
+  		14,19, 1, Point#Point(int@@@int)
 */
 
-/*$$ Point#Point(int@@@int),
-  1,
-  java.util.Objects#requireNonNull(int)
+/*$$ Point#Point(int@@@int), 1,
+		8,9, 1, java.util.Objects#requireNonNull(int)
 */
 
 // This test is currently disabled because it fails in extended callgraph test suite run.

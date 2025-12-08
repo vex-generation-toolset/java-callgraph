@@ -10,8 +10,7 @@ public class Example5 {
     }
 }
 
-/*$$$$$
-  Example5#demo(), 2,
-  java.io.File#File(String),
-  java.io.File#File(String@@@String),
+/*$$$$$ Example5#demo(), 2,
+  		8,19, 1, java.io.File#File(String),
+  		9,19, 1, java.io.File#File(String@@@String),
 */

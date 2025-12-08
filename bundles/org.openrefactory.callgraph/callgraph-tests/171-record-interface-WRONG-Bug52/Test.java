@@ -12,9 +12,8 @@ record Rectangle(int width, int height) implements Drawable {
     }
 }
 
-/*$$ Rectangle#draw(),
-  1,
-  java.lang.String#toUpperCase()
+/*$$ Rectangle#draw(), 1,
+  		11,24, 1, java.lang.String#toUpperCase()
 */
 
 // This test is currently disabled because it fails in extended callgraph test suite run.

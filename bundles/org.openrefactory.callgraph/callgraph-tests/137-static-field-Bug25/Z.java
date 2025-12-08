@@ -11,14 +11,10 @@ public class Example7 {
     }
 }
 
-/*$$$$$
-  Example7.main(String[]), 1,
-  Example7.<staticinit>(),
+/*$$$$$ Example7.main(String[]), 1,
+  		9,5, 1, Example7.<staticinit>(),
 */
 
-
-/*$$$$$
-  Example7.<staticinit>(), 2,
-  java.util.Locale.getDefault(),
-  Locale#getDisplayCountry(),
+/*$$$$$ Example7.<staticinit>(), 1,
+  		7,43, 2, java.util.Locale.getDefault(), Locale#getDisplayCountry()
 */

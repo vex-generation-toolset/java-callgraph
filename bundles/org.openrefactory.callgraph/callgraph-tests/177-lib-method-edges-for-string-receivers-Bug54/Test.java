@@ -13,12 +13,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.fooProperty(),
-  1,
-  Name.printUpperProperty()
+/*$$$$$ Demo.fooProperty(), 1,
+  		12, 9, 1, Name.printUpperProperty()
 */
 
-/*$$$$$ Name.printUpperProperty(),
-  1,
-  java.lang.System.getProperty(String)
+/*$$$$$ Name.printUpperProperty(), 1,
+  		6, 24, 1, java.lang.System.getProperty(String)
 */

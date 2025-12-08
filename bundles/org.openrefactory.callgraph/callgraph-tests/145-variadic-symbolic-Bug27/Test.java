@@ -17,9 +17,7 @@ public class Example6 {
     }
 }
 
-/*$$$$$ Example6.main(String[]), 
-   2, Example6.display(int[]...),
-   Example6.display(int)
- */
-
-/*!!!!! Example6.main(String[]), 2,  372,10, 430,16 */
+/*$$$$$ Example6.main(String[]), 2,
+		15,9, 1, Example6.display(int),
+		16,9, 1, Example6.display(int[]...)
+*/

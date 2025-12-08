@@ -17,17 +17,10 @@ public class MyList3 extends AbstractList<String> implements List<String> {
     }
 }
 
-/*$$$$$
-  MyList3#add(String), 1,
-  java.util.AbstractList#add(String),
+/*$$$$$ MyList3#add(String), 1,
+  		16,16, 1, java.util.AbstractList#add(String),
 */
 
+/*$$$$$ MyList3#size(), 0 */
 
-/*$$$$$
-MyList3#size(), 0,
-*/
-
-/*$$$$$
-MyList3#get(int), 0,
-*/
-
+/*$$$$$ MyList3#get(int), 0 */

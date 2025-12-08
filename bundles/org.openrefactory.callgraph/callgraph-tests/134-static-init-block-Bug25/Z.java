@@ -18,17 +18,10 @@ public class Example3 {
     }
 }
 
-/*$$$$$
-  Example3.main(String[]), 1,
-  Example3.<staticinit>()
+/*$$$$$ Example3.main(String[]), 1,
+  		16,5, 1, Example3.<staticinit>()
 */
 
-
-/*$$$$$
-  Example3.<staticinit>(), 2,
-  java.time.LocalDateTime.now(),
-  LocalDateTime#format(Object),
+/*$$$$$ Example3.<staticinit>(), 1,
+  		12,22, 2, java.time.LocalDateTime.now(), LocalDateTime#format(Object)
 */
-
-/*!!!!! Example3.main(String[]), 1, 360,103 */
-/*!!!!! Example3.<staticinit>(), 2, 265,19, 265,82 */

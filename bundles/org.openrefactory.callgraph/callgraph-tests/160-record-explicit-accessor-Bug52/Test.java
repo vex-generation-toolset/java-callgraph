@@ -14,8 +14,7 @@ public class DemoClass {
     }
 }
 
-/*$$$$$ DemoClass.foo(),
-  2,
-  Point#Point(int@@@int),
-  Point#x()
+/*$$$$$ DemoClass.foo(), 2,
+  		12,19, 1, Point#Point(int@@@int),
+  		13,9, 1, Point#x()
 */

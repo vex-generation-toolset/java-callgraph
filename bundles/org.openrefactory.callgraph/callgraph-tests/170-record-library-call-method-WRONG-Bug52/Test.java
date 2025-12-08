@@ -14,15 +14,13 @@ public class Demo {
     }
 }
 
-/*$$ Demo.foo(),
-  2,
-  Name#Name(String),
-  Name.printUpper()
+/*$$ Demo.foo(), 2,
+  		12,18, 1, Name#Name(String),
+  		13,9, 1, Name.printUpper()
 */
 
-/*$$ Name.printUpper(),
-  1,
-  java.lang.String#toUpperCase()
+/*$$ Name.printUpper(), 1,
+  		6,24, 1, java.lang.String#toUpperCase()
 */
 
 // This test is currently disabled because it fails in extended callgraph test suite run.

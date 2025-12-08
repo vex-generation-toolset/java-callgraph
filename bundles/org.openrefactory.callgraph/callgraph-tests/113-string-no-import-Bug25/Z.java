@@ -9,7 +9,6 @@ public class Example9 {
 
 // We do not need import for things such as String.
 
-/*$$$$$
-  Example9#demo(), 1,
-  java.lang.String#String(String),
+/*$$$$$ Example9#demo(), 1,
+  		6,20, 1, java.lang.String#String(String),
 */

@@ -110,4 +110,14 @@ public class ConfigurationManager {
         config = new Configuration("", "", SUMMARIES_PATH, false);
         isTestRun = true;
     }
+    
+    /** 
+     * Method to load configuration with source directory path for test suite run.
+     * 
+     * @param source the source directory
+     */
+    public static void loadConfigForTest(String source) {
+        config = new Configuration(source, "", SUMMARIES_PATH, false);
+        isTestRun = true;
+    }
 }

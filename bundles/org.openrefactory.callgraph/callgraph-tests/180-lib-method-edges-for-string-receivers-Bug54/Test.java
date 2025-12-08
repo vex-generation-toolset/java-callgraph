@@ -8,7 +8,6 @@ public class Name {
     }
 }
 
-/*$$$$$ Name.printIndexOfVar(),
-  1,
-  java.lang.String#indexOf(String)
+/*$$$$$ Name.printIndexOfVar(), 1,
+  		7, 19, 1, java.lang.String#indexOf(String)
 */

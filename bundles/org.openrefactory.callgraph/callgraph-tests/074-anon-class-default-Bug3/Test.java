@@ -48,47 +48,25 @@ class AnonymousDemo {
     }
 }
 
-/*$$$$$ AnonymousDemo#foo1(), 
-   5,
-   AnonymousDemo#foo1()$Polygon$1.<init>(), 
-   AnonymousDemo#foo1()$Polygon$1#getVal(),
-   Polygon#getVal(),
-   AnonymousDemo#foo2()$Polygon$1#getVal(),
-   AnonymousDemo#foo2()$Polygon$2#getVal(), 
- */
-
-/*!!!!! AnonymousDemo#foo1(),  2, 424, 105, 542,11 */
-
-/*$$$$$ AnonymousDemo#foo1()$Polygon$1.<init>(), 
-  1, 
-  Polygon#Polygon(String@@@String) 
+/*$$$$$ AnonymousDemo#foo1(), 2,
+   		28,12, 1, AnonymousDemo#foo1()$Polygon$1.<init>(), 
+   		33,12, 4, Polygon#getVal(), AnonymousDemo#foo1()$Polygon$1#getVal(), AnonymousDemo#foo2()$Polygon$1#getVal(), AnonymousDemo#foo2()$Polygon$2#getVal(),
 */
 
-/*!!!!! AnonymousDemo#foo1()$Polygon$1.<init>(), 1, 448, 81 */
-
-
-/*$$$$$ AnonymousDemo#foo2(), 
-   6, 
-   AnonymousDemo#foo2()$Polygon$1.<init>(), 
-   AnonymousDemo#foo2()$Polygon$2.<init>(), 
-   AnonymousDemo#foo2()$Polygon$2#getVal(),
-   AnonymousDemo#foo1()$Polygon$1#getVal(),
-   Polygon#getVal(),
-   AnonymousDemo#foo2()$Polygon$1#getVal(), 
- */
-
-/*!!!!! AnonymousDemo#foo2(), 3, 600, 99, 713,99,  826, 11 */
-
-/*$$$$$ AnonymousDemo#foo2()$Polygon$1.<init>(), 
-  1,
-  Polygon#Polygon() 
+/*$$$$$ AnonymousDemo#foo1()$Polygon$1.<init>(), 1, 
+		28,36, 1, Polygon#Polygon(String@@@String) 
 */
 
-/*!!!!! AnonymousDemo#foo2()$Polygon$1.<init>(), 1, 614, 85 */
-
-/*$$$$$ AnonymousDemo#foo2()$Polygon$2.<init>(), 
-  1,
-  Polygon#Polygon() 
+/*$$$$$ AnonymousDemo#foo2(), 3, 
+   		37,13, 1, AnonymousDemo#foo2()$Polygon$1.<init>(), 
+   		42,13, 1, AnonymousDemo#foo2()$Polygon$2.<init>(), 
+   		47,13, 4, Polygon#getVal(), AnonymousDemo#foo2()$Polygon$2#getVal(), AnonymousDemo#foo1()$Polygon$1#getVal(), AnonymousDemo#foo2()$Polygon$1#getVal(), 
 */
 
-/*!!!!! AnonymousDemo#foo2()$Polygon$2.<init>(), 1, 727, 85*/
+/*$$$$$ AnonymousDemo#foo2()$Polygon$1.<init>(), 1,
+  		37,27, 1, Polygon#Polygon()
+*/
+
+/*$$$$$ AnonymousDemo#foo2()$Polygon$2.<init>(), 1,
+		42,27, 1, Polygon#Polygon() 
+*/

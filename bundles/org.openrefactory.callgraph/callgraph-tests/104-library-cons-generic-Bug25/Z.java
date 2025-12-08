@@ -9,11 +9,6 @@ public class Example2 {
     }
 }
 
-
-/*$$$$$
-  Example2#demo(), 2,
-  java.util.ArrayList#ArrayList(),
-  java.util.ArrayList.<init>()
+/*$$$$$ Example2#demo(), 1,
+  		8,35, 2, java.util.ArrayList#ArrayList(), java.util.ArrayList.<init>()
 */
-
-/*!!!!! Example2#demo(), 1, 155, 17 */

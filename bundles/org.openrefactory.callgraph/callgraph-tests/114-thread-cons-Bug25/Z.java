@@ -12,10 +12,7 @@ public class Example10 {
 
 // The lambda type is not found. It is identified as an Object.
 
-/*$$$$$
-  Example10#demo(), 2,
-  java.lang.Thread#Thread(Object),
-  java.lang.Thread#start()
+/*$$$$$ Example10#demo(), 2,
+  		6,20, 1, java.lang.Thread#Thread(Object),
+  		7,9, 1, java.lang.Thread#start(),
 */
-
-/*!!!!! Example10#demo(), 2, 106, 48, 164, 9 */

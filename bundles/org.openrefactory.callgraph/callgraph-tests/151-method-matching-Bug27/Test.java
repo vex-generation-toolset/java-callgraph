@@ -14,10 +14,7 @@ public class Z {
     }
 }
 
-/*$$$$$ Z#toString(), 
-   2,
-   Z#toString(String@@@long),
-   java.lang.Object#toString()
- */
-
-/*!!!!! Z#toString(),  2, 152,16, 174,20 */
+/*$$$$$ Z#toString(), 2,
+   		9,38, 1, Z#toString(String@@@long),
+   		9,16, 1, java.lang.Object#toString()
+*/

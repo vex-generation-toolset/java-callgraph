@@ -19,24 +19,15 @@ public class Example1 {
     }
 }
 
-/*$$$$$
-  Example1.main(String[]), 2,
-  Example1.<init>(),
-  Example1#show()
+/*$$$$$ Example1.main(String[]), 1,
+  		18,9, 2, Example1.<init>(), Example1#show()
 */
 
-
-/*$$$$$
-  Example1#show(), 0,
-*/
+/*$$$$$ Example1#show(), 0 */
 
 // Linking default constructor to library method calls for field initialization.
 
-/*$$$$$
-  Example1.<init>(), 2,
-  java.time.LocalDate.now(),
-  java.lang.String#hashCode()
+/*$$$$$ Example1.<init>(), 2,
+  		8,35, 1, java.time.LocalDate.now(),
+  		11,24, 1, java.lang.String#hashCode()
 */
-
-/*!!!!! Example1#show(), 0 */
-/*!!!!! Example1.<init>(), 1, 197,15 */

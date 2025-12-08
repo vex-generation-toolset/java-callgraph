@@ -14,12 +14,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.foo(),
-  1,
-  Util.bar(String@@@String[]...)
+/*$$$$$ Demo.foo(), 1,
+  		12, 25, 1, Util.bar(String@@@String[]...)
 */
 
-/*$$$$$ Util.bar(String@@@String[]...),
-  1,
-  java.lang.String.join(String@@@String[])
+/*$$$$$ Util.bar(String@@@String[]...), 1,
+  		6, 16, 1, java.lang.String.join(String@@@String[])
 */

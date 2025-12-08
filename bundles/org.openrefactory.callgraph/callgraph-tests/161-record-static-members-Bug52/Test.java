@@ -13,7 +13,6 @@ public class DemoClass {
     }
 }
 
-/*$$$$$ DemoClass.foo(),
-  1,
-  Point#print()
+/*$$$$$ DemoClass.foo(), 1,
+  		11,9, 1, Point#print()
 */

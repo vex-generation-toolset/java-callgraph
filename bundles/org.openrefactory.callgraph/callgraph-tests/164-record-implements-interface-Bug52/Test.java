@@ -16,9 +16,7 @@ public class DemoClass {
     }
 }
 
-/*$$$$$ DemoClass.f(),
-  3,
-  R.<init>(),
-  R#R(),
-  I#foo()
+/*$$$$$ DemoClass.f(), 2,
+  		14,15, 2, R.<init>(), R#R(),
+  		15,9, 1, I#foo()
 */

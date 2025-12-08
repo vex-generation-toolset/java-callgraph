@@ -9,7 +9,6 @@ public class Example6 {
     }
 }
 
-/*$$$$$
-  Example6#demo(), 1,
-  java.lang.StringBuilder#StringBuilder(String)
+/*$$$$$ Example6#demo(), 1,
+  		8,28, 1, java.lang.StringBuilder#StringBuilder(String)
 */

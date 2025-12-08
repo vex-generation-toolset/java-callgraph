@@ -28,22 +28,16 @@ class Person {
     }
 }
 
-/*$$$$$ org.openrefactory.test.Person.main(String[]), 
-   3,
-   org.openrefactory.test.Person#Person(String),
-   org.openrefactory.test.Person#Person(int),
-   org.openrefactory.test.Person#Person(String@@@int)
+/*$$$$$ org.openrefactory.test.Person.main(String[]), 3,
+   		25,21, 1, org.openrefactory.test.Person#Person(String),
+   		26,21, 1, org.openrefactory.test.Person#Person(int),
+   		27,21, 1, org.openrefactory.test.Person#Person(String@@@int)
 */
 
-/*$$$$$ org.openrefactory.test.Person#Person(String), 
-   1,
-   org.openrefactory.test.Person#Person(String@@@int),
+/*$$$$$ org.openrefactory.test.Person#Person(String), 1,
+   		12,9, 1, org.openrefactory.test.Person#Person(String@@@int),
 */
 
-/*$$$$$ org.openrefactory.test.Person#Person(int), 
-    1,
-    org.openrefactory.test.Person#Person(String@@@int),
+/*$$$$$ org.openrefactory.test.Person#Person(int), 1,
+		16,9, 1, org.openrefactory.test.Person#Person(String@@@int),
 */
-
-/*!!!!! org.openrefactory.test.Person#Person(String), 1, 215,14 */
-/*!!!!! org.openrefactory.test.Person#Person(int), 1, 307,21 */

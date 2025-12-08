@@ -19,14 +19,12 @@ public class Example1 {
     }
 }
 
-/*$$$$$ Example1.main(String[]), 
-   1, Example1.printNumbers(int[]...)
- */
-
-/*$$$$$ Example1.main2(String[]), 
-  1, Example1.printNumbers(int[]...)
+/*$$$$$ Example1.main(String[]), 3,
+		12,9, 1, Example1.printNumbers(int[]...),
+		13,9, 1, Example1.printNumbers(int[]...),
+		14,9, 1, Example1.printNumbers(int[]...)
 */
 
-/*!!!!! Example1.main(String[]), 3, 293, 15, 345, 27, 241,14 */
-
-/*!!!!! Example1.main2(String[]), 1, 460,14*/
+/*$$$$$ Example1.main2(String[]), 1,
+		18,9, 1, Example1.printNumbers(int[]...)
+*/

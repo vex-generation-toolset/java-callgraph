@@ -22,22 +22,14 @@ class Outer {
     }
 }
 
-/*$$$$$ org.openrefactory.test.Outer.main(String[]), 
-   2,
-   org.openrefactory.test.Outer.<init>(),
-   org.openrefactory.test.Outer#display(),
- */
-
-/*$$$$$ org.openrefactory.test.Outer#display(), 
-  2,
-  org.openrefactory.test.Outer#display().LocalInner.<init>(),
-  org.openrefactory.test.Outer#display().LocalInner#show()
+/*$$$$$ org.openrefactory.test.Outer.main(String[]), 1,
+   		21,9, 2, org.openrefactory.test.Outer.<init>(), org.openrefactory.test.Outer#display(), 
 */
 
-/*$$$$$ org.openrefactory.test.Outer.<init>(), 
-  0, 
+/*$$$$$ org.openrefactory.test.Outer#display(), 2,
+  		16,28, 1, org.openrefactory.test.Outer#display().LocalInner.<init>(),
+  		17,9, 1, org.openrefactory.test.Outer#display().LocalInner#show()
 */
 
-/*!!!!! org.openrefactory.test.Outer.main(String[]), 2, 431,11, 431,21 */
-/*!!!!! org.openrefactory.test.Outer#display(), 2, 331,16, 357,12 */
-/*!!!!! org.openrefactory.test.Outer.<init>(), 0 */
+/*$$$$$ org.openrefactory.test.Outer.<init>(), 0 */
+

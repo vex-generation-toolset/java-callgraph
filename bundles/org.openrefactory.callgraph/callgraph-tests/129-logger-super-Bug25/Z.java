@@ -15,14 +15,12 @@ public class MyLogger extends Logger {
     }
 }
 
-/*$$$$$
-  MyLogger#MyLogger(String@@@String), 2,
-  java.util.logging.Logger#Logger(String@@@String),
-  MyLogger.<init>()
+/*$$$$$ MyLogger#MyLogger(String@@@String), 2,
+  		8,9, 1, java.util.logging.Logger#Logger(String@@@String),
+  		7,5, 1, MyLogger.<init>()
 */
 
 
-/*$$$$$
-MyLogger#info(String), 1,
-java.util.logging.Logger#info(String)
+/*$$$$$	MyLogger#info(String), 1,
+		14,9, 1, java.util.logging.Logger#info(String)
 */

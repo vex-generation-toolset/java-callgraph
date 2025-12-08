@@ -13,12 +13,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.fooConcat(),
-  1,
-  Name.printUpperConcat()
+/*$$$$$ Demo.fooConcat(), 1,
+  		12, 9, 1, Name.printUpperConcat()
 */
 
-/*$$$$$ Name.printUpperConcat(),
-  1,
-  java.lang.String#toUpperCase()
+/*$$$$$ Name.printUpperConcat(), 1,
+  		6, 24, 1, java.lang.String#toUpperCase()
 */

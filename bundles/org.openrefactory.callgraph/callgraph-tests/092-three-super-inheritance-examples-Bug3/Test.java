@@ -38,19 +38,13 @@ class BaseInner {
     String display() { return "base inner"; }
 }
 
-
-/*$$$$$ org.openrefactory.test.SubOuter.main(String[]), 
-   3,
-   org.openrefactory.test.SubOuter.<init>(),
-   org.openrefactory.test.SubOuter.Inner.<init>(),
-   org.openrefactory.test.SubOuter.Inner#show(),
+/*$$$$$ org.openrefactory.test.SubOuter.main(String[]), 2,
+   		32,32, 2, org.openrefactory.test.SubOuter.<init>(), org.openrefactory.test.SubOuter.Inner.<init>(),
+   		33,9, 1, org.openrefactory.test.SubOuter.Inner#show(),
 */
 
-/*$$$$$ org.openrefactory.test.SubOuter.Inner#show(), 
-   3,
-   org.openrefactory.test.BaseInner#display(),
-   org.openrefactory.test.SubOuter.Inner#display(),
-   org.openrefactory.test.Outer#display(),
+/*$$$$$ org.openrefactory.test.SubOuter.Inner#show(), 3,
+   		21,53, 1, org.openrefactory.test.SubOuter.Inner#display(),
+   		24,54, 1, org.openrefactory.test.BaseInner#display(),
+   		27,63, 1, org.openrefactory.test.Outer#display(),
 */
-
-/*!!!!! org.openrefactory.test.SubOuter.Inner#show(), 3, 548,14, 676,15, 813,24 */

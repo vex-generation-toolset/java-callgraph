@@ -9,8 +9,6 @@ public class Example4 {
     }
 }
 
-/*$$$$$
-  Example4#demo(), 0,
-*/
+/*$$$$$ Example4#demo(), 0 */
 
 // Currently we do nto support enums

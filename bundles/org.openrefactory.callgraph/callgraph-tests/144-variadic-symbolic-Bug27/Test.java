@@ -15,9 +15,7 @@ public class Example5 {
     }
 }
 
-/*$$$$$ Example5.main(String[]), 
-   1, Example5.printAll(T[]...)
- */
-
-
-/*!!!!! Example5.main(String[]), 2, 286, 17, 313,23 */
+/*$$$$$ Example5.main(String[]), 2,
+		13,9, 1, Example5.printAll(T[]...),
+		14,9, 1, Example5.printAll(T[]...)
+*/

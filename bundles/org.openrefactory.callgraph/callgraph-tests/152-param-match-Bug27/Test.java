@@ -54,41 +54,26 @@ public class Z {
     }
 }
 
-/*!!!!! Z#foo(), 1, 1249, 34 */
-
-/*$$$$$ Z#foo(), 
-   1,
-   IterUtil.compose(Iterable@@@T),
- */
-
-/*$$$$$ Z#bar(), 
-1,
-IterUtil.compose(T@@@Iterable),
+/*$$$$$ Z#foo(), 1,
+		42,18, 1, IterUtil.compose(Iterable@@@T),
 */
 
-/*$$$$$ Z#bazz(), 
-1,
-IterUtil.compose(Iterable@@@Iterable),
+/*$$$$$ Z#bar(), 1,
+		47,18, 1, IterUtil.compose(T@@@Iterable),
 */
 
-
-/*$$$$$ IterUtil.compose(Iterable@@@T), 
-1,
-ComposedIterable#ComposedIterable(Iterable@@@T),
+/*$$$$$ Z#bazz(), 1,
+		53,18, 1, IterUtil.compose(Iterable@@@Iterable),
 */
 
-/*$$$$$ IterUtil.compose(T@@@Iterable), 
-1,
-ComposedIterable#ComposedIterable(T@@@Iterable),
+/*$$$$$ IterUtil.compose(Iterable@@@T), 1,
+		30,16, 1, ComposedIterable#ComposedIterable(Iterable@@@T),
 */
 
-/*$$$$$ IterUtil.compose(Iterable@@@Iterable), 
-1,
-ComposedIterable#ComposedIterable(Iterable@@@Iterable),
+/*$$$$$ IterUtil.compose(T@@@Iterable), 1,
+		26,16, 1, ComposedIterable#ComposedIterable(T@@@Iterable),
 */
 
-/*!!!!! Z#bar(), 1, 1356,34 */
-/*!!!!! Z#bazz(), 1, 1470,32 */
-/*!!!!! IterUtil.compose(Iterable@@@T), 1, 932,35 */
-/*!!!!! IterUtil.compose(T@@@Iterable), 1, 778,36 */
-/*!!!!! IterUtil.compose(Iterable@@@Iterable), 1,1101,31 */
+/*$$$$$ IterUtil.compose(Iterable@@@Iterable), 1,
+		34,16, 1, ComposedIterable#ComposedIterable(Iterable@@@Iterable),
+*/

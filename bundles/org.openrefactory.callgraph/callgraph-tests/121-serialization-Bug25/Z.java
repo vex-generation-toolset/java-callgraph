@@ -11,11 +11,8 @@ public class Example11 {
     }
 }
 
-/*$$$$$
-  Example11#demo(), 3,
-  java.io.ObjectInputStream#ObjectInputStream(FileInputStream),
-  java.io.FileInputStream#FileInputStream(String),
-  java.io.ObjectInputStream#readObject()
+/*$$$$$ Example11#demo(), 3,
+  		8,37, 1, java.io.ObjectInputStream#ObjectInputStream(FileInputStream),
+  		8,59, 1, java.io.FileInputStream#FileInputStream(String),
+  		9,24, 1, java.io.ObjectInputStream#readObject()
 */
-
-/*!!!!! Example11#demo(), 3, 167, 30, 145, 53, 225, 15 */

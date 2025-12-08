@@ -14,13 +14,11 @@ public class MyThread extends Thread {
     }
 }
 
-/*$$$$$
-  MyThread#run(), 1,
-  java.lang.Thread#run(),
+/*$$$$$ MyThread#run(), 1,
+  		8,9, 1, java.lang.Thread#run(),
 */
 
 
-/*$$$$$
-  MyThread.main(String[]), 1,
-  MyThread.<init>(),
+/*$$$$$ MyThread.main(String[]), 1,
+  		12,22, 1, MyThread.<init>(),
 */

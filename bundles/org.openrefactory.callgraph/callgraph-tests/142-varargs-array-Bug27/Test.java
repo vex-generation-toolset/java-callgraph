@@ -13,8 +13,6 @@ public class Example4 {
     }
 }
 
-/*$$$$$ Example4.main(String[]), 
-   1, Example4.printAll(String[]...)
- */
-
-/*!!!!! Example4.main(String[]), 1, 276,13 */
+/*$$$$$ Example4.main(String[]), 1,
+		12,9, 1, Example4.printAll(String[]...)
+*/

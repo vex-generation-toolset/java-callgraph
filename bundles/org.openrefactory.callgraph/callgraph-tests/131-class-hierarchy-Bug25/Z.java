@@ -24,26 +24,21 @@ public class MyOutputStream extends Middle {
     }
 }
 
-/*$$$$$
-  MyOutputStream#MyOutputStream(OutputStream), 2,
-  Middle#Middle(OutputStream),
-  MyOutputStream.<init>()
+/*$$$$$ MyOutputStream#MyOutputStream(OutputStream), 2,
+  		18,47, 1, Middle#Middle(OutputStream),
+  		18,5, 1, MyOutputStream.<init>()
 */
 
-
-/*$$$$$
-  MyOutputStream#write(int), 1,
-  Middle#write(int),
+/*$$$$$ MyOutputStream#write(int), 1,
+  		23,9, 1, Middle#write(int)
 */
 
-/*$$$$$
-  Middle#Middle(OutputStream), 2,
-  java.io.FilterOutputStream#FilterOutputStream(OutputStream),
-  Middle.<init>(),
+/*$$$$$ Middle#Middle(OutputStream), 2,
+  		9,42, 1, java.io.FilterOutputStream#FilterOutputStream(OutputStream),
+  		9,5, 1, Middle.<init>(),
 */
 
-/*$$$$$
-  Middle#write(int), 1,
-  java.io.FilterOutputStream#write(int),
+/*$$$$$ Middle#write(int), 1,
+  		13,9, 1, java.io.FilterOutputStream#write(int),
 */
 

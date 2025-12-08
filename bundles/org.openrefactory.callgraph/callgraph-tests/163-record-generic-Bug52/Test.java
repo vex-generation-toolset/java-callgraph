@@ -10,8 +10,7 @@ public class DemoClass {
     }
 }
 
-/*$$$$$ DemoClass.foo(),
-  2,
-  javax.swing.Box#Box(String),
-  javax.swing.Box#content()
+/*$$$$$ DemoClass.foo(), 2,
+  		8,25, 1, javax.swing.Box#Box(String),
+  		9,9, 1, javax.swing.Box#content()
 */
