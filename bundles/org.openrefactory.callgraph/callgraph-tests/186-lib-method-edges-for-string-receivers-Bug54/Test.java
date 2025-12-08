@@ -19,14 +19,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.fooInheritanceComplex(),
-  2,
-  ChildName.<init>(),
-  ChildName#process()
+/*$$$$$ Demo.fooInheritanceComplex(), 1,
+  		18, 9, 2, ChildName.<init>(), ChildName#process()
 */
 
-/*$$$$$ ChildName#process(),
-  2,
-  BaseName#baseLabel(),
-  java.lang.String#substring(int)
+/*$$$$$ ChildName#process(), 1,
+  		12, 25, 2, BaseName#baseLabel(), java.lang.String#substring(int)
 */

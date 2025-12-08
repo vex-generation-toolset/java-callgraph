@@ -5,35 +5,22 @@
  */
 package org.openrefactory.cli;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import org.json.JSONObject;
 import org.openrefactory.analysis.callgraph.CallGraphDataStructures;
 import org.openrefactory.analysis.callgraph.MultiThreadCallGraphProcessor;
 import org.openrefactory.analysis.vpg.JavaVPG;
-import org.openrefactory.capslock.Call;
-import org.openrefactory.capslock.Graph;
-import org.openrefactory.capslock.Site;
 import org.openrefactory.model.IModel;
 import org.openrefactory.model.IModelFileElement;
 import org.openrefactory.model.Model;
-import org.openrefactory.util.ASTNodeUtility;
-import org.openrefactory.util.CallGraphUtility;
-import org.openrefactory.util.datastructure.IntPair;
-import org.openrefactory.util.datastructure.TokenRange;
 import org.openrefactory.util.manager.C2PManager;
 import org.openrefactory.util.manager.C2SManager;
 import org.openrefactory.util.manager.FNDSpecManager;
@@ -211,33 +198,8 @@ public class CallGraphPassCommand {
 			}
 
 			String cgFileName = timeStamp + "_cg.json";
-			File cgFile = Path.of(ConfigurationManager.config.RESULT, cgFileName).toFile();
-			try (FileWriter fOut = new FileWriter(cgFile); BufferedWriter bw = new BufferedWriter(fOut)) {
-				Map<String, Map<TokenRange, Set<String>>> storedCallerToCalleeMap = CallGraphDataStructures
-					.getExtendedCallGraph().getCallerToCalleeMap();
-				Graph cg = new Graph();
-				for (Entry<String, Map<TokenRange, Set<String>>> callerHashEntries : storedCallerToCalleeMap
-					.entrySet()) {
-					int callerIdx = cg.populateInfo(callerHashEntries.getKey());
-					for (Entry<TokenRange, Set<String>> rangeToCallees : callerHashEntries.getValue().entrySet()) {
-						TokenRange callTr = rangeToCallees.getKey();
-						// Extract line, column, file information from the token range
-						IntPair lineColumn = ASTNodeUtility.getLineAndColumn(callTr);
-						Path p = Path.of(callTr.getFileName());
-						// Calculate the relative directory path from the project root
-						Path projectRoot = Path.of(ConfigurationManager.config.SOURCE);
-						String fileName = p.getFileName().toString();
-						String parentDir = projectRoot.relativize(p.getParent()).toString();
-
-						for (String calleeHash : rangeToCallees.getValue()) {
-							int calleeIdx = cg.populateInfo(calleeHash);
-							Site site = new Site(parentDir, fileName, (long)lineColumn.fst, (long)lineColumn.snd);
-							Call call = new Call((long)callerIdx, (long)calleeIdx, site);
-							cg.addCall(call);
-						}
-					}
-				}
-				bw.write(cg.toJson().toString(4));
+			try {
+				CallGraphDataStructures.getExtendedCallGraph().writeTofile(cgFileName);
 			} catch (Exception | Error e) {
 				progressReporter.showProgress("Failed to generate cg file: " + e.getMessage());
 			}

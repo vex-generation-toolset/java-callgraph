@@ -14,12 +14,11 @@ public class DemoClass {
     }
 }
 
-/*$$$$$ DemoClass.foo(),
-  6,
-  Point#Point(int@@@int),
-  Point#x(),
-  Point#y(),
-  Point#toString(),
-  Point#hashCode(),
-  Point#equals(Point)
+/*$$$$$ DemoClass.foo(), 6,
+		8,19, 1, Point#Point(int@@@int),
+		9,9, 1, Point#x(),
+		10,9, 1, Point#y(),
+		11,9, 1, Point#toString(),
+		12,9, 1, Point#hashCode(),
+		13,9, 1, Point#equals(Point)
 */

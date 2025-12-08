@@ -27,16 +27,11 @@ public class AnotherClass {
     }
 }
 
-/*$$$$$
-  Example6Custom#demo(), 1,
-  Example6Custom.Pair#Pair(K@@@V)
+/*$$$$$ Example6Custom#demo(), 1,
+ 		17,39, 1, Example6Custom.Pair#Pair(K@@@V)
 */
 
 
-/*$$$$$
-AnotherClass.main(String[]), 1,
-Example6Custom.Pair#Pair(K@@@V)
+/*$$$$$ AnotherClass.main(String[]), 1,
+		24,54, 1, Example6Custom.Pair#Pair(K@@@V)
 */
-
-/*!!!!! Example6Custom#demo(), 1, 339,33 */
-/*!!!!! AnotherClass.main(String[]), 1, 562,48 */

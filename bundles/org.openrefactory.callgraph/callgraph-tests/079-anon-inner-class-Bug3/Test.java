@@ -18,10 +18,7 @@ class Outer {
     }
 }
 
-/*$$$$$ org.openrefactory.test.Outer.main(String[]), 
-   2,
-   org.openrefactory.test.Outer.main(String[])$Greeting$1.<init>(),
-   org.openrefactory.test.Outer.main(String[])$Greeting$1#sayHello(),
- */
-
-/*!!!!! org.openrefactory.test.Outer.main(String[]), 2, 239,168, 417,12 */
+/*$$$$$ org.openrefactory.test.Outer.main(String[]), 2,
+		12,22, 1, org.openrefactory.test.Outer.main(String[])$Greeting$1.<init>(),
+   		17,9, 1, org.openrefactory.test.Outer.main(String[])$Greeting$1#sayHello(),
+*/

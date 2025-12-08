@@ -20,29 +20,14 @@ class Outer {
 }
 
 
-/*$$$$$ org.openrefactory.test.Outer.main(String[]), 
-   3, 
-   org.openrefactory.test.Outer.<init>(),
-   org.openrefactory.test.Outer.Inner.<init>(),
-   org.openrefactory.test.Outer.Inner#show(),
- */
-
-/*!!!!! org.openrefactory.test.Outer.main(String[]), 3, 339,11, 380,17, 407,12 */
-
-/*$$$$$ org.openrefactory.test.Outer.Inner.<init>(), 
-  0, 
+/*$$$$$ org.openrefactory.test.Outer.main(String[]), 3, 
+   		16,23, 1, org.openrefactory.test.Outer.<init>(),
+   		17,29, 1, org.openrefactory.test.Outer.Inner.<init>(),
+   		18,9, 1, org.openrefactory.test.Outer.Inner#show(),
 */
 
-/*!!!!! org.openrefactory.test.Outer.Inner.<init>(), 0 */
+/*$$$$$ org.openrefactory.test.Outer.Inner.<init>(), 0 */
 
-/*$$$$$ org.openrefactory.test.Outer.<init>(), 
-  0, 
-*/
+/*$$$$$ org.openrefactory.test.Outer.<init>(), 0 */
 
-/*!!!!! org.openrefactory.test.Outer.<init>(), 0 */
-
-/*$$$$$ org.openrefactory.test.Outer.Inner#show(),
-  0,
-*/
-
-/*!!!!! org.openrefactory.test.Outer.Inner#show(), 0, */
+/*$$$$$ org.openrefactory.test.Outer.Inner#show(), 0*/

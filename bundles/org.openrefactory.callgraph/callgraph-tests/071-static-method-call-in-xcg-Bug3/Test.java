@@ -23,11 +23,16 @@ class A {
     }
 }
 
-/*$$$$$ Test.main(String[]), 2, Test.foo(), Test.bar() */
+/*$$$$$ Test.main(String[]), 2,
+		6,9, 1, Test.foo(),
+		7,9, 1, Test.bar()
+*/
 
-/*!!!!! Test.main(String[]), 2, 145,5, 160, 10 */
+/*$$$$$ Test.foo(), 2,
+		12,20, 1, A.b(),
+		11,9, 1, Test.bar()
+*/
 
-/*$$$$$ Test.foo(), 2, A.b(), Test.bar() */
 /*$$$$$ Test.bar(), 0 */
 
 /*$$$$$ A.b(), 0 */

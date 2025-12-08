@@ -11,10 +11,7 @@ public class Example9 {
     }
 }
 
-/*$$$$$
-  Example9#demo(), 2,
-  java.lang.Class#getConstructor(),
-  java.lang.reflect.Constructor#newInstance()
+/*$$$$$ Example9#demo(), 2,
+  		9,31, 1, java.lang.Class#getConstructor(),
+  		10,18, 1, java.lang.reflect.Constructor#newInstance()
 */
-
-/*!!!!! Example9#demo(), 2, 178, 27, 224, 15 */

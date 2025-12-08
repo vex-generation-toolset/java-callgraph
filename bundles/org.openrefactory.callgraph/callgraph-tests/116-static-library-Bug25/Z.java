@@ -9,7 +9,6 @@ public class Example5 {
     }
 }
 
-/*$$$$$
-  Example5#demo(), 1,
-  java.util.Calendar.getInstance()
+/*$$$$$ Example5#demo(), 1,
+  		8,24, 1, java.util.Calendar.getInstance()
 */

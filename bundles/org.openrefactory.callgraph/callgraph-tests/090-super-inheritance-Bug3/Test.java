@@ -15,11 +15,7 @@ class Child extends Parent {
     }
 }
 
-
-/*$$$$$ org.openrefactory.test.Child#Child(), 
-   2,
-   org.openrefactory.test.Parent#Parent(int),
-    org.openrefactory.test.Child.<init>(),
- */
-
-/*!!!!! org.openrefactory.test.Child#Child(), 2, 325,10, 307,126 */
+/*$$$$$ org.openrefactory.test.Child#Child(), 2,
+		13,9, 1, org.openrefactory.test.Parent#Parent(int),
+		12,5, 1, org.openrefactory.test.Child.<init>(),
+*/

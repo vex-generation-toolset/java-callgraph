@@ -12,20 +12,13 @@ public class Example2 {
     }
 }
 
-/*!!!!! Example2.main(String[]), 1,  249, 95  */
-
-/*$$$$$
-  Example2.main(String[]), 1,
-  Example2.<staticinit>()
+/*$$$$$ Example2.main(String[]), 1,
+  		10,5, 1, Example2.<staticinit>()
 */
 
-/*!!!!! Example2.<staticinit>(), 2, 214, 17, 214, 28 */
-
-/*$$$$$
-  Example2.<staticinit>(), 2,
-  java.util.UUID.randomUUID(),
-  UUID#toString(),
+/*$$$$$ Example2.<staticinit>(), 1,
+  		8,42, 2, java.util.UUID.randomUUID(), UUID#toString(),
 */
 
 // The last bit is perhaps questionable. Should we get the class of the chain method inside a library?
-// Or should we just content with somethidn hard?
+// Or should we just content with somethidng hard?

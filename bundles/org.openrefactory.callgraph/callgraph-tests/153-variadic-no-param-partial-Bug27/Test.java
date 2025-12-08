@@ -14,8 +14,6 @@ public class Example2 {
     }
 }
 
-/*$$$$$ Example2.main2(String[]), 
-  1, Example2.printSum(Object@@@int[]...)
+/*$$$$$ Example2.main2(String[]), 1,
+		13,9, 1, Example2.printSum(Object@@@int[]...)
 */
-
-/*!!!!! Example2.main2(String[]),  1, 374,17 */

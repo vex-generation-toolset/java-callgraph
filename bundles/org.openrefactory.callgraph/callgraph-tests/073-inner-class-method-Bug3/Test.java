@@ -34,17 +34,14 @@ public class Outer {
     }
 }
 
-/*$$$$$ org.test.Outer.Inner#display(), 1, org.test.Outer#printMessage() */
-
-/*!!!!! org.test.Outer.Inner#display(), 1, 405, 14 */
+/*$$$$$ org.test.Outer.Inner#display(), 1,
+		15,13, 1, org.test.Outer#printMessage()
+*/
 
 /*$$$$$ org.test.Outer#printMessage(), 0 */
 
-/*!!!!! org.test.Outer#printMessage(), 0 */
-
 /*$$$$$ org.test.Outer.main(String[]), 3, 
-     org.test.Outer.<init>(), 
-     org.test.Outer.Inner.<init>(), 
-     org.test.Outer.Inner#display() */
-
-/*!!!!! org.test.Outer.main(String[]), 3, 711,11, 822, 17, 900, 15 */
+		27,23, 1, org.test.Outer.<init>(), 
+		30,29, 1, org.test.Outer.Inner.<init>(), 
+		33,9, 1, org.test.Outer.Inner#display()
+*/

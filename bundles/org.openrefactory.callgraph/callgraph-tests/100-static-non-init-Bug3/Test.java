@@ -29,19 +29,19 @@ class Counter {
     }
 }
 
-class B{
+class B {
     public String getS() {
         return "sb";
     }
 }
 
-class C{
+class C {
     public String getS() {
         return "sc";
     }
 }
 
-class D{
+class D {
     public String getS() {
         return "sd";
     }
@@ -49,19 +49,16 @@ class D{
 
 // Default constructor just points to the non-static initializations
 
-/*$$$$$
-  org.openrefactory.test.Counter.<init>(), 2, 
-  org.openrefactory.test.C.<init>(),
-  org.openrefactory.test.C#getS(),
+/*$$$$$ org.openrefactory.test.Counter.<init>(), 1, 
+  		18,13, 2, org.openrefactory.test.C.<init>(), org.openrefactory.test.C#getS(),
 */
 
 
 // Static method points to static constructor
 
-/*$$$$$
-org.openrefactory.test.Counter.main(String[]), 2,
-org.openrefactory.test.Counter#Counter(),
-org.openrefactory.test.Counter.<staticinit>(),
+/*$$$$$ org.openrefactory.test.Counter.main(String[]), 2,
+		26,21, 1, org.openrefactory.test.Counter#Counter(),
+		25,5, 1, org.openrefactory.test.Counter.<staticinit>(),
 */
 
 
@@ -69,12 +66,9 @@ org.openrefactory.test.Counter.<staticinit>(),
 // There is no concept of a static constructor in Java, this is more
 // like a defualt constructor for static variable initialization.
 
-/*$$$$$
-org.openrefactory.test.Counter.<staticinit>(), 4,
-org.openrefactory.test.D.<init>(),
-org.openrefactory.test.D#getS(),
-org.openrefactory.test.B.<init>(),
-org.openrefactory.test.B#getS(),
+/*$$$$$ org.openrefactory.test.Counter.<staticinit>(), 2,
+		10,24, 2, org.openrefactory.test.D.<init>(), org.openrefactory.test.D#getS(),
+		14,16, 2, org.openrefactory.test.B.<init>(), org.openrefactory.test.B#getS(),
 */
 
 
@@ -82,12 +76,6 @@ org.openrefactory.test.B#getS(),
 // This is because the static value is not processed here as this method is not a root.
 // The static values get processed at the root.
 
-/*$$$$$
-org.openrefactory.test.Counter#Counter(), 1, 
-org.openrefactory.test.Counter.<init>(),
+/*$$$$$ org.openrefactory.test.Counter#Counter(), 1, 
+		21,5, 1, org.openrefactory.test.Counter.<init>(),
 */
-
-/*!!!!! org.openrefactory.test.Counter.<init>(), 2, 316,7, 316,14 */
-/*!!!!! org.openrefactory.test.Counter.main(String[]), 2, 443,13, 382, 202 */
-/*!!!!! org.openrefactory.test.Counter.<staticinit>(), 4, 211,7, 211,14, 271,7, 271,14 */
-/*!!!!! org.openrefactory.test.Counter#Counter(), 1, 343,33 */

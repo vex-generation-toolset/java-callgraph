@@ -17,18 +17,10 @@ public class Example4 {
     }
 }
 
-/*$$$$$
-  Example4.main(String[]), 1,
-  Example4.<init>()
+/*$$$$$ Example4.main(String[]), 1,
+  		15,22, 1, Example4.<init>()
 */
 
-
-/*$$$$$
-  Example4.<init>(), 3,
-  java.util.Random.<init>(),
-  java.util.Random#Random(),
-  java.util.Random#nextInt(int),
+/*$$$$$ Example4.<init>(), 1,
+  		11,14, 3, java.util.Random.<init>(), java.util.Random#Random(), java.util.Random#nextInt(int),
 */
-
-/*!!!!! Example4.main(String[]), 1, 302, 14 */
-/*!!!!! Example4.<init>(), 2, 201, 12, 201, 26 */

@@ -9,7 +9,6 @@ public class Example7 {
     }
 }
 
-/*$$$$$
-  Example7#demo(), 1,
-  java.util.List.of(String@@@String@@@String)
+/*$$$$$ Example7#demo(), 1,
+  		8,29, 1, java.util.List.of(String@@@String@@@String)
 */

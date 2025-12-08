@@ -53,13 +53,14 @@ public class MultiClassWithOverloadedMethods {
 
 /*$$$$$ A.<init>(), 0 */
 
-/*$$$$$ B.<init>(), 1, A.<init>() */
+/*$$$$$ B.<init>(), 1,
+		13,1, 1, A.<init>()
+*/
 
-/*$$$$$ C.<init>(), 1, A.<init>() */
+/*$$$$$ C.<init>(), 1,
+ 		31,1, 1, A.<init>()
+*/
 
-/*$$$$$ D.<init>(), 1, A.<init>() */
-
-/*!!!!! A.<init>(), 0 */
-/*!!!!! B.<init>(), 1, 240,68 */
-/*!!!!! C.<init>(), 1, 483,111 */
-/*!!!!! D.<init>(), 1, 310,171 */
+/*$$$$$ D.<init>(), 1,
+		19,1, 1, A.<init>()
+*/

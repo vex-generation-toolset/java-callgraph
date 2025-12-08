@@ -10,11 +10,7 @@ public class Example10 {
     }
 }
 
-/*$$$$$
-  Example10#demo(), 3,
-  java.util.ArrayList#ArrayList(),
-  java.util.ArrayList.<init>(),
-  java.util.ArrayList#clone()
+/*$$$$$ Example10#demo(), 2,
+  		8,35, 2, java.util.ArrayList#ArrayList(), java.util.ArrayList.<init>(),
+  		9,55, 1, java.util.ArrayList#clone()
 */
-
-/*!!!!! Example10#demo(), 2, 164,17, 237, 13*/

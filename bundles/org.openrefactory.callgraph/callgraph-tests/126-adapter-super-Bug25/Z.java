@@ -12,7 +12,6 @@ public class MyMouseAdapter extends MouseAdapter {
     }
 }
 
-/*$$$$$
-  MyMouseAdapter#mouseClicked(MouseEvent), 1,
-  java.awt.event.MouseAdapter#mouseClicked(MouseEvent),
+/*$$$$$ MyMouseAdapter#mouseClicked(MouseEvent), 1,
+  		11,9, 1, java.awt.event.MouseAdapter#mouseClicked(MouseEvent),
 */

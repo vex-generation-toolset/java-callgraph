@@ -10,8 +10,7 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.foo(),
-  2,
-  Node#Node(int@@@null),
-  Node#next()
+/*$$$$$ Demo.foo(), 2,
+  		8,18, 1, Node#Node(int@@@null),
+  		9,9, 1, Node#next()
 */

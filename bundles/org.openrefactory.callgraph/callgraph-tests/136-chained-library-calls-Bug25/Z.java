@@ -13,17 +13,11 @@ public class Example6 {
     }
 }
 
-/*$$$$$
-  Example6.main(String[]), 1,
-  Example6.<init>(),
+/*$$$$$ Example6.main(String[]), 1,
+  		12,28, 1, Example6.<init>(),
 */
 
-
-/*$$$$$
-  Example6.<init>(), 3,
-  java.time.LocalDateTime.now(),
-  LocalDateTime#format(DateTimeFormatter),
-  java.time.format.DateTimeFormatter.ofPattern(String)
+/*$$$$$ Example6.<init>(), 2,
+  		8,32, 2, java.time.LocalDateTime.now(), LocalDateTime#format(DateTimeFormatter),
+  		9,41, 1, java.time.format.DateTimeFormatter.ofPattern(String)
 */
-
-/*!!!!! Example6.<init>(), 3, 193,19, 193, 111, 253, 50*/

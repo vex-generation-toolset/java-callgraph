@@ -18,17 +18,11 @@ class Child extends Parent {
     }
 }
 
-
-
-/*$$$$$ org.openrefactory.test.Child.main(String[]), 
-   1,
-   org.openrefactory.test.Child#Child(),
- */
-
-/*$$$$$ org.openrefactory.test.Child#Child(), 
-   2,
-   org.openrefactory.test.Parent.<init>(),
-   org.openrefactory.test.Child.<init>(),
+/*$$$$$ org.openrefactory.test.Child.main(String[]), 1,
+   		17,9, 1, org.openrefactory.test.Child#Child(),
 */
 
-/*!!!!! org.openrefactory.test.Child#Child(), 2, 182,81, 200,8 */
+/*$$$$$ org.openrefactory.test.Child#Child(), 2,
+   		12,9, 1, org.openrefactory.test.Parent.<init>(),
+   		11,5, 1, org.openrefactory.test.Child.<init>(),
+*/

@@ -9,8 +9,7 @@ class Outer {
     }
 }
 
-/*$$$$$ Outer.foo(),
-  2,
-  Inner#Inner(int),
-  Inner#x()
+/*$$$$$ Outer.foo(), 2,
+  		7,19, 1, Inner#Inner(int),
+  		8,9, 1, Inner#x()
 */

@@ -27,22 +27,14 @@ class Box {
     }
 }
 
-
-/*$$$$$ org.openrefactory.test.Box.main(String[]), 
-   1,
-   org.openrefactory.test.Box#Box(),
+/*$$$$$ org.openrefactory.test.Box.main(String[]), 1,
+   		26,9, 1, org.openrefactory.test.Box#Box(),
 */
 
-/*$$$$$ org.openrefactory.test.Box#Box(), 
-   1,
-   org.openrefactory.test.Box#Box(int),
+/*$$$$$ org.openrefactory.test.Box#Box(), 1,
+   		11,9, 1, org.openrefactory.test.Box#Box(int),
 */
 
-/*$$$$$ org.openrefactory.test.Box#Box(int), 
-    1,
-    org.openrefactory.test.Box#Box(int@@@int@@@int),
+/*$$$$$ org.openrefactory.test.Box#Box(int), 1,
+		15,9, 1, org.openrefactory.test.Box#Box(int@@@int@@@int),
 */
-
-/*!!!!! org.openrefactory.test.Box.main(String[]), 1, 554,9 */
-/*!!!!! org.openrefactory.test.Box#Box(), 1, 199,8 */
-/*!!!!! org.openrefactory.test.Box#Box(int), 1, 262,23 */

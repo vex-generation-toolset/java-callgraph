@@ -19,14 +19,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.fooInherited(),
-  2,
-  ChildName.<init>(),
-  ChildName#formatInherited()
+/*$$$$$ Demo.fooInherited(), 1,
+  		18, 9, 2, ChildName.<init>(), ChildName#formatInherited()
 */
 
-/*$$$$$ ChildName#formatInherited(),
-  2,
-  ParentName#provideName(),
-  java.lang.String#toLowerCase()
+/*$$$$$ ChildName#formatInherited(), 1,
+  		12, 24, 2, ParentName#provideName(), java.lang.String#toLowerCase()
 */

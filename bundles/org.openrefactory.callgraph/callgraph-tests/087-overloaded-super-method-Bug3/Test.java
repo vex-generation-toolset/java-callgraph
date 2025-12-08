@@ -23,16 +23,10 @@ class Child extends Parent {
     }
 }
 
-
-/*$$$$$ org.openrefactory.test.Child.main(String[]), 
-   2,
-   org.openrefactory.test.Child.<init>(),
-   org.openrefactory.test.Child#show(),
- */
-
-/*$$$$$ org.openrefactory.test.Child#show(), 
-   1,
-   org.openrefactory.test.Parent#show(String),
+/*$$$$$ org.openrefactory.test.Child.main(String[]), 1,
+   		22,9, 2, org.openrefactory.test.Child.<init>(), org.openrefactory.test.Child#show()
 */
 
-/*!!!!! org.openrefactory.test.Child#show(), 1, 345,30 */
+/*$$$$$ org.openrefactory.test.Child#show(), 1,
+   		17,9, 1, org.openrefactory.test.Parent#show(String),
+*/

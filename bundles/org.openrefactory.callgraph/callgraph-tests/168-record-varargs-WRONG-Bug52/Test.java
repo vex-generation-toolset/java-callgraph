@@ -9,9 +9,8 @@ public class Demo {
     }
 }
 
-/*$$ Demo.foo(),
-  1,
-  R#R(int[]...)
+/*$$ Demo.foo(), 1,
+		8,15, 1, R#R(int[]...)
 */
 
 // This test is currently disabled because it fails in extended callgraph test suite run.

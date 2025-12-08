@@ -12,7 +12,6 @@ public class ErasureDemo {
     }
 }
 
-/*$$$$$ ErasureDemo#foo(List),
-  1,
-  java.lang.String#toUpperCase()
+/*$$$$$ ErasureDemo#foo(List), 1,
+  		11,20, 1, java.lang.String#toUpperCase()
 */

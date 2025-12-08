@@ -13,12 +13,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.fooFormatVarArgs(),
-  1,
-  Name.formatVarArgs()
+/*$$$$$ Demo.fooFormatVarArgs(), 1,
+  		12, 9, 1, Name.formatVarArgs()
 */
 
-/*$$$$$ Name.formatVarArgs(),
-  1,
-  java.lang.String.format(String@@@String@@@int)
+/*$$$$$ Name.formatVarArgs(), 1,
+  		6, 25, 1, java.lang.String.format(String@@@String@@@int)
 */

@@ -12,8 +12,7 @@ public class Example12 {
     }
 }
 
-/*$$$$$
-  Example12#demo(), 2,
-  org.springframework.context.annotation.AnnotationConfigApplicationContext#AnnotationConfigApplicationContext(Class),
-  org.springframework.context.ApplicationContext#getBean(Class),
+/*$$$$$ Example12#demo(), 2,
+  		10,34, 1, org.springframework.context.annotation.AnnotationConfigApplicationContext#AnnotationConfigApplicationContext(Class),
+  		11,23, 1, org.springframework.context.ApplicationContext#getBean(Class),
 */

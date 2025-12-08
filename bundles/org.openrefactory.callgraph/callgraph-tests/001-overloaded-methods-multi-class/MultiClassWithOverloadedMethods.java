@@ -47,15 +47,30 @@ public class MultiClassWithOverloadedMethods {
     }
 }
 
-/*$$$$$ MultiClassWithOverloadedMethods.main(String[]), 7, A#foo(A), C#foo(A), B#foo(A), D#foo(A), A.<init>(), B.<init>(), C.<init>() */
+/*$$$$$ MultiClassWithOverloadedMethods.main(String[]), 5,
+		39,15, 1, A.<init>(),
+		42,23, 1, B.<init>(),
+		45,15, 1, C.<init>(),
+		42,17, 4, A#foo(A), C#foo(A), B#foo(A), D#foo(A),
+		46,9, 4, A#foo(A), C#foo(A), B#foo(A), D#foo(A)
+*/
 
 /*$$$$$ A#foo(A), 0 */
 
-/*$$$$$ B#foo(A), 1, D.<init>() */
+/*$$$$$ B#foo(A), 1,
+		11,16, 1, D.<init>()
+*/
 
-/*$$$$$ C#foo(A), 2, D#foo(A), D.<init>() */
+/*$$$$$ C#foo(A), 2,
+		30,15, 1, D.<init>(),
+		31,9, 1, D#foo(A)
+*/
 
-/*$$$$$ D#foo(A), 6, B#foo(A), A#foo(A), C#foo(A), D#foo(A), B.<init>(), A.<init>() */
+/*$$$$$ D#foo(A), 3,
+		17,15, 1, B.<init>(),
+		19,16, 1, A.<init>(),
+		18,9, 4, B#foo(A), A#foo(A), C#foo(A), D#foo(A)
+*/
 
 // Explanation:
 // (1) marker 1 selected class D's foo() method and its caller is according

@@ -11,13 +11,10 @@ public class Demo {
     }
 }
 
-/*$$ Demo#foo(),
-  5,
-  Demo#foo().Inner#list(),
-  Inner#Inner(Object),
-  java.lang.String#toUpperCase(),
-  java.util.List#get(int),
-  java.util.List.of(String)
+/*$$ Demo#foo(), 3,
+  		9,23, 1, Inner#Inner(Object),
+  		9,33, 1, java.util.List.of(String),
+  		10,9, 1, Demo#foo().Inner#list(), java.util.List#get(int), java.lang.String#toUpperCase(),
 */
 
 // This test is currently disabled because it fails in extended callgraph test suite run.

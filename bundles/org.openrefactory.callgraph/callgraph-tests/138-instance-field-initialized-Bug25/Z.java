@@ -11,16 +11,10 @@ public class Example8 {
     }
 }
 
-/*$$$$$
-  Example8.main(String[]), 1,
-  Example8.<init>(),
+/*$$$$$ Example8.main(String[]), 1,
+  		10,28, 1, Example8.<init>(),
 */
 
-
-/*$$$$$
-  Example8.<init>(), 1,
-  java.util.List.of(String@@@String@@@String),
+/*$$$$$ Example8.<init>(), 1,
+  		7,35, 1, java.util.List.of(String@@@String@@@String),
 */
-
-/*!!!!! Example8.main(String[]), 1, 286,14 */
-/*!!!!! Example8.<init>(), 1, 151,31 */

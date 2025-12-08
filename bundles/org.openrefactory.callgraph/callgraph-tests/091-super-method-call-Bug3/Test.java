@@ -29,18 +29,11 @@ class SubOuter extends Outer {
     }
 }
 
-
-/*$$$$$ org.openrefactory.test.SubOuter.main(String[]), 
-   3,
-   org.openrefactory.test.SubOuter.<init>(),
-   org.openrefactory.test.SubOuter.Inner.<init>(),
-   org.openrefactory.test.SubOuter.Inner#show(),
+/*$$$$$ org.openrefactory.test.SubOuter.main(String[]), 2,
+   		26,32, 2, org.openrefactory.test.SubOuter.<init>(), org.openrefactory.test.SubOuter.Inner.<init>(),
+   		27,9, 1, org.openrefactory.test.SubOuter.Inner#show(),
 */
 
-/*$$$$$ org.openrefactory.test.SubOuter.Inner#show(), 
-   1,
-   org.openrefactory.test.BaseInner#display(),
+/*$$$$$ org.openrefactory.test.SubOuter.Inner#show(), 1,
+   		21,17, 1, org.openrefactory.test.BaseInner#display(),
 */
-
-/*!!!!! org.openrefactory.test.SubOuter.main(String[]), 3, 593,14, 593,26, 629,12 */
-/*!!!!! org.openrefactory.test.SubOuter.Inner#show(), 1, 483,15 */

@@ -20,23 +20,12 @@ class Child extends Parent {
     }
 }
 
-
-
-/*$$$$$ org.openrefactory.test.Child.main(String[]), 
-   2,
-   org.openrefactory.test.Child.<init>(),
-   org.openrefactory.test.Child#greet(),
- */
-
-/*$$$$$ org.openrefactory.test.Child#greet(), 
-   1,
-   org.openrefactory.test.Parent#greet(),
+/*$$$$$ org.openrefactory.test.Child.main(String[]), 1,
+		19,9, 2, org.openrefactory.test.Child.<init>(), org.openrefactory.test.Child#greet()
 */
 
-/*$$$$$ org.openrefactory.test.Parent#greet(), 
-   0
+/*$$$$$ org.openrefactory.test.Child#greet(), 1,
+		14,9, 1, org.openrefactory.test.Parent#greet(),
 */
 
-/*!!!!! org.openrefactory.test.Child.main(String[]), 2, 399,11, 399,19 */
-/*!!!!! org.openrefactory.test.Child#greet(), 1, 252,13 */
-/*!!!!! org.openrefactory.test.Parent#greet(), 0 */
+/*$$$$$ org.openrefactory.test.Parent#greet(), 0 */

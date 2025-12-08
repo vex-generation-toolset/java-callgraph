@@ -14,11 +14,7 @@ public class Example8 {
     }
 }
 
-
-/*$$$$$ Example8.main(String[]), 
-   2,
-   Example8.setPriorities(Priority[]...),
-   Priority.<staticinit>()
- */
-
-/*!!!!! Example8.main(String[]), 2, 313, 42, 264, 98 */
+/*$$$$$ Example8.main(String[]), 2,
+   		13,9, 1, Example8.setPriorities(Priority[]...),
+   		12,5, 1, Priority.<staticinit>()
+*/

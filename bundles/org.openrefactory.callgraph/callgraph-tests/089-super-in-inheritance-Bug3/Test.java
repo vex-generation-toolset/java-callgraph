@@ -22,22 +22,11 @@ class SubOuter extends Outer {
     }
 }
 
-
-/*$$$$$ org.openrefactory.test.SubOuter.main(String[]), 
-   3,
-   org.openrefactory.test.SubOuter.<init>(),
-   org.openrefactory.test.SubOuter.Inner.<init>(),
-   org.openrefactory.test.SubOuter.Inner#show(),
- */
-
-// This second test is wrong, we should be pointing to Outer#display()
-// But we were pointing to SubOuter#display()
-// Reported and fixed in Issue 7
-
-/*$$$$$ org.openrefactory.test.SubOuter.Inner#show(), 
-   1,
-   org.openrefactory.test.Outer#display(),
+/*$$$$$ org.openrefactory.test.SubOuter.main(String[]), 2,
+   		20,32, 2, org.openrefactory.test.SubOuter.<init>(), org.openrefactory.test.SubOuter.Inner.<init>(),
+   		21,9, 1, org.openrefactory.test.SubOuter.Inner#show(),
 */
 
-/*!!!!! org.openrefactory.test.SubOuter.main(String[]), 3, 494,14, 494,26, 530,12 */
-/*!!!!! org.openrefactory.test.SubOuter.Inner#show(), 1, 350,24 */
+/*$$$$$ org.openrefactory.test.SubOuter.Inner#show(), 1,
+   		15,13, 1, org.openrefactory.test.Outer#display(),
+*/

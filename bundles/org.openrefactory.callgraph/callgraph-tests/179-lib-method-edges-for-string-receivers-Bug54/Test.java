@@ -7,7 +7,6 @@ public class Name {
     }
 }
 
-/*$$$$$ Name.printSubstringLiteral(),
-  1,
-  java.lang.String#substring(int)
+/*$$$$$ Name.printSubstringLiteral(), 1,
+  		6, 22, 1, java.lang.String#substring(int)
 */

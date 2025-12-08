@@ -11,10 +11,6 @@ public class Example7 {
     }
 }
 
-
-/*$$$$$ Example7.main(String[]), 
-   1,
-   Example7.log(String@@@Object[]...)
- */
-
-/*!!!!! Example7.main(String[]), 1, 244, 56*/
+/*$$$$$ Example7.main(String[]), 1,
+   		10,9, 1, Example7.log(String@@@Object[]...)
+*/

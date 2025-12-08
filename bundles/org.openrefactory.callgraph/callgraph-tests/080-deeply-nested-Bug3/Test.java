@@ -23,13 +23,10 @@ class Outer {
     }
 }
 
-/*$$$$$ org.openrefactory.test.Outer.main(String[]), 
-   5,
-   org.openrefactory.test.Outer.<init>(),
-   org.openrefactory.test.Outer.Inner1.<init>(),
-   org.openrefactory.test.Outer.Inner1.Inner2.<init>(),
-   org.openrefactory.test.Outer.Inner1.Inner2.Inner3.<init>(),
-   org.openrefactory.test.Outer.Inner1.Inner2.Inner3#show(),
- */
-
-/*!!!!! org.openrefactory.test.Outer.main(String[]), 5, 400,11, 443,18, 500,19, 565,19, 594,13 */
+/*$$$$$ org.openrefactory.test.Outer.main(String[]), 5,
+   		18,23, 1, org.openrefactory.test.Outer.<init>(),
+   		19,31, 1, org.openrefactory.test.Outer.Inner1.<init>(),
+   		20,38, 1, org.openrefactory.test.Outer.Inner1.Inner2.<init>(),
+   		21,45, 1, org.openrefactory.test.Outer.Inner1.Inner2.Inner3.<init>(),
+   		22,9, 1, org.openrefactory.test.Outer.Inner1.Inner2.Inner3#show()
+*/

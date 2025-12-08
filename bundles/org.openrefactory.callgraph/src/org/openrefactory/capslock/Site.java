@@ -19,7 +19,7 @@ import org.json.JSONObject;
  * 
  * @author Rifat Rubayatul Islam
  */
-public record Site(String directory, String filename, Long line, Long column) {
+public record Site(String directory, String filename, long line, long column) {
 
     public JSONObject toJson() {
         JSONObject callSite = new JSONObject();

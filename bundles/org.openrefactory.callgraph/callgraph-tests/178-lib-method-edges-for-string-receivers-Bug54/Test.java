@@ -14,12 +14,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.fooVar(),
-  1,
-  Name.printUpperVar()
+/*$$$$$ Demo.fooVar(), 1,
+  		13, 9, 1, Name.printUpperVar()
 */
 
-/*$$$$$ Name.printUpperVar(),
-  1,
-  java.lang.String#toUpperCase()
+/*$$$$$ Name.printUpperVar(), 1,
+  		7, 24, 1, java.lang.String#toUpperCase()
 */

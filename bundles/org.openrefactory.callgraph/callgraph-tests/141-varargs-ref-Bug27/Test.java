@@ -17,14 +17,11 @@ public class Example3 {
     }
 }
 
-/*$$$$$ Example3.main(String[]), 
-   1, Example3.joinStrings(String[]...)
- */
-
-/*$$$$$ Example3.main2(String[]), 
-  1, Example3.joinStrings(String[]...)
+/*$$$$$ Example3.main(String[]), 2,
+		11,9, 1, Example3.joinStrings(String[]...),
+		12,9, 1, Example3.joinStrings(String[]...)
 */
 
-/*!!!!! Example3.main(String[]),  2, 261,43, 314,13 */
-
-/*!!!!! Example3.main2(String[]),  1, 412,13 */
+/*$$$$$ Example3.main2(String[]), 1,
+		16,9, 1, Example3.joinStrings(String[]...)
+*/

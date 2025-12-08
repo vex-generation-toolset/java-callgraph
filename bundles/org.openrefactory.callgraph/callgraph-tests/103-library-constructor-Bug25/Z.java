@@ -9,14 +9,6 @@ public class Example1 {
     }
 }
 
-
-/*$$$$$
-  Example1#demo(), 2,
-  java.util.Date#Date(),
-  java.util.Date.<init>()
-*/
-
-/*!!!!!
-Example1#demo(), 1,
-121, 10
+/*$$$$$ Example1#demo(), 1,
+		8,20, 2, java.util.Date#Date(), java.util.Date.<init>()
 */

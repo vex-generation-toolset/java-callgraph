@@ -10,8 +10,7 @@ public class Example9 {
 
 // We do not need import for things such as integer.
 
-/*$$$$$
-  Example9#demo(), 2,
-  java.lang.Integer#Integer(int),
-  java.lang.Integer.valueOf(int),
+/*$$$$$ Example9#demo(), 2,
+  		6,21, 1, java.lang.Integer#Integer(int),
+  		7,21, 1, java.lang.Integer.valueOf(int),
 */

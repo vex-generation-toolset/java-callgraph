@@ -13,12 +13,10 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.foo(),
-  1,
-  Name.printUpper()
+/*$$$$$ Demo.foo(), 1,
+  		12,9, 1, Name.printUpper()
 */
 
-/*$$$$$ Name.printUpper(),
-  1,
-  java.lang.String#toUpperCase()
+/*$$$$$ Name.printUpper(), 1,
+  		6,24, 1, java.lang.String#toUpperCase()
 */

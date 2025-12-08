@@ -19,6 +19,7 @@ class A extends Dummy {
     }
 }
 
-/*$$$$$ Test.main(String[]), 3, org.dummy.Dummy#b(), A#b(), Test.<init>() */
-
-/*!!!!! Test.main(String[]), 2, 267,10, 298,5 */
+/*$$$$$ Test.main(String[]), 2,
+		12, 20, 2, org.dummy.Dummy#b(), A#b(),
+		11, 18, 1, Test.<init>()
+*/

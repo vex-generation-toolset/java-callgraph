@@ -17,14 +17,12 @@ public class MyInputStream extends FilterInputStream {
     }
 }
 
-/*$$$$$
-  MyInputStream#read(), 2,
-  java.io.FilterInputStream#read(),
-  java.lang.Character.toUpperCase(int)
+/*$$$$$ MyInputStream#read(), 2,
+  		15,17, 1, java.io.FilterInputStream#read(),
+  		16,32, 1, java.lang.Character.toUpperCase(int)
 */
 
-/*$$$$$
- MyInputStream#MyInputStream(InputStream), 2,
- MyInputStream.<init>(),
- java.io.FilterInputStream#FilterInputStream(InputStream)
- */
+/*$$$$$ MyInputStream#MyInputStream(InputStream), 2,
+ 		9,5, 1, MyInputStream.<init>(),
+ 		10,9, 1, java.io.FilterInputStream#FilterInputStream(InputStream)
+*/

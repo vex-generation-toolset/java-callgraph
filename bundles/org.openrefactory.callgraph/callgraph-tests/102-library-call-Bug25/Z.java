@@ -29,21 +29,16 @@ class MultithreadingDemo implements Callable<Integer>
     }
 }
 
-/*$$$$$
-  Z#foo(ExecutorService), 2,
-  MultithreadingDemo.<init>(),
-  java.util.concurrent.ExecutorService#submit(MultithreadingDemo),
- */
-
-/*$$$$$
-  Z#bar(), 2,
-  Z#foo(ExecutorService),
-  java.util.concurrent.Executors.newFixedThreadPool(int)
+/*$$$$$ Z#foo(ExecutorService), 2,
+  		12,35, 1, MultithreadingDemo.<init>(),
+  		13,9, 1, java.util.concurrent.ExecutorService#submit(MultithreadingDemo)
 */
 
-/*$$$$$
-  MultithreadingDemo#call(), 1,
-  Z.<staticinit>()
+/*$$$$$ Z#bar(), 2,
+  		17,32, 1, java.util.concurrent.Executors.newFixedThreadPool(int),
+  		18,9, 1, Z#foo(ExecutorService),
 */
 
-/*!!!!! MultithreadingDemo#call(), 1, 531,110 */
+/*$$$$$ MultithreadingDemo#call(), 1,
+  		24,5, 1, Z.<staticinit>()
+*/

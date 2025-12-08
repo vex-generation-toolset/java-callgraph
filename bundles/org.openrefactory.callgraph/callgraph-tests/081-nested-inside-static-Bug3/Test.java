@@ -19,12 +19,8 @@ class Outer {
     }
 }
 
-
-/*$$$$$ org.openrefactory.test.Outer.main(String[]), 
-   3,
-   org.openrefactory.test.Outer.Nested.<init>(),
-   org.openrefactory.test.Outer.Nested.InnerInNested.<init>(),
-   org.openrefactory.test.Outer.Nested.InnerInNested#show(),
- */
-
-/*!!!!! org.openrefactory.test.Outer.main(String[]), 3, 386,18, 449,26, 485,12 */
+/*$$$$$ org.openrefactory.test.Outer.main(String[]), 3,
+		16,31, 1, org.openrefactory.test.Outer.Nested.<init>(),
+		17,44, 1, org.openrefactory.test.Outer.Nested.InnerInNested.<init>(),
+		18,9, 1, org.openrefactory.test.Outer.Nested.InnerInNested#show(),
+*/

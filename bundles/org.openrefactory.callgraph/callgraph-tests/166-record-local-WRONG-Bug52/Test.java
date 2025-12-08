@@ -9,10 +9,9 @@ public class DemoClass {
     }
 }
 
-/*$$ DemoClass.foo(),
-  2,
-  Point#Point(int@@@int),
-  DemoClass.foo().Point#x()
+/*$$ DemoClass.foo(), 2,
+		7,19, 1, Point#Point(int@@@int),
+		8,9, 1, DemoClass.foo().Point#x()
 */
 
 // This test is currently disabled because it fails in extended callgraph test suite run.

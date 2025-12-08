@@ -20,11 +20,9 @@ public class Example2 {
     }
 }
 
-/*$$$$$ Example2.main2(String[]), 
-  1, Example2.printSum(String@@@int[]...)
+/*$$$$$ Example2.main2(String[]), 1,
+		19,9, 1, Example2.printSum(String@@@int[]...)
 */
-
-/*!!!!! Example2.main2(String[]),  1, 556,17 */
 
 // Compares between the two printSum methods,
 // then finds the best match to be with the printSum that matches best
