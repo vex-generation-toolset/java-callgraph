@@ -2,7 +2,7 @@
 // Test for record with method that calls a library method
 
 record Name(String val) {
-    public void printUpper() {
+    public static void printUpper() {
         String upper = "hello".toUpperCase();
     }
 }
@@ -14,13 +14,13 @@ public class Demo {
     }
 }
 
-/*$$$$$ Demo.foo(),
+/*$$ Demo.foo(),
   2,
   Name#Name(String),
-  Name#printUpper()
+  Name.printUpper()
 */
 
-/*$$ Name#printUpper(),
+/*$$ Name.printUpper(),
   1,
   java.lang.String#toUpperCase()
 */

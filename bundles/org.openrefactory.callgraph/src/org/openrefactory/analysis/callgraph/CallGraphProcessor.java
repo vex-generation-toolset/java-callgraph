@@ -484,9 +484,8 @@ public class CallGraphProcessor implements Runnable {
         // Issue 52
         // Handle record implicit methods first.
         // Records have canonical constructors instead of defaults.
-        if (declaration instanceof RecordDeclaration) {
-            createAndPopulateRecordImplicitMethods(
-                    (RecordDeclaration) declaration, binding, tokenRange, pairClassHashAndSign);
+        if (declaration instanceof RecordDeclaration rd) {
+            createAndPopulateRecordImplicitMethods(rd, binding, tokenRange, pairClassHashAndSign);
         } else {
             // Adding a default and static constructor and updating the map
             // We use the same function to create both default and static constructor,
@@ -569,10 +568,10 @@ public class CallGraphProcessor implements Runnable {
      *
      * Creates implicit methods for a record (canonical constructor, accessors, equals, hashCode, toString).
      *
-     * @param recordDeclaration  the record declaration
-     * @param binding                   the type binding of the record
-     * @param tokenRange            the token range of the record
-     * @param classHashAndSign the class hash and signature pair
+     * @param recordDeclaration the record declaration
+     * @param binding           the type binding of the record
+     * @param tokenRange        the token range of the record
+     * @param classHashAndSign  the class hash and signature pair
      */
     private void createAndPopulateRecordImplicitMethods(
             RecordDeclaration recordDeclaration,

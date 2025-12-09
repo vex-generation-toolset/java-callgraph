@@ -588,7 +588,9 @@ public class ASTNodeUtility {
             return false;
         }
         // Get record components
-        List<?> components = recordDeclaration.recordComponents();
+        @SuppressWarnings("unchecked")
+        List<SingleVariableDeclaration> components =
+                (List<SingleVariableDeclaration>) recordDeclaration.recordComponents();
         ITypeBinding[] paramTypes = constructorBinding.getParameterTypes();
         // Canonical constructor has same number of parameters as components
         if (components.size() != paramTypes.length) {
@@ -596,11 +598,7 @@ public class ASTNodeUtility {
         }
         // Check if parameter types match component types
         for (int i = 0; i < components.size(); i++) {
-            Object componentObj = components.get(i);
-            if (!(componentObj instanceof SingleVariableDeclaration)) {
-                return false;
-            }
-            SingleVariableDeclaration component = (SingleVariableDeclaration) componentObj;
+            SingleVariableDeclaration component = components.get(i);
             ITypeBinding componentType = component.getType().resolveBinding();
             ITypeBinding paramType = paramTypes[i];
             if (componentType == null || paramType == null) {

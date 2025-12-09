@@ -1915,9 +1915,9 @@ public class CallGraphUtility {
      * This is used for methods like accessors, equals, hashCode, toString that are
      * synthesized by the compiler and don't exist in source code.
      *
-     * @param methodBinding the method binding for the implicit method
+     * @param methodBinding      the method binding for the implicit method
      * @param containerSignature the signature of the containing record class
-     * @param filePath the file path of the record
+     * @param filePath           the file path of the record
      * @return pair containing the method's SHA1 hash and signature
      */
     public static Pair<String, String> createImplicitRecordMethod(

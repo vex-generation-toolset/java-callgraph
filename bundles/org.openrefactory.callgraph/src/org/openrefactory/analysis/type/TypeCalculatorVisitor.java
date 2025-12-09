@@ -2094,8 +2094,8 @@ public class TypeCalculatorVisitor extends ASTVisitor {
                         } else {
                             // Check if it's a record component (SingleVariableDeclaration)
                             ASTNode parent = fieldName.getParent();
-                            if (parent instanceof SingleVariableDeclaration) {
-                                fieldType = ((SingleVariableDeclaration) parent).getType();
+                            if (parent instanceof SingleVariableDeclaration svd) {
+                                fieldType = svd.getType();
                             }
                         }
                         AbstractTypeDeclaration declaringClass =
