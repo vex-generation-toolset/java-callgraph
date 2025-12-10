@@ -155,7 +155,9 @@ public class Graph {
                 }
             }
         }
-
+        if (callerId.isImplicit()) {
+            properties.add("implicit method");
+        }
         return addFunction(new Function(funcCanonName, (long)pkgIdx, className, functionName, paramTypes, properties));
     }
 

@@ -39,18 +39,22 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.openrefactory.analysis.vpg.JavaVPG;
@@ -189,6 +193,10 @@ public class ASTNodeUtility {
                         && ((TypeDeclarationStatement) temp).getDeclaration() instanceof EnumDeclaration) {
                     temp = ((TypeDeclarationStatement) temp).getDeclaration();
                     break;
+                } else if (nodeType.isAssignableFrom(RecordDeclaration.class)
+                        && ((TypeDeclarationStatement) temp).getDeclaration() instanceof RecordDeclaration) {
+                    temp = ((TypeDeclarationStatement) temp).getDeclaration();
+                    break;
                 }
             }
             temp = temp.getParent();
@@ -206,6 +214,9 @@ public class ASTNodeUtility {
                     return (T) ((TypeDeclarationStatement) temp).getDeclaration();
                 } else if (nodeType.isAssignableFrom(EnumDeclaration.class)
                         && ((TypeDeclarationStatement) temp).getDeclaration() instanceof EnumDeclaration) {
+                    return (T) ((TypeDeclarationStatement) temp).getDeclaration();
+                } else if (nodeType.isAssignableFrom(RecordDeclaration.class)
+                        && ((TypeDeclarationStatement) temp).getDeclaration() instanceof RecordDeclaration) {
                     return (T) ((TypeDeclarationStatement) temp).getDeclaration();
                 }
             }
@@ -562,6 +573,46 @@ public class ASTNodeUtility {
     }
 
     /**
+     * Issue 52
+     *
+     * Checks if a constructor binding represents the canonical constructor of a record.
+     * A canonical constructor has the same parameter types (in order) as the record components.
+     *
+     * @param constructorBinding the constructor binding to check
+     * @param recordDeclaration the record declaration supplying component information
+     * @return {@code true} if the constructor is canonical, {@code false} otherwise
+     */
+    public static boolean isCanonicalRecordConstructor(
+            IMethodBinding constructorBinding, RecordDeclaration recordDeclaration) {
+        if (constructorBinding == null || recordDeclaration == null || !constructorBinding.isConstructor()) {
+            return false;
+        }
+        // Get record components
+        @SuppressWarnings("unchecked")
+        List<SingleVariableDeclaration> components =
+                (List<SingleVariableDeclaration>) recordDeclaration.recordComponents();
+        ITypeBinding[] paramTypes = constructorBinding.getParameterTypes();
+        // Canonical constructor has same number of parameters as components
+        if (components.size() != paramTypes.length) {
+            return false;
+        }
+        // Check if parameter types match component types
+        for (int i = 0; i < components.size(); i++) {
+            SingleVariableDeclaration component = components.get(i);
+            ITypeBinding componentType = component.getType().resolveBinding();
+            ITypeBinding paramType = paramTypes[i];
+            if (componentType == null || paramType == null) {
+                continue;
+            }
+            // Check if types match (considering erasure for generics)
+            if (!paramType.isEqualTo(componentType) && !paramType.getErasure().isEqualTo(componentType.getErasure())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Recursively finds all nodes matching specified types and populates a results map.
      *
      * <p>This method performs a comprehensive search through an entire AST subtree to find
@@ -755,7 +806,8 @@ public class ASTNodeUtility {
             for (ASTNode child : children) {
                 if (child instanceof AnonymousClassDeclaration
                         || child instanceof TypeDeclaration
-                        || child instanceof EnumDeclaration) {
+                        || child instanceof EnumDeclaration
+                        || child instanceof RecordDeclaration) {
                     continue;
                 }
                 findAndPopulateAllInThisScope(child, clazzes, resultsMap);

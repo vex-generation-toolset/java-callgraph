@@ -244,6 +244,25 @@ public class MethodIdentity implements Serializable {
     }
 
     /**
+     * Sets the implicit bit indicating this is an implicit method.
+     *
+     * <p>Implicit methods are synthesized by the compiler and do not appear
+     * in the source code.</p>
+     */
+    public void setImplicitBit() {
+        methodBits.set(MethodIdentityBits.IMPLICIT.ordinal());
+    }
+
+    /**
+     * Checks if the method is an implicit method.
+     *
+     * @return {@code true} if the method is implicit, {@code false} otherwise
+     */
+    public boolean isImplicit() {
+        return methodBits.get(MethodIdentityBits.IMPLICIT.ordinal());
+    }
+
+    /**
      * Retrieves the method name.
      *
      * @return the method name, or {@code null} for placeholder identities
