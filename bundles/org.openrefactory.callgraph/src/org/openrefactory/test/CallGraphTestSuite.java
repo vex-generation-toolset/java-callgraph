@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.openrefactory.analysis.callgraph.CallGraphDataStructures;
 import org.openrefactory.analysis.callgraph.MultiThreadCallGraphProcessor;
 import org.openrefactory.analysis.vpg.JavaVPG;
+import org.openrefactory.cli.ConfigurationManager;
 import org.openrefactory.model.Model;
 import org.openrefactory.model.eclipse.EclipseModel;
 import org.openrefactory.util.ASTNodeUtility;
@@ -209,6 +210,7 @@ public class CallGraphTestSuite extends GeneralTestSuiteFromMarkers {
                 String rootPath = root.getRawLocation().toOSString();
                 File rootFile = new File(rootPath);
                 String projectPath = rootFile.getAbsolutePath() + File.separator + "TestProject";
+                ConfigurationManager.loadConfigForTest(projectPath);
                 File absoluteFile = file.getAbsoluteFile();
                 File temp = file.getAbsoluteFile();
 
