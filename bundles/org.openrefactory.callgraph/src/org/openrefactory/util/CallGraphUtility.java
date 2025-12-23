@@ -2110,7 +2110,7 @@ public class CallGraphUtility {
         // Create method param types
         StringBuffer argBuf = new StringBuffer();
         for (TypeInfo typeInfo : identity.getArgParamTypeInfos()) {
-            argBuf.append(TypeCalculator.getTypeWithErasure(typeInfo));
+            argBuf.append(typeInfo.getErasuredSimpleName());
             argBuf.append(",");
         }
         if (identity.getArgParamTypeInfos().size() > 0) {

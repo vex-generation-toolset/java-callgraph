@@ -16,6 +16,6 @@ public class Example5 {
 }
 
 /*$$$$$ Example5.main(String[]), 2,
-		13,9, 1, Example5.printAll(T[]...),
-		14,9, 1, Example5.printAll(T[]...)
+		13,9, 1, Example5.printAll(Object[]...),
+		14,9, 1, Example5.printAll(Object[]...)
 */

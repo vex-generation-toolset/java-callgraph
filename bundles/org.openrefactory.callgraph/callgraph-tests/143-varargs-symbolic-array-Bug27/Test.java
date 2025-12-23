@@ -15,5 +15,5 @@ public class Example4 {
 }
 
 /*$$$$$ Example4.main(String[]), 1,
-		13,9, 1, Example4.printAll(T[]...)
+		13,9, 1, Example4.printAll(Object[]...)
 */

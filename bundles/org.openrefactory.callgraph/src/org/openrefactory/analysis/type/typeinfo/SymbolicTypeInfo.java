@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openrefactory.analysis.callgraph.CallGraphDataStructures;
+import org.openrefactory.util.CallGraphUtility;
 import org.openrefactory.util.Constants;
 import org.openrefactory.util.datastructure.ObjectIntPair;
 import org.openrefactory.util.datastructure.Pair;
@@ -171,6 +172,13 @@ public final class SymbolicTypeInfo extends TypeInfo {
             // Take the erasure of the first bound
             return boundTypes.get(0).getTypeErasure();
         }
+    }
+    
+    @Override
+    public String getErasuredSimpleName() {
+        String typeName = CallGraphUtility.getClassNameFromClassHash(this.getTypeErasure());
+        // Get the part after the last dot as the SimpleName of the type
+        return typeName.substring(typeName.lastIndexOf(".") + 1);
     }
 
     /**

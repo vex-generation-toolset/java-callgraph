@@ -28,10 +28,10 @@ public class AnotherClass {
 }
 
 /*$$$$$ Example6Custom#demo(), 1,
- 		17,39, 1, Example6Custom.Pair#Pair(K@@@V)
+ 		17,39, 1, Example6Custom.Pair#Pair(Object@@@Object)
 */
 
 
 /*$$$$$ AnotherClass.main(String[]), 1,
-		24,54, 1, Example6Custom.Pair#Pair(K@@@V)
+		24,54, 1, Example6Custom.Pair#Pair(Object@@@Object)
 */

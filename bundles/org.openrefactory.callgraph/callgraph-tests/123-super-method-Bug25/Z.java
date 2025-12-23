@@ -19,6 +19,6 @@ public class MyList<E> extends ArrayList<E> {
   		14,31, 1, MyList.<init>(),
 */
 
-/*$$$$$ MyList#add(E), 1,
-  		10,16, 1, java.util.ArrayList#add(E)
+/*$$$$$ MyList#add(Object), 1,
+  		10,16, 1, java.util.ArrayList#add(Object)
 */

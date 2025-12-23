@@ -353,6 +353,11 @@ public final class ScalarTypeInfo extends TypeInfo {
     public String getTypeErasure() {
         return this.name;
     }
+    
+    @Override
+    public String getErasuredSimpleName() {
+        return this.toString();
+    }
 
     @Override
     public Map<String, Pair<Pair<TokenRange, Integer>, TypeInfo>> getFields() {
