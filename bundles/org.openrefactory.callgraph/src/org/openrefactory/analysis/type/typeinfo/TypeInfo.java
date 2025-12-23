@@ -72,6 +72,14 @@ public abstract class TypeInfo implements Serializable {
      *         {@link Constants#JAVA_LANG_OBJECT} otherwise
      */
     public abstract String getTypeErasure();
+    
+    /**
+     * Issue 60
+     *
+     * @return the simple name of the type after type erasure.
+     * @see TypeInfo#getTypeErasure()
+     */
+    public abstract String getErasuredSimpleName();
 
     /**
      * Creates a deep copy of this TypeInfo object.

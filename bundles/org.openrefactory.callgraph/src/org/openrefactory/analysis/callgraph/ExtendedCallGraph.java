@@ -198,7 +198,7 @@ public class ExtendedCallGraph {
 
 		MethodIdentity funcId = CallGraphDataStructures.getHashToMethodInfoBundleList().get(methodHashIndex)
 				.getIdentity();
-		List<String> paramTypes = funcId.getArgParamTypeInfos().stream().map(TypeInfo::toString).collect(toList());
+		List<String> paramTypes = funcId.getArgParamTypeInfos().stream().map(TypeInfo::getErasuredSimpleName).collect(toList());
 
 		String funcCanonName = CallGraphUtility.getMethodNameInCanonicalizedFormat(funcHash, true);
 		// Parse the canonical name of the function and find the class name

@@ -136,6 +136,19 @@ public final class ClassTypeInfo extends TypeInfo {
     public String getTypeErasure() {
         return this.name;
     }
+    
+    /**
+     * @return the simple name of the class. For anonymous inner class it returns
+     * the simple name of the interface/abstract class.
+     */
+    @Override
+    public String getErasuredSimpleName() {
+        String simpleName = this.toString();
+        // For anonymous inner class, the type name contains ANON__OR__TYPE$ prefix.
+        // This prefix is not necessary for method signature. So, we are taking only
+        // interface/abstract class name after the $ sign.
+        return simpleName.substring(simpleName.lastIndexOf("$") + 1);
+    }
 
     /**
      * Checks whether this class type matches the required declaration type.

@@ -69,6 +69,11 @@ public final class RecordTypeInfo extends TypeInfo {
     public String getTypeErasure() {
         return this.name;
     }
+    
+    @Override
+    public String getErasuredSimpleName() {
+        return this.toString();
+    }
 
     @Override
     public boolean matches(TypeInfo declarationType) {

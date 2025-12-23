@@ -55,23 +55,23 @@ public class Z {
 }
 
 /*$$$$$ Z#foo(), 1,
-		42,18, 1, IterUtil.compose(Iterable@@@T),
+		42,18, 1, IterUtil.compose(Iterable@@@Object),
 */
 
 /*$$$$$ Z#bar(), 1,
-		47,18, 1, IterUtil.compose(T@@@Iterable),
+		47,18, 1, IterUtil.compose(Object@@@Iterable),
 */
 
 /*$$$$$ Z#bazz(), 1,
 		53,18, 1, IterUtil.compose(Iterable@@@Iterable),
 */
 
-/*$$$$$ IterUtil.compose(Iterable@@@T), 1,
-		30,16, 1, ComposedIterable#ComposedIterable(Iterable@@@T),
+/*$$$$$ IterUtil.compose(Iterable@@@Object), 1,
+		30,16, 1, ComposedIterable#ComposedIterable(Iterable@@@Object),
 */
 
-/*$$$$$ IterUtil.compose(T@@@Iterable), 1,
-		26,16, 1, ComposedIterable#ComposedIterable(T@@@Iterable),
+/*$$$$$ IterUtil.compose(Object@@@Iterable), 1,
+		26,16, 1, ComposedIterable#ComposedIterable(Object@@@Iterable),
 */
 
 /*$$$$$ IterUtil.compose(Iterable@@@Iterable), 1,

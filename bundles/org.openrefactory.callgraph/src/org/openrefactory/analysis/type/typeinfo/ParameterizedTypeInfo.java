@@ -376,6 +376,21 @@ public final class ParameterizedTypeInfo extends TypeInfo {
     public String getTypeErasure() {
         return this.name;
     }
+    
+    /**
+     * @return the simple name of the parameterized type after erasure. For anonymous inner class it returns
+     * the simple name of the interface/abstract class after type erasure.
+     */
+    @Override
+    public String getErasuredSimpleName() {
+        String simpleName = CallGraphUtility.getClassNameFromClassHash(name);
+        // To keep it consistent with other types, we are taking last index of dot instead of the
+        // heuristic used in toString method.
+        // Also, for anonymous inner class, the type name contains ANON__OR__TYPE$ prefix.
+        // This prefix is not necessary for method signature. So, we are taking only
+        // interface/abstract class name after the $ sign.
+        return simpleName.substring(simpleName.lastIndexOf(".") + 1).substring(simpleName.lastIndexOf("$") + 1);
+    }
 
     /**
      * Checks whether this parameterized type matches the required declaration type.

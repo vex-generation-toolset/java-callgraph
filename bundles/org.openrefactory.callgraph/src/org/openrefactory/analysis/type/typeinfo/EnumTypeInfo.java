@@ -127,6 +127,11 @@ public final class EnumTypeInfo extends TypeInfo {
     public String getTypeErasure() {
         return this.name;
     }
+    
+    @Override
+    public String getErasuredSimpleName() {
+        return this.toString();
+    }
 
     /**
      * Checks whether this enum type matches the required declaration type.

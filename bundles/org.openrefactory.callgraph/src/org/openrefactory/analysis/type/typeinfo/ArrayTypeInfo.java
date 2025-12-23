@@ -122,6 +122,22 @@ public final class ArrayTypeInfo extends TypeInfo {
         // So, getting erasure for just the element type does not create problems.
         return elementType.getTypeErasure();
     }
+    
+    /**
+     * @return the SimpleName of the element after type erasure followed by [] (and ... for var-args)
+     */
+    @Override
+    public String getErasuredSimpleName() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(elementType.getErasuredSimpleName());
+        for (int i = 0; i < dimension; i++) {
+            builder.append("[]");
+        }
+        if (isVarArgs) {
+            builder.append("...");
+        }
+        return builder.toString();
+    }
 
     @Override
     public Map<String, Pair<Pair<TokenRange, Integer>, TypeInfo>> getFields() {
