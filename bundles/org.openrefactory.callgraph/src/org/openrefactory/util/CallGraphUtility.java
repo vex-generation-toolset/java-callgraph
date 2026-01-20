@@ -1911,16 +1911,17 @@ public class CallGraphUtility {
     }
 
     /**
-     * Creates the SHA1 hash and signature for an implicit record method.
-     * This is used for methods like accessors, equals, hashCode, toString that are
+     * Creates the SHA1 hash and signature for an implicit method.
+     * This is used for methods like accessors, equals, hashCode, toString for records,
+     * and values(), valueOf() for enums that are
      * synthesized by the compiler and don't exist in source code.
      *
      * @param methodBinding      the method binding for the implicit method
-     * @param containerSignature the signature of the containing record class
-     * @param filePath           the file path of the record
+     * @param containerSignature the signature of the containing record or enum class
+     * @param filePath           the file path of the record or enum
      * @return pair containing the method's SHA1 hash and signature
      */
-    public static Pair<String, String> createImplicitRecordMethod(
+    public static Pair<String, String> createImplicitMethod(
             IMethodBinding methodBinding, String containerSignature, String filePath) {
         try {
             // Parse the container signature to extract the components
