@@ -486,6 +486,16 @@ public class CallGraphProcessor implements Runnable {
         // Records have canonical constructors instead of defaults.
         if (declaration instanceof RecordDeclaration rd) {
             createAndPopulateRecordImplicitMethods(rd, binding, tokenRange, pairClassHashAndSign);
+        } else if (declaration instanceof EnumDeclaration ed) {
+            // Issue 62
+            // For enums, we create implicit methods and handle constructors.
+            // Explicit constructors are handled by processMethodDeclaration.
+            // Implicit constructors are handled by createAndPopulateEnumImplicitMethods.
+            // Static initialization is handled here.
+            if (hasStaticFields) {
+                createAndPopulateDefaultConstructor(binding, tokenRange, pairClassHashAndSign, true);
+            }
+            createAndPopulateEnumImplicitMethods(ed, binding, tokenRange, pairClassHashAndSign);
         } else {
             // Adding a default and static constructor and updating the map
             // We use the same function to create both default and static constructor,
@@ -606,7 +616,7 @@ public class CallGraphProcessor implements Runnable {
                 if (classHashAndSign.snd == null) {
                     continue;
                 }
-                Pair<String, String> methodHashAndSign = CallGraphUtility.createImplicitRecordMethod(
+                Pair<String, String> methodHashAndSign = CallGraphUtility.createImplicitMethod(
                         methodBinding, classHashAndSign.snd, tokenRange.getFileName());
                 if (methodHashAndSign == null) {
                     continue;
@@ -629,6 +639,71 @@ public class CallGraphProcessor implements Runnable {
                                     true);
                         }
                     }
+                    argTypeInfos.add(paramTypeInfo);
+                }
+                MethodIdentity identity = new MethodIdentity(methodName, returnTypeInfo, argTypeInfos);
+                identity.setImplicitBit();
+                if (methodBinding.isConstructor()) {
+                    identity.setConstructorBit();
+                    CallGraphDataStructures.addToClassToDefaultConstructorMap(classHashAndSign.fst, methodHashAndSign.fst);
+                }
+                if (Modifier.isStatic(methodBinding.getModifiers())) {
+                    identity.setStaticBit();
+                }
+                // Add to data structures
+                int index = CallGraphDataStructures.getMethodHashIndexAndPotentiallyUpdateOtherInitialStructures(
+                        methodHashAndSign.fst, methodHashAndSign.snd);
+                CallGraphDataStructures.addToClassToMethodsMap(classHashAndSign.fst, methodName, index);
+                CallGraphDataStructures.addMethodIdentity(index, identity);
+            }
+        }
+    }
+
+    /**
+     * Issue 62
+     *
+     * Creates implicit methods for an enum.
+     *
+     * @param enumDeclaration  the enum declaration
+     * @param binding          the type binding of the enum
+     * @param tokenRange       the token range of the enum
+     * @param classHashAndSign the class hash and signature pair
+     */
+    private void createAndPopulateEnumImplicitMethods(
+            EnumDeclaration enumDeclaration,
+            ITypeBinding binding,
+            TokenRange tokenRange,
+            Pair<String, String> classHashAndSign) {
+        IMethodBinding[] declaredMethods = binding.getDeclaredMethods();
+        Set<String> explicitMethodKeys = new HashSet<>();
+        for (Object bodyDecl : enumDeclaration.bodyDeclarations()) {
+            if (bodyDecl instanceof MethodDeclaration md) {
+                IMethodBinding mb = md.resolveBinding();
+                if (mb != null) {
+                    explicitMethodKeys.add(mb.getKey());
+                }
+            }
+        }
+        for (IMethodBinding methodBinding : declaredMethods) {
+            // Check if it is an implicit method
+            if (!explicitMethodKeys.contains(methodBinding.getKey())) {
+                if (classHashAndSign.snd == null) {
+                    continue;
+                }
+                Pair<String, String> methodHashAndSign = CallGraphUtility.createImplicitMethod(
+                        methodBinding, classHashAndSign.snd, tokenRange.getFileName());
+                if (methodHashAndSign == null) {
+                    continue;
+                }
+                // Create MethodIdentity
+                String methodName = methodBinding.getName();
+                TypeInfo returnTypeInfo = TypeCalculator.typeOf(methodBinding.getReturnType(), tokenRange.getFileName(),
+                        null, null, true);
+                List<TypeInfo> argTypeInfos = new ArrayList<>();
+                ITypeBinding[] paramTypes = methodBinding.getParameterTypes();
+                for (int i = 0; i < paramTypes.length; i++) {
+                    TypeInfo paramTypeInfo = TypeCalculator.typeOf(paramTypes[i], tokenRange.getFileName(), null, null,
+                            true);
                     argTypeInfos.add(paramTypeInfo);
                 }
                 MethodIdentity identity = new MethodIdentity(methodName, returnTypeInfo, argTypeInfos);

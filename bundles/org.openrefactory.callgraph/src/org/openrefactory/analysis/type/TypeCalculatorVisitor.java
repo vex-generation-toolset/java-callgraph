@@ -1935,7 +1935,20 @@ public class TypeCalculatorVisitor extends ASTVisitor {
             // So, soft and proper types are the same
             typeInfo = new ScalarTypeInfo(typeBinding.getName());
         } else if (typeBinding.isEnum()) {
-            typeInfo = new EnumTypeInfo(hash);
+            // Issue 62
+            Map<String, Pair<Pair<TokenRange, Integer>, TypeInfo>> fields = null;
+            List<String> constants = null;
+            if (!calculateSoftType && isCalculatingContainerType) {
+                fields = getFieldsFromClassType(hash);
+                constants = getConstantsFromEnumType(hash);
+            }
+            if (fields == null) {
+                fields = Collections.emptyMap();
+            }
+            if (constants == null) {
+                constants = Collections.emptyList();
+            }
+            typeInfo = new EnumTypeInfo(hash, fields, constants);
         } else if (typeBinding.isRecord()) {
             Map<String, Pair<Pair<TokenRange, Integer>, TypeInfo>> fields = null;
             if (!calculateSoftType && isCalculatingContainerType) {
@@ -2136,6 +2149,29 @@ public class TypeCalculatorVisitor extends ASTVisitor {
             }
         }
         return fieldsMap;
+    }
+
+    /**
+     * Issue 62
+     *
+     * Finds all constants of an enum.
+     *
+     * @param classHash the enum's hash whose constants are sought
+     * @return list of enum constant names
+     */
+    private List<String> getConstantsFromEnumType(String classHash) {
+        List<String> constants = new ArrayList<>();
+        if (CallGraphDataStructures.containsFieldsForContainer(classHash)) {
+            List<TokenRange> fields = CallGraphDataStructures.getFieldsFromClassHash(classHash);
+            for (TokenRange fieldRange : fields) {
+                EnumConstantDeclaration node = ASTNodeUtility.getASTNodeFromTokenRange(fieldRange,
+                        EnumConstantDeclaration.class);
+                if (node != null) {
+                    constants.add(node.getName().getIdentifier());
+                }
+            }
+        }
+        return constants;
     }
 
     /**
