@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
@@ -38,8 +40,10 @@ import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.MethodReference;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -222,6 +226,12 @@ public class CallGraphProcessor implements Runnable {
         // It gets calculated inside and becomes relevant in phase 3 and 4
         if (!CallGraphDataStructures.isExcludedFile(filePath) && !CallGraphDataStructures.isAProtoFile(filePath)) {
             try {
+                // Register and binding-classify every call site before any other
+                // phase-4 processing can fail or skip a container. The handlers
+                // below may later upgrade a site whose binding was unresolved.
+                if (cgPhase == Phase.PHASE_4) {
+                    inventoryCallExpressions(cu, filePath);
+                }
                 // Store all package names imported in a file
                 // in CallGraphDataStructures
                 Pair<Set<String>, Boolean> importsPair = getImports(cu);
@@ -1619,6 +1629,190 @@ public class CallGraphProcessor implements Runnable {
     }
 
     /**
+     * Returns the library type hash only when JDT has resolved the invoked method or
+     * constructor to a real, non-recovered library declaration. A missing or recovered
+     * binding is not evidence that resolution succeeded and must remain unresolved in
+     * the coverage report.
+     */
+    private static String getConfirmedLibraryTypeHash(IMethodBinding binding, String filePath) {
+        if (binding == null || binding.isRecovered()) {
+            return null;
+        }
+        ITypeBinding declaringType = binding.getDeclaringClass();
+        if (declaringType == null || CallGraphUtility.isRecovered(declaringType)
+            || !CallGraphUtility.isLibraryType(declaringType)) {
+            return null;
+        }
+        String typeHash = CallGraphUtility.getClassHashFromTypeBinding(declaringType, null, filePath);
+        return typeHash != null && typeHash.startsWith(Constants.LIB_TYPE) ? typeHash : null;
+    }
+
+    /**
+     * Classifies a call from its resolved binding, used when our own source-method
+     * matching did not find a servicing method. A confirmed library declaration is
+     * LIBRARY; a binding that points back into analyzed source is SOURCE; a missing
+     * or recovered binding stays UNRESOLVED. This is binding-truth, independent of
+     * receiver-type heuristics or the over-approximating static-import matcher, so
+     * an inherited library method called on a source-typed receiver is still counted
+     * as library rather than falling through to unresolved.
+     */
+    private static CallResolutionStats.Category classifyFromBinding(
+        IMethodBinding binding,
+        String filePath,
+        boolean callResolutionError)
+    {
+        // JDT may return a non-recovered "closest" binding even when overload
+        // resolution failed. Do not call that resolved when the compiler reports
+        // an error on the call expression.
+        if (callResolutionError) {
+            return CallResolutionStats.Category.UNRESOLVED;
+        }
+        if (getConfirmedLibraryTypeHash(binding, filePath) != null) {
+            return CallResolutionStats.Category.LIBRARY;
+        }
+        if (binding != null && !binding.isRecovered()) {
+            ITypeBinding declaringType = binding.getDeclaringClass();
+            if (declaringType != null && declaringType.isFromSource()) {
+                return CallResolutionStats.Category.SOURCE;
+            }
+        }
+        return CallResolutionStats.Category.UNRESOLVED;
+    }
+
+    private static boolean hasCallResolutionError(ASTNode callSite) {
+        if (callSite == null) {
+            return false;
+        }
+        CompilationUnit cu = ASTNodeUtility.findNearestAncestor(callSite, CompilationUnit.class);
+        if (cu == null) {
+            return false;
+        }
+        int callStart = callSite.getStartPosition();
+        int callEnd = callStart + Math.max(callSite.getLength() - 1, 0);
+        for (IProblem problem : cu.getProblems()) {
+            if (problem.isError() && isCallResolutionError(problem)
+                && problem.getSourceStart() <= callEnd && problem.getSourceEnd() >= callStart
+                && isOwnedByCallSite(cu, problem, callSite)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isCallResolutionError(IProblem problem) {
+        int id = problem.getID();
+        return id == IProblem.UndefinedMethod
+            || id == IProblem.NotVisibleMethod
+            || id == IProblem.AmbiguousMethod
+            || id == IProblem.ParameterMismatch
+            || id == IProblem.UndefinedConstructor
+            || id == IProblem.NotVisibleConstructor
+            || id == IProblem.AmbiguousConstructor
+            || id == IProblem.GenericMethodTypeArgumentMismatch
+            || id == IProblem.NonGenericMethod
+            || id == IProblem.IncorrectArityForParameterizedMethod
+            || id == IProblem.ParameterizedMethodArgumentTypeMismatch
+            || id == IProblem.GenericConstructorTypeArgumentMismatch
+            || id == IProblem.NonGenericConstructor
+            || id == IProblem.IncorrectArityForParameterizedConstructor
+            || id == IProblem.ParameterizedConstructorArgumentTypeMismatch
+            || id == IProblem.MethodReferenceSwingsBothWays
+            || id == IProblem.InvalidArrayConstructorReference
+            || id == IProblem.IncompatibleMethodReference;
+    }
+
+    /**
+     * Attributes a compiler problem to the innermost call expression covering
+     * its source range. This prevents a bad nested argument call from making an
+     * otherwise resolved outer invocation look unresolved.
+     */
+    private static boolean isOwnedByCallSite(
+        CompilationUnit cu,
+        IProblem problem,
+        ASTNode callSite)
+    {
+        int problemStart = Math.max(problem.getSourceStart(), 0);
+        int problemLength = Math.max(problem.getSourceEnd() - problemStart + 1, 0);
+        NodeFinder finder = new NodeFinder(cu, problemStart, problemLength);
+        ASTNode problemNode = finder.getCoveringNode();
+        if (problemNode == null) {
+            problemNode = finder.getCoveredNode();
+        }
+        for (ASTNode node = problemNode; node != null; node = node.getParent()) {
+            if (isCallExpression(node)) {
+                return node == callSite;
+            }
+        }
+        // A call-resolution error overlapping this site should not be ignored
+        // merely because a malformed source range prevented AST attribution.
+        return true;
+    }
+
+    /**
+     * Registers and binding-classifies every call expression (method / constructor
+     * invocations, super calls, enum constants and method references) in a
+     * compilation unit. This AST inventory is the single coverage denominator and
+     * runs before the normal phase-4 processing, so skipped containers and early
+     * call-graph failures cannot hide otherwise resolvable bindings.
+     */
+    private static void inventoryCallExpressions(CompilationUnit cu, String filePath) {
+        try {
+            cu.accept(new ASTVisitor() {
+                @Override
+                public void preVisit(ASTNode node) {
+                    if (!isCallExpression(node)) {
+                        return;
+                    }
+                    TokenRange tokenRange = new TokenRange(node.getStartPosition(), node.getLength(), filePath);
+                    CallResolutionStats.Category category = CallResolutionStats.Category.UNRESOLVED;
+                    boolean callResolutionError = false;
+                    try {
+                        callResolutionError = hasCallResolutionError(node);
+                        category = classifyFromBinding(resolveCallBinding(node), filePath, callResolutionError);
+                    } catch (Exception | Error e) {
+                        // Keep this site unresolved, but do not let one problematic
+                        // binding stop the rest of the file inventory.
+                        e.printStackTrace();
+                    } finally {
+                        CallResolutionStats.register(category, node, tokenRange, !callResolutionError);
+                    }
+                }
+            });
+        } catch (Exception | Error e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static boolean isCallExpression(ASTNode node) {
+        return node instanceof MethodInvocation
+            || node instanceof ClassInstanceCreation
+            || node instanceof SuperMethodInvocation
+            || node instanceof ConstructorInvocation
+            || node instanceof SuperConstructorInvocation
+            || node instanceof EnumConstantDeclaration
+            || node instanceof MethodReference;
+    }
+
+    private static IMethodBinding resolveCallBinding(ASTNode node) {
+        if (node instanceof MethodInvocation invocation) {
+            return invocation.resolveMethodBinding();
+        } else if (node instanceof ClassInstanceCreation creation) {
+            return creation.resolveConstructorBinding();
+        } else if (node instanceof SuperMethodInvocation invocation) {
+            return invocation.resolveMethodBinding();
+        } else if (node instanceof ConstructorInvocation invocation) {
+            return invocation.resolveConstructorBinding();
+        } else if (node instanceof SuperConstructorInvocation invocation) {
+            return invocation.resolveConstructorBinding();
+        } else if (node instanceof EnumConstantDeclaration enumConstant) {
+            return enumConstant.resolveConstructorBinding();
+        } else if (node instanceof MethodReference reference) {
+            return reference.resolveMethodBinding();
+        }
+        return null;
+    }
+
+    /**
      * Iterates through all MethodInvocation nodes and adds them as callees to the caller method.
      *
      * <p>This method processes method invocations found within method bodies or initializer blocks
@@ -1665,10 +1859,15 @@ public class CallGraphProcessor implements Runnable {
             // We are not keeping a method identity cache because there may be overloaded methods
             NeoLRUCache<String, Pair<TypeInfo, TokenRange>> methodCallingContextCache = new NeoLRUCache<>(100);
             for (ASTNode methodInvoc : methodInvocations) {
+                TokenRange invocationTokenRange = null;
+                CallResolutionStats.Category cat = CallResolutionStats.Category.UNRESOLVED;
+                boolean shouldRecordResolution = true;
                 try {
                     MethodInvocation invocation = (MethodInvocation) methodInvoc;
-                    TokenRange invocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(invocation, filePath);
+                    invocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(invocation, filePath);
                     if (CallGraphDataStructures.hasInfoAboutMethodInvocation(invocationTokenRange)) {
+                        // This call site was processed through another path and was recorded there.
+                        shouldRecordResolution = false;
                         continue;
                     }
                     Expression expression = invocation.getExpression();
@@ -1678,6 +1877,8 @@ public class CallGraphProcessor implements Runnable {
                     int servicingCalleeMethodIndex = CallGraphUtility.getServicingMethodHashIndex(
                             invocation, callerMethodHash, null, methodCallingContextCache);
                     if (servicingCalleeMethodIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                        // Resolved to a method defined in the analyzed project
+                        cat = CallResolutionStats.Category.SOURCE;
                         // For a static method, no need to store the method invocation type since it is
                         // calculated differently. In that case, just add an edge to the call graph and continue
                         if (CallGraphUtility.isStaticMethod(servicingCalleeMethodIndex)) {
@@ -1832,6 +2033,17 @@ public class CallGraphProcessor implements Runnable {
                             }
                         }
                     } else {
+                        // No servicing method was found in the analyzed source. Resolution
+                        // status was already set from the JDT binding by the AST inventory; this
+                        // branch only maintains call-graph edges and must not downgrade it.
+                        if (invocation.getExpression() == null) {
+                            // A method call such as foo(), i.e., without a receiver expression,
+                            // that was not found in the this/super sections cannot be serviced by
+                            // the library-receiver logic below either (the implicit-this container
+                            // is always a source type). A missing binding remains unresolved.
+                            // We are done, we can go and process the next entry
+                            continue;
+                        }
                         // If we get an invocation of a library class/interface method
                         // we need to match with all of its implementations/subclasses
                         // to match the method. Otherwise we might lose method in caller-callee
@@ -1844,6 +2056,8 @@ public class CallGraphProcessor implements Runnable {
                                         invocation, callerMethodHash, methodCallingContextCache);
                         if (callingContextDeclaredTypeHash != null
                                 && callingContextDeclaredTypeHash.startsWith(Constants.LIB_TYPE)) {
+                            // Category was already decided from the binding above; here we only
+                            // extend the call graph to source implementors of the library method.
                             // Issue 25
                             // Added extended call graph information for implementor of a library method.
                             ExtendedCallGraphUtils.addEntryForLibraryMethodInvocation(invocation, callerMethodHash,
@@ -1914,11 +2128,15 @@ public class CallGraphProcessor implements Runnable {
                         }
                     }
                 } catch (Exception e) {
-                    // Ignore and continue processing the next
+                    // Keep the category decided before the failure; a failure in post-resolution
+                    // bookkeeping must not downgrade an already-resolved call. Default is UNRESOLVED.
                     e.printStackTrace();
                 } catch (Error e) {
-                    // Ignore and continue processing the next
                     e.printStackTrace();
+                } finally {
+                    if (shouldRecordResolution) {
+                        CallResolutionStats.record(cat, methodInvoc, invocationTokenRange);
+                    }
                 }
             }
             methodCallingContextCache.clear();
@@ -1961,9 +2179,14 @@ public class CallGraphProcessor implements Runnable {
             List<ASTNode> classInstanceCreations, String callerMethodHash, String filePath) {
         if (classInstanceCreations != null) {
             for (ASTNode classCreate : classInstanceCreations) {
+                TokenRange invocationTokenRange = null;
+                CallResolutionStats.Category cat = CallResolutionStats.Category.UNRESOLVED;
+                boolean shouldRecordResolution = true;
                 try {
-                    TokenRange invocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(classCreate, filePath);
+                    invocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(classCreate, filePath);
                     if (CallGraphDataStructures.hasInfoAboutMethodInvocation(invocationTokenRange)) {
+                        // This call site was processed through another path and was recorded there.
+                        shouldRecordResolution = false;
                         continue;
                     }
                     ClassInstanceCreation classInstanceCreation = (ClassInstanceCreation) classCreate;
@@ -1986,6 +2209,8 @@ public class CallGraphProcessor implements Runnable {
                                 int defaultConsHashIndex =
                                         CallGraphDataStructures.getMethodIndexFromHash(defaultConsOfAnonClass);
                                 if (defaultConsHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                                    // Anonymous class default constructor is source code
+                                    cat = CallResolutionStats.Category.SOURCE;
                                     if (consHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
                                         String superclassServicingConstructorHash = CallGraphDataStructures
                                                 .getMethodHashFromIndex(consHashIndex);
@@ -2033,6 +2258,7 @@ public class CallGraphProcessor implements Runnable {
                         // A normal class instance creation.
                         // The method returned is the actual method that is called.
                         if (consHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                            cat = CallResolutionStats.Category.SOURCE;
                             String consHash = CallGraphDataStructures.getMethodHashFromIndex(consHashIndex);
                             CallGraphDataStructures.getCallGraph().addEdge(callerMethodHash, consHash);
                             // Issue 3
@@ -2050,6 +2276,9 @@ public class CallGraphProcessor implements Runnable {
                                         invocationTokenRange, consHashIndex, calleeContenders);
                             }
                         } else {
+                            // Constructor of a library / non-source type. Its category was set
+                            // from the JDT binding by the AST inventory; only maintain the
+                            // extended call graph here.
                             // Issue 25
                             // Added extended call graph information for a library constructor call
                             // We need to find the type of the constructor
@@ -2076,11 +2305,15 @@ public class CallGraphProcessor implements Runnable {
                         }
                     }
                 } catch (Exception e) {
-                    // Ignore and continue processing the next
+                    // Keep the category decided before the failure; a failure in post-resolution
+                    // bookkeeping must not downgrade an already-resolved call. Default is UNRESOLVED.
                     e.printStackTrace();
                 } catch (Error e) {
-                    // Ignore and continue processing the next
                     e.printStackTrace();
+                } finally {
+                    if (shouldRecordResolution) {
+                        CallResolutionStats.record(cat, classCreate, invocationTokenRange);
+                    }
                 }
             }
             classInstanceCreations.clear();
@@ -2117,10 +2350,15 @@ public class CallGraphProcessor implements Runnable {
             List<ASTNode> superMethodCalls, String callerMethodName, String callerHash, String filePath) {
         if (superMethodCalls != null) {
             for (ASTNode superMethod : superMethodCalls) {
+                TokenRange invocationTokenRange = null;
+                CallResolutionStats.Category cat = CallResolutionStats.Category.UNRESOLVED;
+                boolean shouldRecordResolution = true;
                 try {
                     SuperMethodInvocation node = (SuperMethodInvocation) superMethod;
-                    TokenRange invocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(node, filePath);
+                    invocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(node, filePath);
                     if (CallGraphDataStructures.hasInfoAboutMethodInvocation(invocationTokenRange)) {
+                        // This call site was processed through another path and was recorded there.
+                        shouldRecordResolution = false;
                         continue;
                     }
                     // We are not using the method calling context cache for super method invocation.
@@ -2130,6 +2368,7 @@ public class CallGraphProcessor implements Runnable {
                     int servicingCalleeMethodIndex =
                             CallGraphUtility.getServicingMethodHashIndex(node, callerHash, null, null);
                     if (servicingCalleeMethodIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                        cat = CallResolutionStats.Category.SOURCE;
                         // This is a single method call, no sub classes
                         // So, just point to it
                         String servicingMethodHash =
@@ -2171,6 +2410,8 @@ public class CallGraphProcessor implements Runnable {
                             }
                         }
                     } else {
+                        // A failed source lookup does not change the category; it was set from
+                        // the JDT binding by the AST inventory. Only maintain the call graph here.
                         String callerClassHash = CallGraphUtility.getClassHashFromMethodHash(callerHash);
                         String superClassHash = CallGraphDataStructures.getSuperClassOf(callerClassHash);
                         // Issue 25
@@ -2179,11 +2420,15 @@ public class CallGraphProcessor implements Runnable {
                             invocationTokenRange, superClassHash, filePath);
                     }
                 } catch (Exception e) {
-                    // Ignore and continue processing the next
+                    // Keep the category decided before the failure; a failure in post-resolution
+                    // bookkeeping must not downgrade an already-resolved call. Default is UNRESOLVED.
                     e.printStackTrace();
                 } catch (Error e) {
-                    // Ignore and continue processing the next
                     e.printStackTrace();
+                } finally {
+                    if (shouldRecordResolution) {
+                        CallResolutionStats.record(cat, superMethod, invocationTokenRange);
+                    }
                 }
             }
             superMethodCalls.clear();
@@ -2215,41 +2460,57 @@ public class CallGraphProcessor implements Runnable {
      */
     private void processAllConstructorInvocations(List<ASTNode> thisConsCalls, String callerHash, String filePath) {
         if (thisConsCalls != null) {
-            String callerContainerHash = CallGraphUtility.getClassHashFromMethodHash(callerHash);
-            if (callerContainerHash != null) {
-                for (ASTNode thisCons : thisConsCalls) {
-                    try {
-                        ConstructorInvocation node = (ConstructorInvocation) thisCons;
-                        TokenRange consInvocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(node, filePath);
-                        if (CallGraphDataStructures.hasInfoAboutMethodInvocation(consInvocationTokenRange)) {
-                            continue;
+            String callerContainerHash = null;
+            try {
+                callerContainerHash = CallGraphUtility.getClassHashFromMethodHash(callerHash);
+            } catch (Exception | Error e) {
+                e.printStackTrace();
+            }
+            for (ASTNode thisCons : thisConsCalls) {
+                TokenRange consInvocationTokenRange = null;
+                CallResolutionStats.Category cat = CallResolutionStats.Category.UNRESOLVED;
+                boolean shouldRecordResolution = true;
+                try {
+                    ConstructorInvocation node = (ConstructorInvocation) thisCons;
+                    consInvocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(node, filePath);
+                    if (CallGraphDataStructures.hasInfoAboutMethodInvocation(consInvocationTokenRange)) {
+                        // This call site was processed through another path and was recorded there.
+                        shouldRecordResolution = false;
+                        continue;
+                    }
+                    int consHashIndex = Constants.INVALID_METHOD_HASH_INDEX;
+                    if (callerContainerHash != null) {
+                        consHashIndex = MethodMatchFinderUtil.getHashOfServicingMethod(callerContainerHash, node);
+                    }
+                    if (consHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                        cat = CallResolutionStats.Category.SOURCE;
+                        String calleeConstructorHash =
+                                CallGraphDataStructures.getMethodHashFromIndex(consHashIndex);
+                        CallGraphDataStructures.getCallGraph().addEdge(callerHash, calleeConstructorHash);
+                        // Issue 3
+                        // Extended call graph information for a this constructor
+                        CallGraphDataStructures.getExtendedCallGraph().addEdge(callerHash,
+                                calleeConstructorHash, consInvocationTokenRange);
+                        // The constructors are not overridden
+                        // Create information about this class instance creation
+                        // No overriding here. So only update method invocation type in CG.
+                        Set<Integer> calleeContenders =
+                                MethodMatchFinderUtil.updateCGAndGetSingleServicingMethodInvocation(
+                                        null, consHashIndex, calleeConstructorHash, false);
+                        if (calleeContenders != null && !calleeContenders.isEmpty()) {
+                            CallGraphDataStructures.addToMethodInvocationToCalleeCandidatesMap(
+                                    consInvocationTokenRange, consHashIndex, calleeContenders);
                         }
-                        int consHashIndex = MethodMatchFinderUtil.getHashOfServicingMethod(callerContainerHash, node);
-                        if (consHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
-                            String calleeConstructorHash =
-                                    CallGraphDataStructures.getMethodHashFromIndex(consHashIndex);
-                            CallGraphDataStructures.getCallGraph().addEdge(callerHash, calleeConstructorHash);
-                            // Issue 3
-							// Extended call graph information for a this constructor
-                            CallGraphDataStructures.getExtendedCallGraph().addEdge(callerHash,
-                                    calleeConstructorHash, consInvocationTokenRange);
-                            // The constructors are not overridden
-                            // Create information about this class instance creation
-                            // No overriding here. So only update method invocation type in CG.
-                            Set<Integer> calleeContenders =
-                                    MethodMatchFinderUtil.updateCGAndGetSingleServicingMethodInvocation(
-                                            null, consHashIndex, calleeConstructorHash, false);
-                            if (calleeContenders != null && !calleeContenders.isEmpty()) {
-                                CallGraphDataStructures.addToMethodInvocationToCalleeCandidatesMap(
-                                        consInvocationTokenRange, consHashIndex, calleeContenders);
-                            }
-                        }
-                    } catch (Exception e) {
-                        // Ignore and continue processing the next
-                        e.printStackTrace();
-                    } catch (Error e) {
-                        // Ignore and continue processing the next
-                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    // Keep the category decided before the failure; a failure in post-resolution
+                    // bookkeeping must not downgrade an already-resolved call. Default is UNRESOLVED.
+                    e.printStackTrace();
+                } catch (Error e) {
+                    e.printStackTrace();
+                } finally {
+                    if (shouldRecordResolution) {
+                        CallResolutionStats.record(cat, thisCons, consInvocationTokenRange);
                     }
                 }
             }
@@ -2289,10 +2550,15 @@ public class CallGraphProcessor implements Runnable {
             List<ASTNode> superConsCalls, String callerHash, String callerContainerHash, String filePath) {
         if (superConsCalls != null) {
             for (ASTNode superCons : superConsCalls) {
+                TokenRange superConsInvocationTokenRange = null;
+                CallResolutionStats.Category cat = CallResolutionStats.Category.UNRESOLVED;
+                boolean shouldRecordResolution = true;
                 try {
                     SuperConstructorInvocation node = (SuperConstructorInvocation) superCons;
-                    TokenRange superConsInvocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(node, filePath);
+                    superConsInvocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(node, filePath);
                     if (CallGraphDataStructures.hasInfoAboutMethodInvocation(superConsInvocationTokenRange)) {
+                        // This call site was processed through another path and was recorded there.
+                        shouldRecordResolution = false;
                         continue;
                     }
                     // The super() call only goes to a class (abstract or concrete).
@@ -2310,6 +2576,7 @@ public class CallGraphProcessor implements Runnable {
                         // So skipping.
                         // Not sure why the anonymous type is needed, but kept to be
                         // compatible with previous code.
+                        // Category already set from the JDT binding by the AST inventory.
                         continue;
                     }
                     // The super constructor may be a regular or a default constructor
@@ -2318,16 +2585,19 @@ public class CallGraphProcessor implements Runnable {
                         // Case 5 and 6
                         // Since an anonymous inner class does not have any implemented constructors,
                         // there is no way to have a super constructor there. So, the last actual param is null
-                        addCGEdgeToAppropriateSuperClassConstructor(
-                                superclassHash, callerHash, null, superConsInvocationTokenRange);
+                        if (addCGEdgeToAppropriateSuperClassConstructor(
+                                superclassHash, callerHash, null, superConsInvocationTokenRange)) {
+                            cat = CallResolutionStats.Category.SOURCE;
+                        }
                     } else {
                         // Find the actual constructor
                         int superConsHashIndex = MethodMatchFinderUtil.getHashOfServicingMethod(superclassHash, node);
                         if (superConsHashIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                            cat = CallResolutionStats.Category.SOURCE;
                             String superConsHash = CallGraphDataStructures.getMethodHashFromIndex(superConsHashIndex);
                             CallGraphDataStructures.getCallGraph().addEdge(callerHash, superConsHash);
                             // Issue 3
-							// Extended call graph information for a super constructor
+                            // Extended call graph information for a super constructor
                             CallGraphDataStructures.getExtendedCallGraph().addEdge(callerHash,
                                     superConsHash, superConsInvocationTokenRange);
                             // The constructors are not overridden
@@ -2343,11 +2613,15 @@ public class CallGraphProcessor implements Runnable {
                         }
                     }
                 } catch (Exception e) {
-                    // Ignore and continue processing the next
+                    // Keep the category decided before the failure; a failure in post-resolution
+                    // bookkeeping must not downgrade an already-resolved call. Default is UNRESOLVED.
                     e.printStackTrace();
                 } catch (Error e) {
-                    // Ignore and continue processing the next
                     e.printStackTrace();
+                } finally {
+                    if (shouldRecordResolution) {
+                        CallResolutionStats.record(cat, superCons, superConsInvocationTokenRange);
+                    }
                 }
             }
             superConsCalls.clear();
@@ -2512,7 +2786,7 @@ public class CallGraphProcessor implements Runnable {
      *        expression that determines the parent constructor choice
      * @param superConsInvocationTokenRange the token range for the super constructor invocation
      */
-    private void addCGEdgeToAppropriateSuperClassConstructor(
+    private boolean addCGEdgeToAppropriateSuperClassConstructor(
             String superClassHash,
             String callerHash,
             ASTNode anonymousInnerInstanceCreation,
@@ -2602,7 +2876,9 @@ public class CallGraphProcessor implements Runnable {
                             superConsInvocationTokenRange, superClassConstIndex, calleeContenders);
                 }
             }
+            return true;
         }
+        return false;
     }
 
     /**
@@ -2747,25 +3023,40 @@ public class CallGraphProcessor implements Runnable {
             return;
         }
         for (ASTNode enumConstantDeclaration : enumConstantDeclarations) {
-            TokenRange invocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(enumConstantDeclaration, filePath);
-            // Find the matching constructor of enum
-            String constructorHash;
-            MethodIdentity identity = MethodHandler.process(enumConstantDeclaration);
-            int methodIndex =
-                    MethodMatchFinderUtil.getBestMatchedMethodServicingInvocation(containerEnumHash, identity);
-            if (methodIndex != Constants.INVALID_METHOD_HASH_INDEX) {
-                constructorHash = CallGraphDataStructures.getMethodHashFromIndex(methodIndex);
-            } else {
-                // Matching constructor not found, use default constructor.
-                constructorHash = CallGraphDataStructures.getDefaultConstructorFor(containerEnumHash);
-                methodIndex = CallGraphDataStructures.getMethodIndexFromHash(constructorHash);
+            TokenRange invocationTokenRange = null;
+            CallResolutionStats.Category cat = CallResolutionStats.Category.UNRESOLVED;
+            try {
+                invocationTokenRange = ASTNodeUtility.getTokenRangeFromNode(enumConstantDeclaration, filePath);
+                // Find the matching constructor of enum
+                String constructorHash;
+                MethodIdentity identity = MethodHandler.process(enumConstantDeclaration);
+                int methodIndex =
+                        MethodMatchFinderUtil.getBestMatchedMethodServicingInvocation(containerEnumHash, identity);
+                if (methodIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                    constructorHash = CallGraphDataStructures.getMethodHashFromIndex(methodIndex);
+                } else {
+                    // Matching constructor not found, use default constructor.
+                    constructorHash = CallGraphDataStructures.getDefaultConstructorFor(containerEnumHash);
+                    methodIndex = CallGraphDataStructures.getMethodIndexFromHash(constructorHash);
+                }
+                CallGraphDataStructures.getCallGraph().addEdge(callerMethodHash, constructorHash);
+                // No override for a enum constructor, but create a method invocation type
+                Set<Integer> invocationTypes = new HashSet<>();
+                invocationTypes.add(methodIndex);
+                CallGraphDataStructures.addToMethodInvocationToCalleeCandidatesMap(
+                        invocationTokenRange, methodIndex, invocationTypes);
+                if (methodIndex != Constants.INVALID_METHOD_HASH_INDEX) {
+                    cat = CallResolutionStats.Category.SOURCE;
+                }
+            } catch (Exception e) {
+                // Keep the category decided before the failure; a failure in post-resolution
+                // bookkeeping must not downgrade an already-resolved call. Default is UNRESOLVED.
+                e.printStackTrace();
+            } catch (Error e) {
+                e.printStackTrace();
+            } finally {
+                CallResolutionStats.record(cat, enumConstantDeclaration, invocationTokenRange);
             }
-            CallGraphDataStructures.getCallGraph().addEdge(callerMethodHash, constructorHash);
-            // No override for a enum constructor, but create a method invocation type
-            Set<Integer> invocationTypes = new HashSet<>();
-            invocationTypes.add(methodIndex);
-            CallGraphDataStructures.addToMethodInvocationToCalleeCandidatesMap(
-                    invocationTokenRange, methodIndex, invocationTypes);
         }
     }
 }

@@ -5,7 +5,9 @@
  */
 package org.openrefactory.cli;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +18,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.openrefactory.analysis.callgraph.CallGraphDataStructures;
+import org.openrefactory.analysis.callgraph.CallResolutionStats;
 import org.openrefactory.analysis.callgraph.MultiThreadCallGraphProcessor;
 import org.openrefactory.analysis.vpg.JavaVPG;
 import org.openrefactory.model.IModel;
@@ -202,6 +205,30 @@ public class CallGraphPassCommand {
 				CallGraphDataStructures.getExtendedCallGraph().writeTofile(cgFileName);
 			} catch (Exception | Error e) {
 				progressReporter.showProgress("Failed to generate cg file: " + e.getMessage());
+			}
+
+			// Print and save the call-expression resolution coverage report
+			String coverageReport = CallResolutionStats.report();
+			System.out.println(System.lineSeparator() + coverageReport);
+			String coverageFileName = timeStamp + "_cg_coverage.txt";
+			File coverageFile = Path.of(ConfigurationManager.config.RESULT, coverageFileName).toFile();
+			try (FileWriter fOut = new FileWriter(coverageFile);
+					BufferedWriter bw = new BufferedWriter(fOut)) {
+				bw.write(coverageReport);
+			} catch (Exception | Error e) {
+				progressReporter.showProgress("Failed to generate cg coverage file: " + e.getMessage());
+			}
+
+			// Save the unresolved call site details for diagnosis
+			String unresolvedFileName = CallResolutionStats.unresolvedCallSitesJsonFileName();
+			File unresolvedFile = Path.of(ConfigurationManager.config.RESULT, unresolvedFileName).toFile();
+			try (FileWriter fOut = new FileWriter(unresolvedFile);
+					BufferedWriter bw = new BufferedWriter(fOut)) {
+				bw.write(CallResolutionStats.unresolvedCallSitesJson());
+				System.out.println("Unresolved call sites logged ("
+						+ CallResolutionStats.unresolvedDetailCount() + "): " + unresolvedFileName);
+			} catch (Exception | Error e) {
+				progressReporter.showProgress("Failed to generate unresolved call sites file: " + e.getMessage());
 			}
 
 			progressReporter.showProgress("Call graph generation complete");

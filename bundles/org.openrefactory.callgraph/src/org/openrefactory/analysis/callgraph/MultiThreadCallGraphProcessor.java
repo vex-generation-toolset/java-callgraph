@@ -631,6 +631,8 @@ public class MultiThreadCallGraphProcessor {
             progressReporter.showProgress("--------Loading Library Class Info--------");
             CallGraphDataStructures.addLibraryTypesToSubClassesAndReachableSuperMap();
             progressReporter.showProgress("--------Library Class Info Loaded--------");
+            // Reset call-expression resolution counters before phase 4 populates them
+            CallResolutionStats.reset();
             constructCHACallGraph(progressReporter);
             // Also clear the special root specs as root method
             // already calculated and will no longer be used.
