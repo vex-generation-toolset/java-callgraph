@@ -40,6 +40,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -397,6 +398,7 @@ public class CallGraphProcessor implements Runnable {
      * @param cu the compilation unit for which file path and imports are to be stored
      * @return a Pair where the first element is the set of imported packages and the second
      *         element is true if the compilation unit contains JUnit test imports
+     *         and is not itself declared in a JUnit package.
      */
     private Pair<Set<String>, Boolean> getImports(CompilationUnit cu) {
         @SuppressWarnings("unchecked")
@@ -419,7 +421,38 @@ public class CallGraphProcessor implements Runnable {
                 hasJUnitImport = true;
             }
         }
+        // Issue 66
+        // A file whose own package is a JUnit package is JUnit product code,
+        // not a test that uses JUnit. JUnit's own sources import sibling
+        // org.junit/junit packages everywhere, so the import signal alone
+        // would exclude most of the project's main sources. Tests of such a
+        // project are still excluded by the test directory path check.
+        if (hasJUnitImport && isInJUnitPackage(cu)) {
+            hasJUnitImport = false;
+        }
         return Pair.of(importedPackages, hasJUnitImport);
+    }
+
+    /**
+     * Issue 66
+     *
+     * Checks whether a compilation unit is declared in a JUnit package,
+     * i.e., the package is <code>org.junit</code>, <code>junit</code>,
+     * or a subpackage of either.
+     *
+     * @param cu the compilation unit to check
+     * @return true if the compilation unit's package is a JUnit package
+     */
+    private boolean isInJUnitPackage(CompilationUnit cu) {
+        PackageDeclaration packageDeclaration = cu.getPackage();
+        if (packageDeclaration != null) {
+            String packageName = packageDeclaration.getName().getFullyQualifiedName();
+            return packageName.equals("org.junit")
+                    || packageName.startsWith("org.junit.")
+                    || packageName.equals("junit")
+                    || packageName.startsWith("junit.");
+        }
+        return false;
     }
 
     /**
