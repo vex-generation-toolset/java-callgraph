@@ -1135,7 +1135,8 @@ public class MethodMatchFinderUtil {
                     // by the compiler. So, instead of matching the exact type
                     // we are matching if the argument falls under this number category.
                     // See if the mismatch is from this category
-                    if (isNumberType(declaredType) && isNumberType(actualType)) {
+                    if (participatesInNumericConversion(declaredType)
+                            && participatesInNumericConversion(actualType)) {
                         // The parameters can still be allowed
                         if (allowedConversion((ScalarTypeInfo) actualType, (ScalarTypeInfo) declaredType)) {
                             // Previously we consider this case like exact match,
@@ -1269,6 +1270,18 @@ public class MethodMatchFinderUtil {
     private static boolean isABetterMatch(
             List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>> existingMismatchInfo,
             List<Pair<MismatchKind, Pair<TypeInfo, TypeInfo>>> newMismatchInfo) {
+        // Issue 69
+        // Some matched methods can make lists with different sizes.
+        // For example, this can happen when one method has varargs and the other does not.
+        // Each list has one item for each matched parameter and one item for the return type.
+        // If the list sizes are different, the return type may be at a different place in
+        // each list. Then comparing by position may compare a parameter with a return type.
+        // Also, if the new list is shorter, the loop below can read past the end of it.
+        // The null counts checked below do not catch this case.
+        // So, when the list sizes are different, keep the old match.
+        if (existingMismatchInfo.size() != newMismatchInfo.size()) {
+            return false;
+        }
         int mismatchCountInExisting = 0;
         int mismatchCountInNew = 0;
         for (Pair<MismatchKind, Pair<TypeInfo, TypeInfo>> temp : existingMismatchInfo) {
@@ -1422,6 +1435,20 @@ public class MethodMatchFinderUtil {
                                 }
                                 break;
 						case NUMERIC_TYPE_AUTOCOVERT:
+							if (newMismatch.fst == MismatchKind.NUMERIC_TYPE_AUTOCOVERT) {
+								// Issue 69
+								// Both candidates match by primitive conversion. Java picks
+								// the most specific applicable formal, so prefer the narrowest
+								// type that the actual widens into. Both candidates share the
+								// actual at this position, so ranking the formals is enough.
+								int existingRank = wideningRank(existingMismatch.snd.snd, existingMismatch.snd.fst);
+								int newRank = wideningRank(newMismatch.snd.snd, newMismatch.snd.fst);
+								if (newRank < existingRank) {
+									newMatchBeingBetterCount++;
+								} else if (newRank > existingRank) {
+									return false;
+								}
+							}
 							break;
 						default:
 							break;
@@ -1478,24 +1505,91 @@ public class MethodMatchFinderUtil {
     }
 
     /**
-     * Checks whether the given type info represents a number
+     * Issue 69
+     * Checks whether the given type info is a primitive type that takes part in
+     * primitive conversion, i.e., the domain of JLS 5.1.2. This is the gate that decides
+     * whether {@link #allowedConversion} gets consulted for a formal/actual pair.
+     *
+     * <p>This asks whether the type converts, not whether it is a java.lang.Number.
+     * char is a converting type: char widens to int, long, float and double, even though
+     * Character is not a Number (ScalarTypeInfo.Scalars.CHAR carries isNumber = false,
+     * which is right for boxing and wrong for this question). Leaving char out made every
+     * char branch inside allowedConversion dead code and turned a legal widening call into
+     * a hard mismatch. boolean stays out, it converts to nothing.
      *
      * @param typeInfo the type info that needs to be tested
-     * @return true if it is a number, false otherwise
+     * @return true if the type takes part in primitive conversion, false otherwise
      */
-    private static boolean isNumberType(TypeInfo typeInfo) {
+    private static boolean participatesInNumericConversion(TypeInfo typeInfo) {
         if (typeInfo instanceof ScalarTypeInfo) {
             ScalarTypeInfo givenType = (ScalarTypeInfo) typeInfo;
             if ((givenType.getName().equals("long")
                     || givenType.getName().equals("int")
                     || givenType.getName().equals("short")
                     || givenType.getName().equals("byte")
+                    || givenType.getName().equals("char")
                     || givenType.getName().equals("float")
                     || givenType.getName().equals("double"))) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Issue 69
+     * The formal types that an actual primitive type widens into, narrowest first (JLS 5.1.2).
+     * char belongs here: it widens to int and wider, but not to short, and nothing widens to
+     * char. The list starts with the actual itself so an identical formal ranks best.
+     *
+     * @param actualTypeName name of the actual param's primitive type
+     * @return the widening targets in preference order, empty if the type does not widen
+     */
+    private static List<String> wideningTargetsOf(String actualTypeName) {
+        switch (actualTypeName) {
+            case "byte":
+                return List.of("byte", "short", "int", "long", "float", "double");
+            case "short":
+                return List.of("short", "int", "long", "float", "double");
+            case "char":
+                return List.of("char", "int", "long", "float", "double");
+            case "int":
+                return List.of("int", "long", "float", "double");
+            case "long":
+                return List.of("long", "float", "double");
+            case "float":
+                return List.of("float", "double");
+            case "double":
+                return List.of("double");
+            default:
+                return List.of();
+        }
+    }
+
+    /**
+     * Issue 69
+     * Ranks a formal param against the actual it is being matched with, lower being a better
+     * fit. A formal that the actual does not widen into ranks worst. allowedConversion also
+     * permits narrowing, e.g. formal int with actual long, and those all tie at the worst rank
+     * so the pre-existing behavior of keeping the first such candidate is preserved.
+     *
+     * @param actualType the actual param's type
+     * @param formalType the formal param's type declared by the candidate method
+     * @return position of the formal in the actual's widening chain, or Integer.MAX_VALUE
+     */
+    private static int wideningRank(TypeInfo actualType, TypeInfo formalType) {
+        if (actualType == null || formalType == null) {
+            return Integer.MAX_VALUE;
+        }
+        String actualTypeName = actualType.getName();
+        String formalTypeName = formalType.getName();
+        // A switch on a null name and List.indexOf(null) both throw, and a throw here would be
+        // swallowed by the per-invocation catch in phase 4 and silently lose the call
+        if (actualTypeName == null || formalTypeName == null) {
+            return Integer.MAX_VALUE;
+        }
+        int rank = wideningTargetsOf(actualTypeName).indexOf(formalTypeName);
+        return rank < 0 ? Integer.MAX_VALUE : rank;
     }
 
     /**
